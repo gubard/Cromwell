@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Db", "..\Nestor\Nest
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.SourceGenerator", "..\Nestor\Nestor.SourceGenerator\Nestor.SourceGenerator.csproj", "{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cromwell.SourceGenerator", "Cromwell.SourceGenerator\Cromwell.SourceGenerator.csproj", "{9C0EFD17-9603-4B2A-B2B3-12BB1B247149}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C0EFD17-9603-4B2A-B2B3-12BB1B247149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C0EFD17-9603-4B2A-B2B3-12BB1B247149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C0EFD17-9603-4B2A-B2B3-12BB1B247149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C0EFD17-9603-4B2A-B2B3-12BB1B247149}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
