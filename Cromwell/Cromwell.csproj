@@ -2,8 +2,11 @@
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>preview</LangVersion>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
@@ -20,5 +23,11 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="Jab" PrivateAssets="all" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Nestor\Nestor.Db\Nestor.Db.csproj" />
+      <ProjectReference Include="..\..\Nestor\Nestor.SourceGenerator\Nestor.SourceGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
     </ItemGroup>
 </Project>

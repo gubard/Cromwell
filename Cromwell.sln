@@ -18,6 +18,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nestor", "Nestor", "{1C5B16F7-428C-45B3-AA65-F4397E17A592}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.Db", "..\Nestor\Nestor.Db\Nestor.Db.csproj", "{BD40CC80-14AD-4D53-AFB0-384B9AC92AFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nestor.SourceGenerator", "..\Nestor\Nestor.SourceGenerator\Nestor.SourceGenerator.csproj", "{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,11 +50,23 @@ Global
 		{7AD1DAC8-7FBE-49D5-8614-7321233DB82E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AD1DAC8-7FBE-49D5-8614-7321233DB82E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AD1DAC8-7FBE-49D5-8614-7321233DB82E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD40CC80-14AD-4D53-AFB0-384B9AC92AFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD40CC80-14AD-4D53-AFB0-384B9AC92AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD40CC80-14AD-4D53-AFB0-384B9AC92AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD40CC80-14AD-4D53-AFB0-384B9AC92AFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {83CB65B8-011F-4ED7-BCD3-A6CFA935EF7E}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BD40CC80-14AD-4D53-AFB0-384B9AC92AFE} = {1C5B16F7-428C-45B3-AA65-F4397E17A592}
+		{3BA5810F-0ABF-45ED-B845-5EF9D163DAD6} = {1C5B16F7-428C-45B3-AA65-F4397E17A592}
 	EndGlobalSection
 EndGlobal
