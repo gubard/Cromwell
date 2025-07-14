@@ -2,7 +2,7 @@
 
 namespace Cromwell.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public class MainViewModel : ObservableObject
 {
-    [ObservableProperty] private string _greeting = "Welcome to Avalonia!";
+    
 }

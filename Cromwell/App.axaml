@@ -1,12 +1,10 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Cromwell"
+             xmlns:sg="clr-namespace:Cromwell.SourceGenerator"
              x:Class="Cromwell.App"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <sg:CromwellViewLocator />
     </Application.DataTemplates>
 
     <Application.Styles>
