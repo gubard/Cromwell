@@ -1,0 +1,17 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:s="clr-namespace:System;assembly=System.Runtime">
+    <s:String x:Key="Lang.Name">Name</s:String>
+    <s:String x:Key="Lang.Login">Login</s:String>
+    <s:String x:Key="Lang.Key">Key</s:String>
+    <s:String x:Key="Lang.IsAvailableUpperLatin">Is available upper latin</s:String>
+    <s:String x:Key="Lang.IsAvailableLowerLatin">Is available lower latin</s:String>
+    <s:String x:Key="Lang.IsAvailableNumber">Is available number</s:String>
+    <s:String x:Key="Lang.IsAvailableSpecialSymbols">Is available special symbols</s:String>
+    <s:String x:Key="Lang.CustomAvailableCharacters">Custom available characters</s:String>
+    <s:String x:Key="Lang.Length">Length</s:String>
+    <s:String x:Key="Lang.Regex">Regex</s:String>
+    <s:String x:Key="Lang.Type">Type</s:String>
+    <s:String x:Key="Lang.OrderIndex">OrderIndex</s:String>
+    <s:String x:Key="Lang.Save">Save</s:String>
+</ResourceDictionary>

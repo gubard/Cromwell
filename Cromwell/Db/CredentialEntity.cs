@@ -6,45 +6,18 @@ namespace Cromwell.Db;
 [SourceEntity(nameof(Id))]
 public partial class CredentialEntity : ObservableObject
 {
-    [ObservableProperty]
-    public partial Guid Id { get; set; }
-
-    [ObservableProperty]
-    public partial string Name { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial string Login { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial string Key { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial bool IsAvailableUpperLatin { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsAvailableLowerLatin { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsAvailableNumber { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsAvailableSpecialSymbols { get; set; }
-
-    [ObservableProperty]
-    public partial string CustomAvailableCharacters { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial ushort Length { get; set; }
-
-    [ObservableProperty]
-    public partial string Regex { get; set; } = string.Empty;
-
-    [ObservableProperty]
-    public partial CredentialType Type { get; set; }
-
-    [ObservableProperty]
-    public partial uint OrderIndex { get; set; }
-
-    [ObservableProperty]
-    public partial Guid? ParentId { get; set; }
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Login { get; set; } = string.Empty;
+    public string Key { get; set; } = string.Empty;
+    public bool IsAvailableUpperLatin { get; set; }
+    public bool IsAvailableLowerLatin { get; set; }
+    public bool IsAvailableNumber { get; set; }
+    public bool IsAvailableSpecialSymbols { get; set; }
+    public string CustomAvailableCharacters { get; set; } = string.Empty;
+    public ushort Length { get; set; }
+    public string Regex { get; set; } = string.Empty;
+    public CredentialType Type { get; set; }
+    public uint OrderIndex { get; set; }
+    public Guid? ParentId { get; set; }
 }

@@ -5,6 +5,11 @@ namespace Cromwell.SourceGenerator;
 
 public static class Extensions
 {
+    public static string GetName(this PropertyDeclarationSyntax syntax)
+    {
+        return syntax.Identifier.Text;
+    }
+
     public static TypeSyntax GetAttributeValueType(this AttributeSyntax syntax, int argumentIndex)
     {
         return syntax.ArgumentList?.Arguments[argumentIndex].Expression switch

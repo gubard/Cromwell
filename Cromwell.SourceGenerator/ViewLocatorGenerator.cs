@@ -1,7 +1,6 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 namespace Cromwell.SourceGenerator;
 
@@ -63,7 +62,7 @@ public class ViewLocatorGenerator : IIncrementalGenerator
             CreateMatchMethod(stringBuilder);
             stringBuilder.AppendLine("}");
             var text = stringBuilder.ToString();
-            spc.AddSource("ViewLocator.g.cs", SourceText.From(text, Encoding.UTF8));
+            spc.AddSource("ViewLocator.g.cs", text);
         });
     }
 

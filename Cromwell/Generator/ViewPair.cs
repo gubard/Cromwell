@@ -1,14 +1,9 @@
 namespace Cromwell.Generator;
 
-[AttributeUsage(AttributeTargets.Assembly)]
+[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
 public class ViewPair : Attribute
 {
     public ViewPair(Type view, Type viewModel)
     {
-        View = view;
-        ViewModel = viewModel;
     }
-
-    public Type View { get; set; }
-    public Type ViewModel { get; set; }
 }
