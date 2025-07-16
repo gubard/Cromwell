@@ -7,7 +7,7 @@ using Cromwell.Views;
 
 namespace Cromwell;
 
-public partial class App : Application
+public class App : Application
 {
     public override void Initialize()
     {
@@ -21,16 +21,17 @@ public partial class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
+
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainViewModel(new(Guid.Empty))
+                DataContext = new MainViewModel([new(Guid.Empty),]),
             };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             singleViewPlatform.MainView = new MainView
             {
-                DataContext = new MainViewModel(new(Guid.Empty))
+                DataContext = new MainViewModel([new(Guid.Empty),]),
             };
         }
 

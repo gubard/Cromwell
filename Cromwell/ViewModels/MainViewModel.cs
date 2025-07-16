@@ -1,13 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Collections;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Cromwell.ViewModels;
 
-public class MainViewModel : ObservableObject
+public partial class MainViewModel : ObservableObject
 {
-    public MainViewModel(EditCredentialViewModel editCredentialViewModel)
+    public MainViewModel(IEnumerable<EditCredentialViewModel> credentials)
     {
-        EditCredentialViewModel = editCredentialViewModel;
+        Credentials = new(credentials);
+        SelectedCredential = Credentials.FirstOrDefault();
     }
 
-    public EditCredentialViewModel EditCredentialViewModel { get; }
+    public AvaloniaList<EditCredentialViewModel> Credentials { get; }
+
+    [ObservableProperty]
+    public partial EditCredentialViewModel? SelectedCredential { get; set; }
 }

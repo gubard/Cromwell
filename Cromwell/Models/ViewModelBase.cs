@@ -1,6 +1,7 @@
 using System.Collections;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace Cromwell.Models;
 
@@ -13,13 +14,23 @@ public abstract class ViewModelBase : ObservableObject, INotifyDataErrorInfo
 
     public bool HasErrors => _errors.Count != 0 && _errors.Any(x => x.Value.Invoke().Any());
 
+    protected AsyncRelayCommand CreateCommand(Func<Task> func)
+    {
+        return new(() =>
+        {
+            StartExecute();
+
+            return func.Invoke();
+        });
+    }
+
     protected void StartExecute()
     {
         _isAnyExecute = true;
 
         foreach (var error in _errors)
         {
-            ErrorsChanged?.Invoke(this, new (error.Key));
+            ErrorsChanged?.Invoke(this, new(error.Key));
         }
     }
 

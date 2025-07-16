@@ -1,6 +1,6 @@
 using System.Windows.Input;
+using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Cromwell.Db;
 using Cromwell.Generator;
 using Cromwell.Models;
@@ -25,21 +25,20 @@ public partial class EditCredentialViewModel : ViewModelBase
 
         SetValidation(nameof(Length), () => Length == 0 ? [new PropertyZeroValidationError(nameof(Length)),] : []);
 
-        SaveCommand = new AsyncRelayCommand(() =>
+        SaveCommand = CreateCommand(() =>
         {
-            StartExecute();
-
             if (HasErrors)
             {
                 return Task.CompletedTask;
             }
-            
+
             return Task.CompletedTask;
         });
     }
 
     public Guid Id { get; }
     public ICommand SaveCommand { get; }
+    public AvaloniaList<EditCredentialViewModel> Children { get; } = new();
 
     [ObservableProperty]
     public partial bool IsEditName { get; set; }
