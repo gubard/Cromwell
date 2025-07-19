@@ -1,7 +1,14 @@
 using Cromwell.Db;
 using Microsoft.EntityFrameworkCore;
+using Nestor.Db;
 
 namespace Cromwell.Services;
+
+public interface ICredentialService
+{
+    ValueTask AddAsync(CredentialEntity entity, CancellationToken cancellationToken);
+    ValueTask<CredentialEntity[]> GetAsync(CancellationToken cancellationToken);
+}
 
 public class CredentialService : ICredentialService
 {
@@ -12,8 +19,14 @@ public class CredentialService : ICredentialService
         _dbContext = dbContext;
     }
 
-    public ValueTask AddAsync(CredentialEntity entity, CancellationToken cancellationToken)
+    public async ValueTask AddAsync(CredentialEntity entity, CancellationToken cancellationToken)
     {
-        return CredentialEntity.AddCredentialEntitysAsync(_dbContext, "App", cancellationToken, entity);
+        await CredentialEntity.AddCredentialEntitysAsync(_dbContext, "App", cancellationToken, entity);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public ValueTask<CredentialEntity[]> GetAsync(CancellationToken cancellationToken)
+    {
+        return CredentialEntity.GetCredentialEntitysAsync(_dbContext.Set<EventEntity>(), cancellationToken);
     }
 }

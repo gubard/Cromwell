@@ -1,19 +1,43 @@
-using System.Windows.Input;
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Db;
 using Cromwell.Generator;
 using Cromwell.Models;
+using Cromwell.Services;
 
 namespace Cromwell.Ui;
 
 [EditNotify]
 public partial class EditCredentialViewModel : ViewModelBase
 {
-    public EditCredentialViewModel(Guid id)
+    private readonly ICredentialService _credentialService;
+    private readonly IDialogService _dialogService;
+
+    public EditCredentialViewModel(
+        CredentialEntity entity,
+        ICredentialService credentialService,
+        IDialogService dialogService
+    ) : this(entity.Id, credentialService, dialogService)
+    {
+        Name = entity.Name;
+        Login = entity.Login;
+        Key = entity.Key;
+        IsAvailableUpperLatin = entity.IsAvailableUpperLatin;
+        IsAvailableLowerLatin = entity.IsAvailableLowerLatin;
+        IsAvailableNumber = entity.IsAvailableNumber;
+        IsAvailableSpecialSymbols = entity.IsAvailableSpecialSymbols;
+        CustomAvailableCharacters = entity.CustomAvailableCharacters;
+        Length = entity.Length;
+        Regex = entity.Regex;
+        Type = entity.Type;
+    }
+
+    public EditCredentialViewModel(Guid id, ICredentialService credentialService, IDialogService dialogService)
     {
         Id = id;
+        _credentialService = credentialService;
+        _dialogService = dialogService;
 
         SetValidation(nameof(Name),
             () => string.IsNullOrWhiteSpace(Name) ? [new PropertyEmptyValidationError(nameof(Name)),] : []);
@@ -25,10 +49,12 @@ public partial class EditCredentialViewModel : ViewModelBase
             () => string.IsNullOrWhiteSpace(Key) ? [new PropertyEmptyValidationError(nameof(Key)),] : []);
 
         SetValidation(nameof(Length), () => Length == 0 ? [new PropertyZeroValidationError(nameof(Length)),] : []);
+        Length = 512;
+        Children = new();
     }
 
     public Guid Id { get; }
-    public AvaloniaList<EditCredentialViewModel> Children { get; } = new();
+    public AvaloniaList<EditCredentialViewModel> Children { get; }
 
     [ObservableProperty]
     public partial bool IsEditName { get; set; }
@@ -101,10 +127,31 @@ public partial class EditCredentialViewModel : ViewModelBase
     {
         return WrapCommand(() => Task.CompletedTask);
     }
-    
+
     [RelayCommand]
-    private Task CreateAsync()
+    private Task CreateAsync(CancellationToken cancellationToken)
     {
-        return WrapCommand(() => Task.CompletedTask);
+        return WrapCommand(async () =>
+        {
+            await _credentialService.AddAsync(new()
+            {
+                Id = Id,
+                Name = Name,
+                Login = Login,
+                Key = Key,
+                IsAvailableUpperLatin = IsAvailableUpperLatin,
+                IsAvailableLowerLatin = IsAvailableLowerLatin,
+                IsAvailableNumber = IsAvailableNumber,
+                IsAvailableSpecialSymbols = IsAvailableSpecialSymbols,
+                CustomAvailableCharacters = CustomAvailableCharacters,
+                Length = Length,
+                Regex = Regex,
+                Type = Type,
+                OrderIndex = 0, // You may want to set this based on your business logic
+                ParentId = null, // Set this if this credential has a parent
+            }, cancellationToken);
+
+            _dialogService.CloseMessageBox();
+        });
     }
 }

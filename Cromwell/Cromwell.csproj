@@ -25,9 +25,12 @@
         </PackageReference>
         <PackageReference Include="CommunityToolkit.Mvvm" />
         <PackageReference Include="Jab" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="Xaml.Behaviors.Interactions" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Nestor\Nestor.Db.Sqlite\Nestor.Db.Sqlite.csproj" />
       <ProjectReference Include="..\..\Nestor\Nestor.Db\Nestor.Db.csproj" />
       <ProjectReference Include="..\..\Nestor\Nestor.SourceGenerator\Nestor.SourceGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
       <ProjectReference Include="..\Cromwell.SourceGenerator\Cromwell.SourceGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />

@@ -7,3 +7,4 @@ using MainViewModel = Cromwell.Ui.MainViewModel;
 [assembly: ViewPair(typeof(EditCredentialView), typeof(EditCredentialViewModel))]
 [assembly: ViewPair(typeof(StackView), typeof(StackViewModel))]
 [assembly: ViewPair(typeof(DialogView), typeof(DialogViewModel))]
+[assembly: ViewPair(typeof(ExceptionView), typeof(ExceptionViewModel))]

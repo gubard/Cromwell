@@ -1,7 +1,6 @@
 using System.Collections;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Cromwell.Helpers;
 
 namespace Cromwell.Models;
@@ -18,6 +17,11 @@ public abstract class ViewModelBase : ObservableObject, INotifyDataErrorInfo
     protected Task WrapCommand(Func<Task> func)
     {
         StartExecute();
+
+        if (HasErrors)
+        {
+            return Task.CompletedTask;
+        }
 
         return UiHelper.ExecuteAsync(func);
     }

@@ -5,7 +5,8 @@
              xmlns:ui="clr-namespace:Cromwell.Ui"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="100"
              x:Class="Cromwell.Ui.DialogView"
-             x:DataType="ui:DialogViewModel">
+             x:DataType="ui:DialogViewModel"
+             Background="{DynamicResource TextControlBackgroundFocused}">
     <Design.DataContext>
         <x:Static Member="ui:DialogViewModel.DesignViewModel" />
     </Design.DataContext>

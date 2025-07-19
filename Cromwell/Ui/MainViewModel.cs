@@ -12,16 +12,22 @@ public partial class MainViewModel : ViewModelBase
     private readonly IDialogService _dialogService;
     private readonly IApplicationResourceService _applicationResourceService;
     private readonly IStringFormater _stringFormater;
+    private readonly IViewModelFactory _viewModelFactory;
+    private readonly ICredentialService _credentialService;
 
     public MainViewModel(
         IDialogService dialogService,
         IApplicationResourceService applicationResourceService,
-        IStringFormater stringFormater
+        IStringFormater stringFormater,
+        IViewModelFactory viewModelFactory,
+        ICredentialService credentialService
     )
     {
         _dialogService = dialogService;
         _applicationResourceService = applicationResourceService;
         _stringFormater = stringFormater;
+        _viewModelFactory = viewModelFactory;
+        _credentialService = credentialService;
         SelectedCredential = Credentials.FirstOrDefault();
     }
 
@@ -31,30 +37,40 @@ public partial class MainViewModel : ViewModelBase
     public partial EditCredentialViewModel? SelectedCredential { get; set; }
 
     [RelayCommand]
-    private Task ShowCreateViewAsync()
+    private Task ShowCreateViewAsync(CancellationToken cancellationToken)
     {
-        var viewModel = new EditCredentialViewModel(Guid.CreateVersion7());
+        var viewModel = _viewModelFactory.CreateEditCredentialViewModel(Guid.CreateVersion7());
 
-        return WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
-            _stringFormater.Format(_applicationResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                _applicationResourceService.GetResource<string>("Lang.Credential")), viewModel,
-            new DialogButton(_applicationResourceService.GetResource<string>("Lang.Create"), viewModel.CreateCommand,
-                DialogButtonType.Primary), UiHelper.CancelButton)));
-    }
-
-    [RelayCommand]
-    private Task CreateCredentialAsync(EditCredentialViewModel viewModel)
-    {
         return WrapCommand(async () =>
         {
-            _dialogService.CloseMessageBox();
-            await InitializedAsync();
+            await _dialogService.ShowMessageBoxAsync(new(
+                _stringFormater.Format(_applicationResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                    _applicationResourceService.GetResource<string>("Lang.Credential")), viewModel,
+                new DialogButton(_applicationResourceService.GetResource<string>("Lang.Create"),
+                    viewModel.CreateCommand, DialogButtonType.Primary), UiHelper.CancelButton));
+
+            await InitializedAsync(cancellationToken);
         });
     }
 
     [RelayCommand]
-    private Task InitializedAsync()
+    private Task CreateCredentialAsync(EditCredentialViewModel viewModel, CancellationToken cancellationToken)
     {
-        return WrapCommand(() => Task.CompletedTask);
+        return WrapCommand(async () =>
+        {
+            _dialogService.CloseMessageBox();
+            await InitializedAsync(cancellationToken);
+        });
+    }
+
+    [RelayCommand]
+    private Task InitializedAsync(CancellationToken cancellationToken)
+    {
+        return WrapCommand(async () =>
+        {
+            Credentials.Clear();
+            var credentials = await _credentialService.GetAsync(cancellationToken);
+            Credentials.AddRange(credentials.Select(x => _viewModelFactory.CreateEditCredentialViewModel(x)));
+        });
     }
 }

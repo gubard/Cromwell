@@ -4,6 +4,7 @@ using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Cromwell.Helpers;
 using Cromwell.Ui;
+using Microsoft.EntityFrameworkCore;
 using MainViewModel = Cromwell.Ui.MainViewModel;
 
 namespace Cromwell;
@@ -18,6 +19,8 @@ public class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         var viewModel = DiHelper.ServiceProvider.GetService<MainViewModel>();
+        var dbContext = DiHelper.ServiceProvider.GetService<DbContext>();
+        dbContext.Database.EnsureCreated();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
