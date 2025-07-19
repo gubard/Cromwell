@@ -2,8 +2,9 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Cromwell.ViewModels;
-using Cromwell.Views;
+using Cromwell.Helpers;
+using Cromwell.Ui;
+using MainViewModel = Cromwell.Ui.MainViewModel;
 
 namespace Cromwell;
 
@@ -16,6 +17,8 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        var viewModel = DiHelper.ServiceProvider.GetService<MainViewModel>();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
@@ -24,14 +27,14 @@ public class App : Application
 
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainViewModel([new(Guid.Empty),]),
+                DataContext = viewModel,
             };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             singleViewPlatform.MainView = new MainView
             {
-                DataContext = new MainViewModel([new(Guid.Empty),]),
+                DataContext = viewModel,
             };
         }
 

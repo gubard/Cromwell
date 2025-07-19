@@ -1,11 +1,12 @@
 using System.Windows.Input;
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Cromwell.Db;
 using Cromwell.Generator;
 using Cromwell.Models;
 
-namespace Cromwell.ViewModels;
+namespace Cromwell.Ui;
 
 [EditNotify]
 public partial class EditCredentialViewModel : ViewModelBase
@@ -24,20 +25,9 @@ public partial class EditCredentialViewModel : ViewModelBase
             () => string.IsNullOrWhiteSpace(Key) ? [new PropertyEmptyValidationError(nameof(Key)),] : []);
 
         SetValidation(nameof(Length), () => Length == 0 ? [new PropertyZeroValidationError(nameof(Length)),] : []);
-
-        SaveCommand = CreateCommand(() =>
-        {
-            if (HasErrors)
-            {
-                return Task.CompletedTask;
-            }
-
-            return Task.CompletedTask;
-        });
     }
 
     public Guid Id { get; }
-    public ICommand SaveCommand { get; }
     public AvaloniaList<EditCredentialViewModel> Children { get; } = new();
 
     [ObservableProperty]
@@ -105,4 +95,16 @@ public partial class EditCredentialViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial CredentialType Type { get; set; }
+
+    [RelayCommand]
+    private Task SaveAsync()
+    {
+        return WrapCommand(() => Task.CompletedTask);
+    }
+    
+    [RelayCommand]
+    private Task CreateAsync()
+    {
+        return WrapCommand(() => Task.CompletedTask);
+    }
 }

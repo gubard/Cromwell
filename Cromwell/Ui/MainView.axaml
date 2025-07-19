@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="clr-namespace:Cromwell.Ui"
+             xmlns:dha="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Cromwell.Ui.MainView"
+             x:DataType="ui:MainViewModel">
+    <dha:DialogHost Identifier="MessageBox">
+        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, *">
+            <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="{StaticResource Lang.Create}" Command="{Binding ShowCreateViewCommand}" />
+            </StackPanel>
+
+            <TreeView Grid.Row="1" ItemsSource="{Binding Credentials}" SelectedItem="{Binding SelectedCredential}">
+                <TreeView.ItemTemplate>
+                    <TreeDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Name}" />
+                    </TreeDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid RowDefinitions="*, Auto">
+                    <ContentControl Content="{Binding SelectedCredential}" />
+
+                    <StackPanel Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button Content="{StaticResource Lang.Save}" Command="{Binding SelectedCredential.SaveCommand}" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </dha:DialogHost>
+</UserControl>

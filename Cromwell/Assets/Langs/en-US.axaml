@@ -14,4 +14,10 @@
     <s:String x:Key="Lang.Type">Type</s:String>
     <s:String x:Key="Lang.OrderIndex">OrderIndex</s:String>
     <s:String x:Key="Lang.Save">Save</s:String>
+    <s:String x:Key="Lang.Credential">Credential</s:String>
+    <s:String x:Key="Lang.Create">Create</s:String>
+    <s:String x:Key="Lang.Cancel">Cancel</s:String>
+    <s:String x:Key="Lang.Error">Error</s:String>
+    <s:String x:Key="Lang.Ok">Ok</s:String>
+    <s:String x:Key="Lang.CreatingNewItem">Create new {}</s:String>
 </ResourceDictionary>

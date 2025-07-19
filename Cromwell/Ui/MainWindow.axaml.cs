@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Cromwell.Views;
+namespace Cromwell.Ui;
 
 public partial class MainWindow : Window
 {

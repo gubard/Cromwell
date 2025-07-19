@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:s="clr-namespace:System;assembly=System.Runtime"
+             xmlns:ui="clr-namespace:Cromwell.Ui"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Cromwell.Ui.ExceptionView"
+             x:DataType="ui:ExceptionViewModel">
+    <ItemsControl ItemsSource="{Binding Exceptions}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="s:Exception">
+                <StackPanel>
+                    <TextBlock Classes="field" Text="{StaticResource Lang.Message}" />
+                    <TextBlock Text="{Binding Message}" />
+                    <TextBlock Classes="field" Text="{StaticResource Lang.StackTrace}" />
+                    <TextBlock Text="{Binding StackTrace}" TextWrapping="Wrap" />
+                </StackPanel>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

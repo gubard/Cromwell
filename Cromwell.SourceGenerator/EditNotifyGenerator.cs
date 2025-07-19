@@ -107,8 +107,8 @@ public class EditNotifyGenerator : IIncrementalGenerator
                 viewStringBuilder.AppendLine("    </ScrollViewer>");
                 viewStringBuilder.AppendLine("</UserControl>");
                 stringBuilder.AppendLine();
-                stringBuilder.AppendLine("            base.OnPropertyChanged(e);");
                 stringBuilder.AppendLine("        }");
+                stringBuilder.AppendLine("            base.OnPropertyChanged(e);");
                 stringBuilder.AppendLine("    }");
 
                 foreach (var property in enumProperties)
