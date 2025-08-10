@@ -19,5 +19,6 @@
     <s:String x:Key="Lang.Cancel">Cancel</s:String>
     <s:String x:Key="Lang.Error">Error</s:String>
     <s:String x:Key="Lang.Ok">Ok</s:String>
+    <s:String x:Key="Lang.Delete">Delete</s:String>
     <s:String x:Key="Lang.CreatingNewItem">Create new {}</s:String>
 </ResourceDictionary>

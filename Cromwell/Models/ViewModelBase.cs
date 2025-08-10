@@ -26,7 +26,7 @@ public abstract class ViewModelBase : ObservableObject, INotifyDataErrorInfo
         return UiHelper.ExecuteAsync(func);
     }
 
-    protected void StartExecute()
+    public void StartExecute()
     {
         _isAnyExecute = true;
 

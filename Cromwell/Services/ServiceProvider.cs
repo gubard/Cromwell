@@ -15,11 +15,11 @@ public interface IServiceProvider
 [ServiceProvider]
 [Transient(typeof(MainViewModel))]
 [Transient(typeof(ICredentialService), typeof(CredentialService))]
-[Transient(typeof(IViewModelFactory), typeof(ViewModelFactory))]
 [Singleton(typeof(IDialogService), typeof(DialogService))]
 [Singleton(typeof(IApplicationResourceService), typeof(ApplicationResourceService))]
 [Singleton(typeof(IStringFormater), typeof(StringFormater))]
 [Singleton(typeof(IObjectPropertyStringValueGetter), typeof(ObjectPropertyStringValueGetter))]
+[Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
 [Singleton(typeof(DbContext), Factory = nameof(GetDbContext))]
 public partial class ServiceProvider : IServiceProvider

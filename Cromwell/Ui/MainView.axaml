@@ -15,8 +15,9 @@
 
     <dha:DialogHost Identifier="MessageBox">
         <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, *">
-            <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel Grid.ColumnSpan="2" Classes="accept-panel">
                 <Button Content="{StaticResource Lang.Create}" Command="{Binding ShowCreateViewCommand}" />
+                <Button Content="{StaticResource Lang.Delete}" Command="{Binding DeleteCommand}" />
             </StackPanel>
 
             <TreeView Grid.Row="1" ItemsSource="{Binding Credentials}" SelectedItem="{Binding SelectedCredential}">
@@ -25,6 +26,25 @@
                         <TextBlock Text="{Binding Name}" />
                     </TreeDataTemplate>
                 </TreeView.ItemTemplate>
+
+                <TreeView.Styles>
+                    <Style Selector="TreeViewItem">
+                        <Setter Property="(Interaction.Behaviors)">
+                            <BehaviorCollectionTemplate>
+                                <BehaviorCollection>
+                                    <EventTriggerBehavior EventName="PointerPressed">
+                                        <CallMethodAction TargetObject="{Binding $parent[ui:MainView]}"
+                                                          MethodName="TreeViewItemOnPointerPressed" />
+                                    </EventTriggerBehavior>
+                                    <EventTriggerBehavior EventName="PointerReleased">
+                                        <CallMethodAction TargetObject="{Binding $parent[ui:MainView]}"
+                                                          MethodName="TreeViewItemOnPointerReleased" />
+                                    </EventTriggerBehavior>
+                                </BehaviorCollection>
+                            </BehaviorCollectionTemplate>
+                        </Setter>
+                    </Style>
+                </TreeView.Styles>
             </TreeView>
 
             <Grid Grid.Row="1" Grid.Column="1">
@@ -32,7 +52,7 @@
                     <ContentControl Content="{Binding SelectedCredential}" />
 
                     <StackPanel Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Content="{StaticResource Lang.Save}" Command="{Binding SelectedCredential.SaveCommand}" />
+                        <Button Content="{StaticResource Lang.Save}" Command="{Binding SaveCommand}" />
                     </StackPanel>
                 </Grid>
             </Grid>
