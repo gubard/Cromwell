@@ -15,7 +15,16 @@
 
     <dha:DialogHost Identifier="MessageBox">
         <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, *">
-            <StackPanel Grid.ColumnSpan="2" Classes="accept-panel">
+            <Border Classes="alignment-stretch" Background="Brown">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="PointerEntered">
+                        <CallMethodAction TargetObject="{Binding $parent[ui:MainView]}"
+                                          MethodName="RootButtonOnPointerReleased" />
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </Border>
+
+            <StackPanel Grid.Column="1" Classes="accept-panel">
                 <Button Content="{StaticResource Lang.Create}" Command="{Binding ShowCreateViewCommand}" />
                 <Button Content="{StaticResource Lang.Delete}" Command="{Binding DeleteCommand}" />
             </StackPanel>

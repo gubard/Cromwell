@@ -21,8 +21,29 @@ public partial class MainView : UserControl
 
     public MainViewModel ViewModel => (MainViewModel)(DataContext ?? throw new NullReferenceException());
 
+    public async void RootButtonOnPointerReleased(object? sender, PointerEventArgs e)
+    {
+        if (!_dragAndDropService.IsDragging)
+        {
+            return;
+        }
+
+        if (_dragAndDropService.GetDataAndRelease() is not EditCredentialViewModel data)
+        {
+            return;
+        }
+
+        await _credentialService.ChangeParentAsync(data.Id, null, CancellationToken.None);
+        ViewModel.InitializedCommand.Execute(null);
+    }
+
     public void TreeViewItemOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
+        if (_dragAndDropService.IsDragging)
+        {
+            return;
+        }
+
         if (e.Source is not Control control)
         {
             return;
@@ -40,12 +61,12 @@ public partial class MainView : UserControl
             return;
         }
 
-        _dragAndDropService.Date = viewModel;
+        _dragAndDropService.SetData(viewModel);
     }
 
     public async void TreeViewItemOnPointerReleased(object? sender, PointerReleasedEventArgs e)
     {
-        if (_dragAndDropService.Date is not EditCredentialViewModel data)
+        if (!_dragAndDropService.IsDragging)
         {
             return;
         }
@@ -71,6 +92,11 @@ public partial class MainView : UserControl
         }
 
         if (treeViewItem.DataContext is not EditCredentialViewModel viewModel)
+        {
+            return;
+        }
+
+        if (_dragAndDropService.GetDataAndRelease() is not EditCredentialViewModel data)
         {
             return;
         }
