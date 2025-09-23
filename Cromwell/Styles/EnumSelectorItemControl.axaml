@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Cromwell.Controls">
+    <ControlTheme x:Key="EnumSelectorItemControlStyle" TargetType="c:EnumSelectorItemControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ToggleButton x:Name="PART_ToggleButton" Content="{TemplateBinding DisplayValue}" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type c:EnumSelectorItemControl}"
+                  BasedOn="{StaticResource EnumSelectorItemControlStyle}"
+                  TargetType="c:EnumSelectorItemControl" />
+</ResourceDictionary>

@@ -1,119 +1,26 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Style Selector="NumericUpDown.int-format">
-        <Setter Property="FormatString" Value="F0" />
-    </Style>
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <MergeResourceInclude Source="ViewSelectorControl.axaml" />
+                <MergeResourceInclude Source="ViewSelectorItemControl.axaml" />
+                <MergeResourceInclude Source="EnumSelectorControl.axaml" />
+                <MergeResourceInclude Source="EnumSelectorItemControl.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
 
-    <Style Selector="Rectangle">
-        <Setter Property="Margin" Value="2" />
-    </Style>
-
-    <Style Selector="TextBlock.field">
-        <Setter Property="Margin" Value="10,5,5,5" />
-    </Style>
-
-    <Style Selector="CalendarDatePicker">
-        <Setter Property="Margin" Value="2" />
-    </Style>
-
-    <Style Selector="ComboBox">
-        <Setter Property="Margin" Value="2" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-    </Style>
-
-    <Style Selector=":is(Layoutable).alignment-center">
-        <Setter Property="HorizontalAlignment" Value="Center" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
-    
-    <Style Selector=":is(Layoutable).alignment-stretch">
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Stretch" />
-    </Style>
-
-    <Style Selector=":is(Layoutable).alignment-right">
-        <Setter Property="HorizontalAlignment" Value="Right" />
-    </Style>
-
-    <Style Selector="Button.link">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="Margin" Value="0" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemAccentColor}" />
-    </Style>
-
-    <Style Selector="Button">
-        <Setter Property="Margin" Value="2" />
-    </Style>
-
-    <Style Selector="Button.primary">
-        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
-    </Style>
-
-    <Style Selector="Button.danger">
-        <Setter Property="Background" Value="{DynamicResource SystemErrorTextColor}" />
-        <Setter Property="Foreground" Value="{DynamicResource TextControlBackgroundFocused}" />
-    </Style>
-
-
-    <Style Selector="StackPanel.horizontal">
-        <Setter Property="Orientation" Value="Horizontal" />
-    </Style>
-
-    <Style Selector="StackPanel.accept-panel">
-        <Setter Property="Orientation" Value="Horizontal" />
-        <Setter Property="HorizontalAlignment" Value="Right" />
-    </Style>
-
-    <Style Selector=":is(TemplatedControl).control">
-        <Setter Property="Padding" Value="5" />
-        <Setter Property="MinWidth" Value="200" />
-    </Style>
-
-
-    <Style Selector="ItemsControl.horizontal-stack">
-        <Setter Property="ItemsPanel">
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" />
-            </ItemsPanelTemplate>
-        </Setter>
-    </Style>
-
-    <Style Selector="ItemsControl.accept-panel">
-        <Setter Property="ItemsPanel">
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" />
-            </ItemsPanelTemplate>
-        </Setter>
-    </Style>
-
-    <Style Selector="TextBlock">
-        <Setter Property="Margin" Value="3" />
-    </Style>
-
-    <Style Selector="TextBox">
-        <Setter Property="Margin" Value="5" />
-    </Style>
-
-    <Style Selector="CheckBox">
-        <Setter Property="Margin" Value="5" />
-    </Style>
-
-    <Style Selector="NumericUpDown">
-        <Setter Property="Margin" Value="5" />
-    </Style>
-
-    <Style Selector="ComboBox">
-        <Setter Property="Margin" Value="5" />
-    </Style>
-
-    <Style Selector="ComboBox">
-        <Setter Property="Margin" Value="5" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-    </Style>
-
-    <Style Selector="Button">
-        <Setter Property="Margin" Value="5" />
-    </Style>
+    <StyleInclude Source="NumericUpDown.axaml" />
+    <StyleInclude Source="Rectangle.axaml" />
+    <StyleInclude Source="TextBlock.axaml" />
+    <StyleInclude Source="CalendarDatePicker.axaml" />
+    <StyleInclude Source="ComboBox.axaml" />
+    <StyleInclude Source="Layoutable.axaml" />
+    <StyleInclude Source="Button.axaml" />
+    <StyleInclude Source="StackPanel.axaml" />
+    <StyleInclude Source="TemplatedControl.axaml" />
+    <StyleInclude Source="ItemsControl.axaml" />
+    <StyleInclude Source="CheckBox.axaml" />
+    <StyleInclude Source="TextBox.axaml" />
 </Styles>

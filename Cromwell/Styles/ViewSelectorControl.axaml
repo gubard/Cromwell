@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Cromwell.Controls">
+    <ControlTheme x:Key="ViewSelectorControlStyle" TargetType="c:ViewSelectorControl">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel x:Name="PART_Panel" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type c:ViewSelectorControl}"
+                  BasedOn="{StaticResource ViewSelectorControlStyle}"
+                  TargetType="c:ViewSelectorControl" />
+</ResourceDictionary>

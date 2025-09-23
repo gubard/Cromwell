@@ -1,0 +1,35 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:Cromwell.Controls">
+    <ControlTheme x:Key="EnumSelectorControlStyle" TargetType="c:EnumSelectorControl">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,2,0,2" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ListBox x:Name="PART_SelectingItemsControl" SelectionMode="Single"
+                         MinWidth="{TemplateBinding MinWidth}" />
+            </ControlTemplate>
+        </Setter>
+
+        <Style Selector="^ /template/ ListBox#PART_SelectingItemsControl">
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="^.combo-box">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <ComboBox x:Name="PART_SelectingItemsControl" MinWidth="{TemplateBinding MinWidth}" />
+                </ControlTemplate>
+            </Setter>
+        </Style>
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type c:EnumSelectorControl}"
+                  BasedOn="{StaticResource EnumSelectorControlStyle}"
+                  TargetType="c:EnumSelectorControl" />
+</ResourceDictionary>
