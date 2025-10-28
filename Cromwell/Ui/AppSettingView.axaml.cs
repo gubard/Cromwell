@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace Cromwell.Ui;
 
-public partial class StackView : UserControl
+public partial class AppSettingView : UserControl
 {
-    public StackView()
+    public AppSettingView()
     {
         InitializeComponent();
     }

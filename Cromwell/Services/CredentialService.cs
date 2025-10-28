@@ -10,6 +10,7 @@ public interface ICredentialService
     ValueTask AddAsync(CredentialEntity entity, CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetAsync(CancellationToken cancellationToken);
     ValueTask ChangeParentAsync(Guid id, Guid? parent, CancellationToken cancellationToken);
+    ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken);
 }
 
 public class CredentialService : ICredentialService
@@ -53,6 +54,12 @@ public class CredentialService : ICredentialService
             },
         ], cancellationToken);
 
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken)
+    {
+        await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", edits, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

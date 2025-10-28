@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace Cromwell.Ui;
 
-public partial class ExceptionView : UserControl
+public partial class NavigationBarView : UserControl
 {
-    public ExceptionView()
+    public NavigationBarView()
     {
         InitializeComponent();
     }

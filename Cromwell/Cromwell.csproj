@@ -14,7 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Adzup.DialogHost.Avalonia" />
         <PackageReference Include="Avalonia" />
         <PackageReference Include="Avalonia.Themes.Fluent" />
         <PackageReference Include="Avalonia.Fonts.Inter" />
@@ -30,6 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
       <ProjectReference Include="..\..\Nestor\Nestor.Db.Sqlite\Nestor.Db.Sqlite.csproj" />
       <ProjectReference Include="..\..\Nestor\Nestor.Db\Nestor.Db.csproj" />
       <ProjectReference Include="..\..\Nestor\Nestor.SourceGenerator\Nestor.SourceGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
@@ -37,10 +37,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Ui\DialogView.axaml.cs">
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Ui\EditCredentialView.axaml.cs">
+      <Compile Update="Ui\CredentialParametersView.axaml.cs">
         <DependentUpon>EditCredentialView.axaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>

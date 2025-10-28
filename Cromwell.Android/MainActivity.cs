@@ -2,6 +2,8 @@
 using Android.Content.PM;
 using Avalonia;
 using Avalonia.Android;
+using Cromwell.Services;
+using Inanna.Helpers;
 
 namespace Cromwell.Android;
 
@@ -15,6 +17,7 @@ public class MainActivity : AvaloniaMainActivity<App>
 {
     protected override AppBuilder CustomizeAppBuilder(AppBuilder builder)
     {
+        DiHelper.ServiceProvider = new ServiceProvider();
         return base.CustomizeAppBuilder(builder)
             .WithInterFont();
     }

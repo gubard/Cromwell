@@ -1,7 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sg="clr-namespace:Cromwell.SourceGenerator"
-             xmlns:dha="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
              x:Class="Cromwell.App"
              RequestedThemeVariant="Default">
     <Application.DataTemplates>
@@ -18,7 +17,6 @@
 
     <Application.Styles>
         <FluentTheme />
-        <dha:DialogHostStyles />
-        <StyleInclude Source="Styles/Theme.axaml" />
+        <StyleInclude Source="avares://Inanna/Styles/Theme.axaml" />
     </Application.Styles>
 </Application>

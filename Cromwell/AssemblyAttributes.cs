@@ -1,10 +1,13 @@
 using Cromwell.Generator;
 using Cromwell.Ui;
-using EditCredentialViewModel = Cromwell.Ui.EditCredentialViewModel;
-using MainViewModel = Cromwell.Ui.MainViewModel;
+using Inanna.Ui;
 
 [assembly: ViewPair(typeof(MainView), typeof(MainViewModel))]
-[assembly: ViewPair(typeof(EditCredentialView), typeof(EditCredentialViewModel))]
+[assembly: ViewPair(typeof(CredentialParametersView), typeof(CredentialParametersViewModel))]
 [assembly: ViewPair(typeof(StackView), typeof(StackViewModel))]
 [assembly: ViewPair(typeof(DialogView), typeof(DialogViewModel))]
 [assembly: ViewPair(typeof(ExceptionView), typeof(ExceptionViewModel))]
+[assembly: ViewPair(typeof(AppSettingView), typeof(AppSettingViewModel))]
+[assembly: ViewPair(typeof(NavigationBarView), typeof(NavigationBarViewModel))]
+[assembly: ViewPair(typeof(CredentialsTreeView), typeof(CredentialsTreeViewModel))]
+[assembly: ViewPair(typeof(EditCredentialView), typeof(EditCredentialViewModel))]

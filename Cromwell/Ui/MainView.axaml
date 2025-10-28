@@ -3,68 +3,26 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Cromwell.Ui"
-             xmlns:dha="clr-namespace:DialogHostAvalonia;assembly=DialogHost.Avalonia"
+             xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Cromwell.Ui.MainView"
              x:DataType="ui:MainViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Loaded">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
+    <Panel x:Name="PART_Panel">
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="{DynamicResource TintColor}"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
 
-    <dha:DialogHost Identifier="MessageBox">
-        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto, *">
-            <Border Classes="alignment-stretch" Background="Brown">
-                <Interaction.Behaviors>
-                    <EventTriggerBehavior EventName="PointerEntered">
-                        <CallMethodAction TargetObject="{Binding $parent[ui:MainView]}"
-                                          MethodName="RootButtonOnPointerReleased" />
-                    </EventTriggerBehavior>
-                </Interaction.Behaviors>
-            </Border>
-
-            <StackPanel Grid.Column="1" Classes="accept-panel">
-                <Button Content="{StaticResource Lang.Create}" Command="{Binding ShowCreateViewCommand}" />
-                <Button Content="{StaticResource Lang.Delete}" Command="{Binding DeleteCommand}" />
-            </StackPanel>
-
-            <TreeView Grid.Row="1" ItemsSource="{Binding Credentials}" SelectedItem="{Binding SelectedCredential}">
-                <TreeView.ItemTemplate>
-                    <TreeDataTemplate ItemsSource="{Binding Children}">
-                        <TextBlock Text="{Binding Name}" />
-                    </TreeDataTemplate>
-                </TreeView.ItemTemplate>
-
-                <TreeView.Styles>
-                    <Style Selector="TreeViewItem">
-                        <Setter Property="(Interaction.Behaviors)">
-                            <BehaviorCollectionTemplate>
-                                <BehaviorCollection>
-                                    <EventTriggerBehavior EventName="PointerPressed">
-                                        <CallMethodAction TargetObject="{Binding $parent[ui:MainView]}"
-                                                          MethodName="TreeViewItemOnPointerPressed" />
-                                    </EventTriggerBehavior>
-                                    <EventTriggerBehavior EventName="PointerReleased">
-                                        <CallMethodAction TargetObject="{Binding $parent[ui:MainView]}"
-                                                          MethodName="TreeViewItemOnPointerReleased" />
-                                    </EventTriggerBehavior>
-                                </BehaviorCollection>
-                            </BehaviorCollectionTemplate>
-                        </Setter>
-                    </Style>
-                </TreeView.Styles>
-            </TreeView>
-
-            <Grid Grid.Row="1" Grid.Column="1">
-                <Grid RowDefinitions="*, Auto">
-                    <ContentControl Content="{Binding SelectedCredential}" />
-
-                    <StackPanel Grid.Row="1" HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Content="{StaticResource Lang.Save}" Command="{Binding SaveCommand}" />
-                    </StackPanel>
-                </Grid>
+        <c:DialogControl Identifier="MessageBox" Classes="adaptive-dialog-control">
+            <Grid RowDefinitions="Auto,*">
+                <ContentControl Content="{Binding NavigationBar}" />
+                <ContentControl Grid.Row="1" Content="{Binding Stack}" />
             </Grid>
-        </Grid>
-    </dha:DialogHost>
+        </c:DialogControl>
+    </Panel>
 </UserControl>
