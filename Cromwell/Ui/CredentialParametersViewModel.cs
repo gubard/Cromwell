@@ -57,6 +57,9 @@ public partial class CredentialParametersViewModel : ViewModelBase
         Key = string.Empty;
         CustomAvailableCharacters = string.Empty;
         Regex = string.Empty;
+        IsAvailableNumber = true;
+        IsAvailableLowerLatin = true;
+        IsAvailableUpperLatin = true;
     }
 
     public Guid Id { get; }

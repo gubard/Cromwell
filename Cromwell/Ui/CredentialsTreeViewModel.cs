@@ -152,7 +152,10 @@ public partial class CredentialsTreeViewModel : ViewModelBase
 
     private CredentialParametersViewModel[] Fill(CredentialEntity[] items)
     {
-        var result = items.Where(x => x.ParentId == null).Select(x => new CredentialParametersViewModel(x)).ToArray();
+        var result = items.Where(x => x.ParentId == null)
+           .OrderBy(x => x.OrderIndex)
+           .Select(x => new CredentialParametersViewModel(x))
+           .ToArray();
 
         foreach (var item in result)
         {
@@ -165,6 +168,7 @@ public partial class CredentialsTreeViewModel : ViewModelBase
     private void Fill(CredentialParametersViewModel parametersViewModel, CredentialEntity[] items)
     {
         var children = items.Where(x => x.ParentId == parametersViewModel.Id)
+           .OrderBy(x => x.OrderIndex)
            .Select(x => new CredentialParametersViewModel(x))
            .ToArray();
 

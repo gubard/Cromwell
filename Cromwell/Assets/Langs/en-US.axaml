@@ -28,4 +28,8 @@
     <s:String x:Key="Lang.GeneratePassword">Generate password</s:String>
     <s:String x:Key="Lang.Back">Back</s:String>
     <s:String x:Key="Lang.Edit">Edit</s:String>
+    <s:String x:Key="Lang.Root">Root</s:String>
+    <s:String x:Key="Lang.Up">Up</s:String>
+    <s:String x:Key="Lang.Down">Down</s:String>
+    <s:String x:Key="Lang.Parent">Parent</s:String>
 </ResourceDictionary>

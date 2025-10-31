@@ -1,113 +1,203 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.LogicalTree;
 using Avalonia.VisualTree;
 using Cromwell.Services;
+using Gaia.Extensions;
 using Inanna.Helpers;
-using Inanna.Services;
 
 namespace Cromwell.Ui;
 
 public partial class CredentialsTreeView : UserControl
 {
-    private readonly IDragAndDropService _dragAndDropService;
+    private readonly ReadOnlyMemory<string> _dropTags = new[]
+    {
+        "DropRoot",
+        "DropUp",
+        "DropDown",
+        "DropParent",
+    };
+
     private readonly ICredentialService _credentialService;
 
     public CredentialsTreeView()
     {
         InitializeComponent();
-        _dragAndDropService = DiHelper.ServiceProvider.GetService<IDragAndDropService>();
         _credentialService = DiHelper.ServiceProvider.GetService<ICredentialService>();
+        AddHandler(DragDrop.DropEvent, Drop);
+        AddHandler(DragDrop.DragOverEvent, DragOver);
     }
-    
-    public CredentialsTreeViewModel ViewModel => (CredentialsTreeViewModel)(DataContext ?? throw new NullReferenceException());
 
-    public async void RootButtonOnPointerReleased(object? sender, PointerEventArgs e)
+    public CredentialsTreeViewModel ViewModel =>
+        (CredentialsTreeViewModel)(DataContext ?? throw new NullReferenceException());
+
+    private void DragOver(object? sender, DragEventArgs e)
     {
-        if (!_dragAndDropService.IsDragging)
+        var tag = FindObjectDropTag(e.Source);
+
+        if (tag is not null && _dropTags.Span.Contains(tag))
+        {
+            e.DragEffects &= DragDropEffects.Move;
+        }
+        else
+        {
+            e.DragEffects = DragDropEffects.None;
+        }
+    }
+
+    private string? FindObjectDropTag(object? obj)
+    {
+        if (obj is null)
+        {
+            return null;
+        }
+
+        if (obj is Panel panel)
+        {
+            return panel.Tag?.ToString();
+        }
+
+        return obj.As<Visual>()?.GetVisualParent<Panel>()?.Tag?.ToString();
+    }
+
+    private void Drop(object? sender, DragEventArgs e)
+    {
+        var tag = FindObjectDropTag(e.Source);
+        var data = e.DataTransfer.Items[0].TryGetRaw(e.DataTransfer.Items[0].Formats[0]).As<byte[]>();
+
+        if (data is null)
         {
             return;
         }
 
-        if (_dragAndDropService.GetDataAndRelease() is not CredentialParametersViewModel data)
+        var id = new Guid(data);
+
+        switch (tag)
         {
-            return;
+            case "DropRoot":
+            {
+                _credentialService.EditAsync([
+                        new(id)
+                        {
+                            IsEditParentId = true,
+                            ParentId = null,
+                        },
+                    ], CancellationToken.None)
+                   .GetAwaiter()
+                   .GetResult();
+
+                break;
+            }
+            case "DropParent":
+            {
+                if (e.Source is not IDataContextProvider dataContextProvider)
+                {
+                    return;
+                }
+
+                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+
+                if (viewModel is null)
+                {
+                    return;
+                }
+
+                if (viewModel.Id == id)
+                {
+                    return;
+                }
+
+                _credentialService.EditAsync([
+                        new(id)
+                        {
+                            IsEditParentId = true,
+                            ParentId = viewModel.Id,
+                        },
+                    ], CancellationToken.None)
+                   .GetAwaiter()
+                   .GetResult();
+
+                break;
+            }
+            case "DropUp":
+            {
+                if (e.Source is not IDataContextProvider dataContextProvider)
+                {
+                    return;
+                }
+
+                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+
+                if (viewModel is null)
+                {
+                    return;
+                }
+
+                if (viewModel.Id == id)
+                {
+                    return;
+                }
+
+                _credentialService.ChangeOrderAsync(viewModel.Id, [id,], false, CancellationToken.None)
+                   .GetAwaiter()
+                   .GetResult();
+
+                break;
+            }
+            case "DropDown":
+            {
+                if (e.Source is not IDataContextProvider dataContextProvider)
+                {
+                    return;
+                }
+
+                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+
+                if (viewModel is null)
+                {
+                    return;
+                }
+
+                if (viewModel.Id == id)
+                {
+                    return;
+                }
+
+                _credentialService.ChangeOrderAsync(viewModel.Id, [id,], true, CancellationToken.None)
+                   .GetAwaiter()
+                   .GetResult();
+
+                break;
+            }
         }
 
-        await _credentialService.ChangeParentAsync(data.Id, null, CancellationToken.None);
         ViewModel.InitializedCommand.Execute(null);
     }
 
-    public void TreeViewItemOnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private async void InputElement_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (_dragAndDropService.IsDragging)
+        if (sender is not IDataContextProvider dataContextProvider)
         {
             return;
         }
 
-        if (e.Source is not Control control)
+        if (dataContextProvider.DataContext is not CredentialParametersViewModel credentialParametersViewModel)
         {
             return;
         }
 
-        var treeViewItem = control.FindAncestorOfType<TreeViewItem>();
+        e.Handled = true;
+        var dragData = new DataTransfer();
+        var dataTransferItem = new DataTransferItem();
 
-        if (treeViewItem is null)
-        {
-            return;
-        }
+        dataTransferItem.Set(DataFormat.CreateBytesApplicationFormat(nameof(CredentialParametersViewModel)),
+            credentialParametersViewModel.Id.ToByteArray());
 
-        if (treeViewItem.DataContext is not CredentialParametersViewModel viewModel)
-        {
-            return;
-        }
-
-        _dragAndDropService.SetData(viewModel);
-    }
-
-    public async void TreeViewItemOnPointerReleased(object? sender, PointerReleasedEventArgs e)
-    {
-        if (!_dragAndDropService.IsDragging)
-        {
-            return;
-        }
-
-        if (sender is not Visual visual)
-        {
-            return;
-        }
-
-        var position = e.GetPosition(visual);
-        var overControl = visual.GetVisualsAt(position).FirstOrDefault();
-
-        if (overControl is null)
-        {
-            return;
-        }
-
-        var treeViewItem = overControl.FindAncestorOfType<TreeViewItem>();
-
-        if (treeViewItem is null)
-        {
-            return;
-        }
-
-        if (treeViewItem.DataContext is not CredentialParametersViewModel viewModel)
-        {
-            return;
-        }
-
-        if (_dragAndDropService.GetDataAndRelease() is not CredentialParametersViewModel data)
-        {
-            return;
-        }
-
-        if (viewModel == data)
-        {
-            return;
-        }
-
-        await _credentialService.ChangeParentAsync(data.Id, viewModel.Id, CancellationToken.None);
-        ViewModel.InitializedCommand.Execute(null);
+        dragData.Add(dataTransferItem);
+        var item = sender.As<ILogical>()?.GetLogicalAncestors().OfType<TreeViewItem>().FirstOrDefault().As<Visual>();
+        item?.IsVisible = false;
+        await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+        item?.IsVisible = true;
     }
 }

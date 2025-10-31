@@ -9,8 +9,14 @@ public interface ICredentialService
     ValueTask DeleteAsync(Guid id, CancellationToken cancellationToken);
     ValueTask AddAsync(CredentialEntity entity, CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetAsync(CancellationToken cancellationToken);
-    ValueTask ChangeParentAsync(Guid id, Guid? parent, CancellationToken cancellationToken);
     ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken);
+
+    ValueTask ChangeOrderAsync(
+        Guid itemId,
+        Guid[] entityIds,
+        bool isAfter,
+        CancellationToken cancellationToken
+    );
 }
 
 public class CredentialService : ICredentialService
@@ -39,27 +45,94 @@ public class CredentialService : ICredentialService
         return CredentialEntity.GetCredentialEntitysAsync(_dbContext.Set<EventEntity>(), cancellationToken);
     }
 
-    public async ValueTask ChangeParentAsync(Guid id, Guid? parent, CancellationToken cancellationToken)
+    public async ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken)
     {
-        if (id == parent)
-        {
-            throw new ArgumentException("Parent can't be the same as the current");
-        }
+        var credentials =
+            await CredentialEntity.GetCredentialEntitysAsync(_dbContext.Set<EventEntity>(), cancellationToken);
 
-        await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", [
-            new(id)
-            {
-                IsEditParentId = true,
-                ParentId = parent,
-            },
-        ], cancellationToken);
-
+        edits.Where(x => x is { IsEditParentId: true, ParentId: not null })
+           .ToList()
+           .ForEach(x => CheckParentId(credentials, credentials.Single(y => y.Id == x.Id), x.ParentId.Value));
+        
+        await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", edits, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken)
+    public async ValueTask ChangeOrderAsync(
+        Guid itemId,
+        Guid[] entityIds,
+        bool isAfter,
+        CancellationToken cancellationToken
+    )
     {
-        await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", edits, cancellationToken);
+        var credentials =
+            await CredentialEntity.GetCredentialEntitysAsync(_dbContext.Set<EventEntity>(), cancellationToken);
+
+        var item = credentials.Single(x => x.Id == itemId);
+        var items = credentials.Where(x => x.ParentId == item.ParentId && !entityIds.Contains(x.Id));
+
+        items = isAfter
+            ? items.Where(x => x.OrderIndex > item.OrderIndex)
+            : items.Where(x => x.OrderIndex >= item.OrderIndex);
+
+        items = entityIds.Select(x => credentials.Single(y => y.Id == x)).Concat(items).ToArray();
+        var startIndex = isAfter ? item.OrderIndex + 1 : item.OrderIndex;
+
+        foreach (var i in items)
+        {
+            i.OrderIndex = startIndex;
+            startIndex++;
+        }
+
+        if (item.ParentId.HasValue)
+        {
+            items.Where(x => x.ParentId != item.ParentId)
+               .ToList()
+               .ForEach(x => CheckParentId(credentials, x, item.ParentId.Value));
+        }
+
+        await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", items.Select(x=> new EditCredentialEntity(x.Id)
+        {
+            OrderIndex = x.OrderIndex,
+            IsEditOrderIndex = true,
+            IsEditParentId = x.ParentId != item.ParentId,
+            ParentId = item.ParentId,
+        }), cancellationToken);
+        
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private void CheckParentId(CredentialEntity[] credentials, CredentialEntity item, Guid newParentId)
+    {
+        if (item.Id == newParentId)
+        {
+            throw new($"Parent Id {newParentId} already exists");
+        }
+        
+        var newRoot = credentials.Single(x => x.Id == newParentId);
+
+        if (newRoot.Id == item.Id)
+        {
+            throw new($"Parent Id {newParentId} already exists");
+        }
+
+        CheckParentId(credentials, item, newRoot);
+    }
+    
+    private void CheckParentId(CredentialEntity[] credentials, CredentialEntity item, CredentialEntity parent)
+    {
+        if (parent.ParentId is null)
+        {
+            return;
+        }
+        
+        var newRoot = credentials.Single(x => x.Id == parent.ParentId);
+
+        if (newRoot.Id == item.Id)
+        {
+            throw new($"Parent Id {parent.Id} already exists");
+        }
+        
+        CheckParentId(credentials, item, newRoot);
     }
 }
