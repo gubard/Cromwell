@@ -19,10 +19,12 @@
         </ExperimentalAcrylicBorder>
 
         <c:DialogControl Identifier="MessageBox" Classes="adaptive-dialog-control">
-            <Grid RowDefinitions="Auto,*">
-                <ContentControl Content="{Binding NavigationBar}" />
-                <ContentControl Grid.Row="1" Content="{Binding Stack}" />
-            </Grid>
+            <c:NotificationPanel Identifier="Notifications">
+                <Grid RowDefinitions="Auto,*">
+                    <ContentControl Content="{Binding NavigationBar}" />
+                    <ContentControl Grid.Row="1" Content="{Binding Stack}" />
+                </Grid>
+            </c:NotificationPanel>
         </c:DialogControl>
     </Panel>
 </UserControl>

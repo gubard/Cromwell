@@ -1,5 +1,10 @@
+using Avalonia.Markup.Xaml.MarkupExtensions;
+using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
+using Inanna.Controls;
+using Inanna.Enums;
+using Inanna.Helpers;
 using Inanna.Models;
 
 namespace Cromwell.Ui;
@@ -58,6 +63,23 @@ public partial class EditCredentialViewModel : ViewModelBase
                     Type = CredentialParameters.Type,
                 },
             ], cancellationToken);
+
+            var notification = new NotificationControl
+            {
+                Type = NotificationType.None,
+                Content = new StaticResourceExtension("Lang.Saved").ProvideValue(XamlIlRuntimeHelpers
+                   .CreateRootServiceProviderV2()),
+            };
+
+            notification.Command = UiHelper.CreateCommand(() =>
+            {
+                NotificationPanel.CloseNotification("Notifications", notification);
+
+                return Task.CompletedTask;
+            });
+
+            NotificationPanel.ShowNotification("Notifications", notification, NotificationPanelAlignment.Center,
+                TimeSpan.FromSeconds(5));
         });
     }
 }

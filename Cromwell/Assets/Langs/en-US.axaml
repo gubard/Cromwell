@@ -32,4 +32,5 @@
     <s:String x:Key="Lang.Up">Up</s:String>
     <s:String x:Key="Lang.Down">Down</s:String>
     <s:String x:Key="Lang.Parent">Parent</s:String>
+    <s:String x:Key="Lang.Saved">Saved</s:String>
 </ResourceDictionary>
