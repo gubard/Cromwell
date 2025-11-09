@@ -69,6 +69,7 @@ public class EditNotifyGenerator : IIncrementalGenerator
                 stringBuilder.AppendLine("        switch (e.PropertyName)");
                 stringBuilder.AppendLine("        {");
                 var enumProperties = new List<PropertyDeclarationSyntax>();
+                var editProperties = new List<PropertyDeclarationSyntax>();
 
                 foreach (var property in properties)
                 {
@@ -82,6 +83,13 @@ public class EditNotifyGenerator : IIncrementalGenerator
                         continue;
                     }
 
+                    editProperties.Add(property);
+                    stringBuilder.AppendLine($"            case nameof(IsEdit{property.GetName()}):");
+                    stringBuilder.AppendLine("            {");
+                    stringBuilder.AppendLine("                OnPropertyChanged(nameof(IsEdit));");
+                    stringBuilder.AppendLine();
+                    stringBuilder.AppendLine("                break;");
+                    stringBuilder.AppendLine("            }");
                     stringBuilder.AppendLine($"            case nameof({property.GetName()}):");
                     stringBuilder.AppendLine("            {");
                     stringBuilder.AppendLine($"                IsEdit{property.GetName()} = true;");
@@ -110,6 +118,12 @@ public class EditNotifyGenerator : IIncrementalGenerator
                 stringBuilder.AppendLine("        }");
                 stringBuilder.AppendLine("            base.OnPropertyChanged(e);");
                 stringBuilder.AppendLine("    }");
+
+                stringBuilder.AppendLine(
+                    $"protected void ResetEdit() {{{string.Join(string.Empty, editProperties.Select(x => $"IsEdit{x.GetName()} = false;"))};}}");
+
+                stringBuilder.AppendLine(
+                    $"public bool IsEdit => {string.Join(" || ", editProperties.Select(x => $"IsEdit{x.GetName()}"))};");
 
                 foreach (var property in enumProperties)
                 {
@@ -330,7 +344,9 @@ public class EditNotifyGenerator : IIncrementalGenerator
                 stringBuilder.AppendLine(
                     $"            <TextBlock Text=\"{{StaticResource Lang.{property.GetName()}}}\"/>");
 
-                stringBuilder.AppendLine($"            <DatePicker SelectedDate=\"{{Binding {property.GetName()}}}\"/>");
+                stringBuilder.AppendLine(
+                    $"            <DatePicker SelectedDate=\"{{Binding {property.GetName()}}}\"/>");
+
                 stringBuilder.AppendLine("        </StackPanel>");
 
                 return;
@@ -342,7 +358,9 @@ public class EditNotifyGenerator : IIncrementalGenerator
                 stringBuilder.AppendLine(
                     $"            <TextBlock Text=\"{{StaticResource Lang.{property.GetName()}}}\"/>");
 
-                stringBuilder.AppendLine($"            <DatePicker SelectedDate=\"{{Binding {property.GetName()}}}\"/>");
+                stringBuilder.AppendLine(
+                    $"            <DatePicker SelectedDate=\"{{Binding {property.GetName()}}}\"/>");
+
                 stringBuilder.AppendLine("        </StackPanel>");
 
                 return;
@@ -354,7 +372,9 @@ public class EditNotifyGenerator : IIncrementalGenerator
                 stringBuilder.AppendLine(
                     $"            <TextBlock Text=\"{{StaticResource Lang.{property.GetName()}}}\"/>");
 
-                stringBuilder.AppendLine($"            <TimePicker SelectedTime=\"{{Binding {property.GetName()}}}\"/>");
+                stringBuilder.AppendLine(
+                    $"            <TimePicker SelectedTime=\"{{Binding {property.GetName()}}}\"/>");
+
                 stringBuilder.AppendLine("        </StackPanel>");
 
                 return;

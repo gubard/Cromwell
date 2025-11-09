@@ -24,6 +24,7 @@ public partial class CredentialParametersViewModel : ViewModelBase
         Length = entity.Length;
         Regex = entity.Regex;
         Type = entity.Type;
+        ResetEdit();
     }
 
     public CredentialParametersViewModel(Guid id)

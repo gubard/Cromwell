@@ -23,9 +23,11 @@ public partial class EditCredentialViewModel : ViewModelBase
         _credentialService = credentialService;
         _notificationService = notificationService;
         _applicationResourceService = applicationResourceService;
+        CredentialParameters.PropertyChanged += (_, e) => OnPropertyChanged(nameof(CanSave));
     }
 
     public CredentialParametersViewModel CredentialParameters { get; }
+    public bool CanSave => CredentialParameters is { HasErrors: false, IsEdit: true, };
 
     [RelayCommand]
     private Task SaveAsync(CancellationToken cancellationToken)
