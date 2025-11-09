@@ -20,6 +20,7 @@ public partial class CredentialsTreeViewModel : ViewModelBase
     private readonly IStringFormater _stringFormater;
     private readonly IApplicationResourceService _applicationResourceService;
     private readonly INavigator _navigator;
+    private readonly INotificationService _notificationService;
 
     public CredentialsTreeViewModel(
         ICredentialService credentialService,
@@ -29,7 +30,8 @@ public partial class CredentialsTreeViewModel : ViewModelBase
         IDialogService dialogService,
         IStringFormater stringFormater,
         IApplicationResourceService applicationResourceService,
-        INavigator navigator
+        INavigator navigator,
+        INotificationService notificationService
     )
     {
         _credentialService = credentialService;
@@ -40,6 +42,7 @@ public partial class CredentialsTreeViewModel : ViewModelBase
         _stringFormater = stringFormater;
         _applicationResourceService = applicationResourceService;
         _navigator = navigator;
+        _notificationService = notificationService;
     }
 
     public AvaloniaList<CredentialParametersViewModel> Credentials { get; } = new();
@@ -68,7 +71,9 @@ public partial class CredentialsTreeViewModel : ViewModelBase
     private Task EditAsync(CredentialParametersViewModel credential, CancellationToken cancellationToken)
     {
         return WrapCommand(() =>
-            _navigator.NavigateToAsync(new EditCredentialViewModel(credential, _credentialService), cancellationToken));
+            _navigator.NavigateToAsync(
+                new EditCredentialViewModel(credential, _credentialService, _notificationService,
+                    _applicationResourceService), cancellationToken));
     }
 
     [RelayCommand]

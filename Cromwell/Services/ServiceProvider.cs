@@ -21,6 +21,7 @@ namespace Cromwell.Services;
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(ICredentialService), typeof(CredentialService))]
+[Transient(typeof(INotificationService), Factory = nameof(GetNotificationService) )]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
 [Singleton(typeof(IApplicationResourceService), typeof(ApplicationResourceService))]
 [Singleton(typeof(IStringFormater), typeof(StringFormater))]
@@ -34,6 +35,11 @@ namespace Cromwell.Services;
 [Singleton(typeof(MainViewModel))]
 public partial class ServiceProvider : IServiceProvider
 {
+    public static INotificationService GetNotificationService()
+    {
+        return new NotificationService("Notifications", TimeSpan.FromSeconds(5));
+    }
+    
     public static IDialogService GetDialogService()
     {
         return new DialogService("MessageBox");

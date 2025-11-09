@@ -1,25 +1,28 @@
-using Avalonia.Markup.Xaml.MarkupExtensions;
-using Avalonia.Markup.Xaml.XamlIl.Runtime;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
-using Inanna.Controls;
 using Inanna.Enums;
-using Inanna.Helpers;
 using Inanna.Models;
+using Inanna.Services;
 
 namespace Cromwell.Ui;
 
 public partial class EditCredentialViewModel : ViewModelBase
 {
     private readonly ICredentialService _credentialService;
+    private readonly INotificationService _notificationService;
+    private readonly IApplicationResourceService _applicationResourceService;
 
     public EditCredentialViewModel(
         CredentialParametersViewModel credentialParameters,
-        ICredentialService credentialService
+        ICredentialService credentialService,
+        INotificationService notificationService,
+        IApplicationResourceService applicationResourceService
     )
     {
         CredentialParameters = credentialParameters;
         _credentialService = credentialService;
+        _notificationService = notificationService;
+        _applicationResourceService = applicationResourceService;
     }
 
     public CredentialParametersViewModel CredentialParameters { get; }
@@ -64,22 +67,8 @@ public partial class EditCredentialViewModel : ViewModelBase
                 },
             ], cancellationToken);
 
-            var notification = new NotificationControl
-            {
-                Type = NotificationType.None,
-                Content = new StaticResourceExtension("Lang.Saved").ProvideValue(XamlIlRuntimeHelpers
-                   .CreateRootServiceProviderV2()),
-            };
-
-            notification.Command = UiHelper.CreateCommand(() =>
-            {
-                NotificationPanel.CloseNotification("Notifications", notification);
-
-                return Task.CompletedTask;
-            });
-
-            NotificationPanel.ShowNotification("Notifications", notification, NotificationPanelAlignment.Center,
-                TimeSpan.FromSeconds(5));
+            _notificationService.ShowNotification(_applicationResourceService.GetResource<string>("Lang.Saved"),
+                NotificationType.None);
         });
     }
 }

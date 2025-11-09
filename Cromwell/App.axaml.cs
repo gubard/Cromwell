@@ -1,12 +1,7 @@
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core.Plugins;
-using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Cromwell.Ui;
 using Inanna.Helpers;
-using Inanna.Models;
 using Inanna.Services;
 using Microsoft.EntityFrameworkCore;
 
