@@ -66,6 +66,7 @@ public class EditNotifyGenerator : IIncrementalGenerator
                     $"    protected override void OnPropertyChanged(global::{TypeNames.PropertyChangedEventArgs} e)");
 
                 stringBuilder.AppendLine("    {");
+                stringBuilder.AppendLine("            base.OnPropertyChanged(e);");
                 stringBuilder.AppendLine("        switch (e.PropertyName)");
                 stringBuilder.AppendLine("        {");
                 var enumProperties = new List<PropertyDeclarationSyntax>();
@@ -116,7 +117,6 @@ public class EditNotifyGenerator : IIncrementalGenerator
                 viewStringBuilder.AppendLine("</UserControl>");
                 stringBuilder.AppendLine();
                 stringBuilder.AppendLine("        }");
-                stringBuilder.AppendLine("            base.OnPropertyChanged(e);");
                 stringBuilder.AppendLine("    }");
 
                 stringBuilder.AppendLine(

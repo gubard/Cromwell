@@ -42,7 +42,7 @@ public partial class CredentialParametersViewModel : ViewModelBase
 
         SetValidation(nameof(Length), () => Length == 0 ? [new PropertyZeroValidationError(nameof(Length)),] : []);
 
-        SetValidation(nameof(IsAvailableLowerLatin),
+        SetValidation(nameof(IsAvailableUpperLatin),
             () => !IsAvailableLowerLatin
              && !IsAvailableNumber
              && !IsAvailableSpecialSymbols
