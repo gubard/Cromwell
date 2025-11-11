@@ -7,9 +7,15 @@
              x:Class="Cromwell.Ui.NavigationBarView"
              x:DataType="ui:NavigationBarViewModel">
     <Grid ColumnDefinitions="Auto,*,Auto">
-        <Button Grid.Column="0" Content="{DynamicResource Lang.Back}" Command="{Binding BackCommand}" IsEnabled="{Binding IsCanBack}" />
-        <TextBlock Grid.Column="1" Classes="alignment-left-center" Text="{DynamicResource Lang.Cromwell}" />
-        <Button Grid.Column="2"  Content="{DynamicResource Lang.Settings}"
+        <Button Grid.Column="0" 
+                Content="{DynamicResource Lang.Back}"
+                Command="{Binding BackCommand}"
+                IsEnabled="{Binding IsCanBack}" />
+        <TextBlock Grid.Column="1" 
+                   Classes="alignment-left-center"
+                   Text="{DynamicResource Lang.Cromwell}" />
+        <Button Grid.Column="2"
+                Content="{DynamicResource Lang.Settings}"
                 Command="{Binding ShowSettingsViewCommand}" />
     </Grid>
 </UserControl>

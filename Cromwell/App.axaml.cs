@@ -1,8 +1,4 @@
-using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Primitives;
-using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Cromwell.Ui;
 using Inanna.Helpers;
@@ -25,19 +21,22 @@ public class App : InannaApplication
         dbContext.Database.EnsureCreated();
         DisableAvaloniaDataAnnotationValidation();
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        switch (ApplicationLifetime)
         {
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = viewModel,
-            };
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            singleViewPlatform.MainView = new MainView
-            {
-                DataContext = viewModel,
-            };
+            case IClassicDesktopStyleApplicationLifetime desktop:
+                desktop.MainWindow = new MainWindow
+                {
+                    DataContext = viewModel,
+                };
+
+                break;
+            case ISingleViewApplicationLifetime singleViewPlatform:
+                singleViewPlatform.MainView = new MainView
+                {
+                    DataContext = viewModel,
+                };
+
+                break;
         }
 
         base.OnFrameworkInitializationCompleted();
