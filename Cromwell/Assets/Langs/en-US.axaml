@@ -35,4 +35,5 @@
     <s:String x:Key="Lang.PropertyZeroValidationError">Property "{}" can't be zero</s:String>
     <s:String x:Key="Lang.PropertyEmptyValidationError">Property "{}" can't be empty</s:String>
     <s:String x:Key="Lang.Saved">Saved</s:String>
+    <s:String x:Key="Lang.Cromwell">Cromwell</s:String>
 </ResourceDictionary>

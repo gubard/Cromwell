@@ -1,4 +1,8 @@
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 using Cromwell.Ui;
 using Inanna.Helpers;
@@ -19,13 +23,10 @@ public class App : InannaApplication
         var viewModel = DiHelper.ServiceProvider.GetService<MainViewModel>();
         var dbContext = DiHelper.ServiceProvider.GetService<DbContext>();
         dbContext.Database.EnsureCreated();
+        DisableAvaloniaDataAnnotationValidation();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
-            // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-            DisableAvaloniaDataAnnotationValidation();
-
             desktop.MainWindow = new MainWindow
             {
                 DataContext = viewModel,
