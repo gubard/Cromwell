@@ -48,7 +48,7 @@ public partial class NavigationBarViewModel : ViewModelBase
                 return new TextBlock
                 {
                     Text = _applicationResourceService.GetResource<string>("Lang.Cromwell"),
-                    Classes = { "alignment-left-center", },
+                    Classes = { "alignment-left-center", "h3", },
                 };
             }
 
@@ -60,7 +60,7 @@ public partial class NavigationBarViewModel : ViewModelBase
             return new TextBlock
             {
                 Text = _applicationResourceService.GetResource<string>("Lang.Cromwell"),
-                Classes = { "alignment-left-center", },
+                Classes = { "alignment-left-center", "h3",},
             };
         }
     }

@@ -63,15 +63,6 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     }
 
     [RelayCommand]
-    private Task LoginToClipboardAsync(
-        CredentialParametersViewModel parametersViewModel,
-        CancellationToken cancellationToken
-    )
-    {
-        return WrapCommand(() => _clipboardService.SetTextAsync(parametersViewModel.Login, cancellationToken));
-    }
-
-    [RelayCommand]
     private Task InitializedAsync(CancellationToken cancellationToken)
     {
         return WrapCommand(async () =>
@@ -91,25 +82,6 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
             _navigator.NavigateToAsync(
                 new EditCredentialViewModel(credential, _credentialService, _notificationService,
                     _applicationResourceService), cancellationToken));
-    }
-
-    [RelayCommand]
-    private Task GeneratePasswordAsync(
-        CredentialParametersViewModel parametersViewModel,
-        CancellationToken cancellationToken
-    )
-    {
-        return WrapCommand(async () =>
-        {
-            var settings = await _appSettingService.GetAppSettingsAsync();
-
-            var password = _passwordGeneratorService.GeneratePassword($"{settings.GeneralKey}{parametersViewModel.Key}",
-                new(
-                    $"{parametersViewModel.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{parametersViewModel.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{parametersViewModel.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{parametersViewModel.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{parametersViewModel.CustomAvailableCharacters}",
-                    parametersViewModel.Length, parametersViewModel.Regex));
-
-            await _clipboardService.SetTextAsync(password, cancellationToken);
-        });
     }
 
     [RelayCommand]

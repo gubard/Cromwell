@@ -36,4 +36,6 @@
     <s:String x:Key="Lang.PropertyEmptyValidationError">Property "{}" can't be empty</s:String>
     <s:String x:Key="Lang.Saved">Saved</s:String>
     <s:String x:Key="Lang.Cromwell">Cromwell</s:String>
+    <s:String x:Key="Lang.Copied">Copied "{}"</s:String>
+    <s:String x:Key="Lang.Password">Password</s:String>
 </ResourceDictionary>
