@@ -39,31 +39,28 @@ public partial class NavigationBarViewModel : ViewModelBase
 
     public bool IsCanBack => !_navigator.IsEmpty;
 
-    public object Header
+    public object Header => _navigator.CurrentView switch
     {
-        get
+        null => new TextBlock
         {
-            if (_navigator.CurrentView is null)
+            Text = _appResourceService.GetResource<string>("Lang.Cromwell"),
+            Classes =
             {
-                return new TextBlock
-                {
-                    Text = _appResourceService.GetResource<string>("Lang.Cromwell"),
-                    Classes = { "alignment-left-center", "h3", },
-                };
-            }
-
-            if (_navigator.CurrentView is IHeader header)
+                "alignment-left-center",
+                "h3",
+            },
+        },
+        IHeader header => header.Header,
+        _ => new TextBlock
+        {
+            Text = _appResourceService.GetResource<string>("Lang.Cromwell"),
+            Classes =
             {
-                return header.Header;
-            }
-
-            return new TextBlock
-            {
-                Text = _appResourceService.GetResource<string>("Lang.Cromwell"),
-                Classes = { "alignment-left-center", "h3",},
-            };
-        }
-    }
+                "alignment-left-center",
+                "h3",
+            },
+        },
+    };
 
     [RelayCommand]
     private Task ShowSettingsViewAsync(CancellationToken cancellationToken)
