@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Cromwell.Ui"
+             xmlns:controls="clr-namespace:Inanna.Controls;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Cromwell.Ui.AppSettingView"
              x:DataType="ui:AppSettingViewModel">
@@ -13,7 +14,13 @@
     </Interaction.Behaviors>
 
     <StackPanel>
-        <TextBlock Classes="field" Text="{StaticResource Lang.GeneralKey}" />
-        <TextBox Text="{Binding GeneralKey}" />
+        <StackPanel>
+            <TextBlock Classes="field" Text="{StaticResource Lang.GeneralKey}" />
+            <TextBox Text="{Binding GeneralKey}" />
+        </StackPanel>
+        <StackPanel>
+            <TextBlock Classes="field" Text="{StaticResource Lang.Theme}" />
+            <controls:EnumSelectorControl SelectedEnum="{Binding Theme}" />
+        </StackPanel>
     </StackPanel>
 </UserControl>
