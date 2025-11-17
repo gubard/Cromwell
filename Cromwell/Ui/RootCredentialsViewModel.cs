@@ -13,54 +13,30 @@ namespace Cromwell.Ui;
 public partial class RootCredentialsViewModel : ViewModelBase
 {
     private readonly ICredentialService _credentialService;
-    private readonly IClipboardService _clipboardService;
-    private readonly IAppSettingService _appSettingService;
-    private readonly IPasswordGeneratorService _passwordGeneratorService;
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;
     private readonly IApplicationResourceService _applicationResourceService;
     private readonly INavigator _navigator;
     private readonly INotificationService _notificationService;
-    private readonly NavigationBarViewModel  _navigationBar;
 
     public RootCredentialsViewModel(
         ICredentialService credentialService,
-        IClipboardService clipboardService,
-        IAppSettingService appSettingService,
-        IPasswordGeneratorService passwordGeneratorService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IApplicationResourceService applicationResourceService,
         INavigator navigator,
-        INotificationService notificationService,
-        NavigationBarViewModel navigationBar
+        INotificationService notificationService
     )
     {
         _credentialService = credentialService;
-        _clipboardService = clipboardService;
-        _appSettingService = appSettingService;
-        _passwordGeneratorService = passwordGeneratorService;
         _dialogService = dialogService;
         _stringFormater = stringFormater;
         _applicationResourceService = applicationResourceService;
         _navigator = navigator;
         _notificationService = notificationService;
-        _navigationBar = navigationBar;
     }
 
     public AvaloniaList<CredentialParametersViewModel> Credentials { get; } = new();
-    
-    [RelayCommand]
-    private Task OpenCredentialAsync(
-        CredentialParametersViewModel parameters,
-        CancellationToken cancellationToken
-    )
-    {
-        return WrapCommand(() => _navigator.NavigateToAsync(
-            new CredentialViewModel(_credentialService, _clipboardService, _appSettingService,
-                _passwordGeneratorService, _dialogService, _stringFormater, _applicationResourceService, _navigator,
-                _notificationService, parameters), cancellationToken));
-    }
 
     [RelayCommand]
     private Task InitializedAsync(CancellationToken cancellationToken)

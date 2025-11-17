@@ -1,8 +1,10 @@
+using System.Collections;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Db;
+using Cromwell.Models;
 using Cromwell.Services;
 using Gaia.Extensions;
-using Gaia.Helpers;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
@@ -11,10 +13,9 @@ namespace Cromwell.Ui;
 
 public partial class CredentialViewModel : ViewModelBase, IHeader
 {
+    [ObservableProperty] private IEnumerable _parents;
+
     private readonly ICredentialService _credentialService;
-    private readonly IClipboardService _clipboardService;
-    private readonly IAppSettingService _appSettingService;
-    private readonly IPasswordGeneratorService _passwordGeneratorService;
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;
     private readonly IApplicationResourceService _applicationResourceService;
@@ -23,9 +24,6 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
 
     public CredentialViewModel(
         ICredentialService credentialService,
-        IClipboardService clipboardService,
-        IAppSettingService appSettingService,
-        IPasswordGeneratorService passwordGeneratorService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IApplicationResourceService applicationResourceService,
@@ -35,9 +33,6 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     )
     {
         _credentialService = credentialService;
-        _clipboardService = clipboardService;
-        _appSettingService = appSettingService;
-        _passwordGeneratorService = passwordGeneratorService;
         _dialogService = dialogService;
         _stringFormater = stringFormater;
         _applicationResourceService = applicationResourceService;
@@ -45,22 +40,11 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
         _notificationService = notificationService;
         Credential = credential;
         Header = new CredentialHeaderViewModel(credential);
+        _parents = Array.Empty<object>();
     }
 
     public CredentialParametersViewModel Credential { get; }
     public object Header { get; }
-
-    [RelayCommand]
-    private Task OpenCredentialAsync(
-        CredentialParametersViewModel parameters,
-        CancellationToken cancellationToken
-    )
-    {
-        return WrapCommand(() => _navigator.NavigateToAsync(
-            new CredentialViewModel(_credentialService, _clipboardService, _appSettingService,
-                _passwordGeneratorService, _dialogService, _stringFormater, _applicationResourceService, _navigator,
-                _notificationService, parameters), cancellationToken));
-    }
 
     [RelayCommand]
     private Task InitializedAsync(CancellationToken cancellationToken)
@@ -68,10 +52,17 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
         return WrapCommand(async () =>
         {
             Credential.Children.Clear();
+            var parents = await _credentialService.GetParentsAsync(Credential.Id, cancellationToken);
             var credentials = await _credentialService.GetChildrenAsync(Credential.Id, cancellationToken);
 
             Credential.Children.AddRange(credentials.OrderBy(x => x.OrderIndex)
                .Select(x => new CredentialParametersViewModel(x)));
+
+            Parents = Root.Instance
+               .Cast<object>()
+               .ToEnumerable()
+               .Concat(parents.Select(x => new CredentialParametersViewModel(x)))
+               .ToArray();
         });
     }
 

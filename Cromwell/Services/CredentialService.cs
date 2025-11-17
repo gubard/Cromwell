@@ -1,4 +1,5 @@
 using Cromwell.Db;
+using Gaia.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Nestor.Db;
 
@@ -12,13 +13,9 @@ public interface ICredentialService
     ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetRootsAsync(CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetChildrenAsync(Guid parentId, CancellationToken cancellationToken);
+    ValueTask<CredentialEntity[]> GetParentsAsync(Guid id, CancellationToken cancellationToken);
 
-    ValueTask ChangeOrderAsync(
-        Guid itemId,
-        Guid[] entityIds,
-        bool isAfter,
-        CancellationToken cancellationToken
-    );
+    ValueTask ChangeOrderAsync(Guid itemId, Guid[] entityIds, bool isAfter, CancellationToken cancellationToken);
 }
 
 public class CredentialService : ICredentialService
@@ -52,10 +49,10 @@ public class CredentialService : ICredentialService
         var credentials =
             await CredentialEntity.GetCredentialEntitysAsync(_dbContext.Set<EventEntity>(), cancellationToken);
 
-        edits.Where(x => x is { IsEditParentId: true, ParentId: not null })
+        edits.Where(x => x is { IsEditParentId: true, ParentId: not null, })
            .ToList()
            .ForEach(x => CheckParentId(credentials, credentials.Single(y => y.Id == x.Id), x.ParentId.Value));
-        
+
         await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", edits, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
@@ -98,6 +95,39 @@ public class CredentialService : ICredentialService
             cancellationToken);
     }
 
+    public async ValueTask<CredentialEntity[]> GetParentsAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var list = new List<CredentialEntity>();
+
+        var entity =
+            await CredentialEntity.FindCredentialEntityAsync(id, _dbContext.Set<EventEntity>(), cancellationToken);
+
+        list.Add(entity.ThrowIfNull());
+        await GetParentsAsync(entity, list, cancellationToken);
+        list.Reverse();
+
+        return list.ToArray();
+    }
+
+    private async ValueTask GetParentsAsync(
+        CredentialEntity entity,
+        List<CredentialEntity> list,
+        CancellationToken cancellationToken
+    )
+    {
+        if (entity.ParentId is null)
+        {
+            return;
+        }
+
+        var parent = await CredentialEntity.FindCredentialEntityAsync(entity.ParentId.Value,
+            _dbContext.Set<EventEntity>(), cancellationToken);
+
+        parent = parent.ThrowIfNull();
+        list.Add(parent);
+        await GetParentsAsync(parent, list, cancellationToken);
+    }
+
     public async ValueTask ChangeOrderAsync(
         Guid itemId,
         Guid[] entityIds,
@@ -131,14 +161,15 @@ public class CredentialService : ICredentialService
                .ForEach(x => CheckParentId(credentials, x, item.ParentId.Value));
         }
 
-        await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", items.Select(x=> new EditCredentialEntity(x.Id)
-        {
-            OrderIndex = x.OrderIndex,
-            IsEditOrderIndex = true,
-            IsEditParentId = x.ParentId != item.ParentId,
-            ParentId = item.ParentId,
-        }), cancellationToken);
-        
+        await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", items.Select(x =>
+            new EditCredentialEntity(x.Id)
+            {
+                OrderIndex = x.OrderIndex,
+                IsEditOrderIndex = true,
+                IsEditParentId = x.ParentId != item.ParentId,
+                ParentId = item.ParentId,
+            }), cancellationToken);
+
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -148,7 +179,7 @@ public class CredentialService : ICredentialService
         {
             throw new($"Parent Id {newParentId} already exists");
         }
-        
+
         var newRoot = credentials.Single(x => x.Id == newParentId);
 
         if (newRoot.Id == item.Id)
@@ -158,21 +189,21 @@ public class CredentialService : ICredentialService
 
         CheckParentId(credentials, item, newRoot);
     }
-    
+
     private void CheckParentId(CredentialEntity[] credentials, CredentialEntity item, CredentialEntity parent)
     {
         if (parent.ParentId is null)
         {
             return;
         }
-        
+
         var newRoot = credentials.Single(x => x.Id == parent.ParentId);
 
         if (newRoot.Id == item.Id)
         {
             throw new($"Parent Id {parent.Id} already exists");
         }
-        
+
         CheckParentId(credentials, item, newRoot);
     }
 }

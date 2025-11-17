@@ -15,12 +15,15 @@ public static class Commands
 {
     static Commands()
     {
+        var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
+        var credentialService = DiHelper.ServiceProvider.GetService<ICredentialService>();
         var appSettingService = DiHelper.ServiceProvider.GetService<IAppSettingService>();
         var appResourceService = DiHelper.ServiceProvider.GetService<IApplicationResourceService>();
         var passwordGeneratorService = DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
         var clipboardService = DiHelper.ServiceProvider.GetService<IClipboardService>();
         var notificationService = DiHelper.ServiceProvider.GetService<INotificationService>();
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
+        var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
 
         GeneratePasswordCommand = new AsyncRelayCommand<CredentialParametersViewModel>(async (parameters, ct) =>
         {
@@ -58,8 +61,20 @@ public static class Commands
                 },
             }, NotificationType.Success);
         });
+
+        OpenCredentialCommand = new AsyncRelayCommand<CredentialParametersViewModel>((parameters, ct) =>
+            navigator.NavigateToAsync(
+                new CredentialViewModel(credentialService, dialogService, stringFormater, appResourceService, navigator,
+                    notificationService, parameters), ct));
+
+        NavigateToRootCredentialsViewCommand = new AsyncRelayCommand(ct =>
+            navigator.NavigateToAsync(
+                new RootCredentialsViewModel(credentialService, dialogService, stringFormater, appResourceService,
+                    navigator, notificationService), ct));
     }
 
     public static ICommand GeneratePasswordCommand;
     public static ICommand LoginToClipboardCommand;
+    public static ICommand OpenCredentialCommand;
+    public static ICommand NavigateToRootCredentialsViewCommand;
 }
