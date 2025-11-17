@@ -14,21 +14,21 @@ public partial class NavigationBarViewModel : ViewModelBase
     private readonly IAppSettingService _appSettingService;
     private readonly IDialogService _dialogService;
     private readonly IServiceProvider _serviceProvider;
-    private readonly IApplicationResourceService _applicationResourceService;
+    private readonly IApplicationResourceService _appResourceService;
 
     public NavigationBarViewModel(
         INavigator navigator,
         IAppSettingService appSettingService,
         IDialogService dialogService,
         IServiceProvider serviceProvider,
-        IApplicationResourceService applicationResourceService
+        IApplicationResourceService appResourceService
     )
     {
         _navigator = navigator;
         _appSettingService = appSettingService;
         _dialogService = dialogService;
         _serviceProvider = serviceProvider;
-        _applicationResourceService = applicationResourceService;
+        _appResourceService = appResourceService;
 
         _navigator.ViewChanged += (_, _) =>
         {
@@ -47,7 +47,7 @@ public partial class NavigationBarViewModel : ViewModelBase
             {
                 return new TextBlock
                 {
-                    Text = _applicationResourceService.GetResource<string>("Lang.Cromwell"),
+                    Text = _appResourceService.GetResource<string>("Lang.Cromwell"),
                     Classes = { "alignment-left-center", "h3", },
                 };
             }
@@ -59,7 +59,7 @@ public partial class NavigationBarViewModel : ViewModelBase
 
             return new TextBlock
             {
-                Text = _applicationResourceService.GetResource<string>("Lang.Cromwell"),
+                Text = _appResourceService.GetResource<string>("Lang.Cromwell"),
                 Classes = { "alignment-left-center", "h3",},
             };
         }
@@ -71,9 +71,9 @@ public partial class NavigationBarViewModel : ViewModelBase
         var setting = _serviceProvider.GetService<AppSettingViewModel>();
 
         return WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
-            _applicationResourceService.GetResource<string>("Lang.Settings"),
+            _appResourceService.GetResource<string>("Lang.Settings"),
             _serviceProvider.GetService<AppSettingViewModel>(),
-            new DialogButton(_applicationResourceService.GetResource<string>("Lang.Save"), SaveSettingsCommand, setting,
+            new DialogButton(_appResourceService.GetResource<string>("Lang.Save"), SaveSettingsCommand, setting,
                 DialogButtonType.Primary), UiHelper.CancelButton)));
     }
 
@@ -96,6 +96,7 @@ public partial class NavigationBarViewModel : ViewModelBase
             {
                 GeneralKey = setting.GeneralKey,
                 Id = Guid.Empty,
+                Theme = setting.Theme,
             }, cancellationToken);
 
             _dialogService.CloseMessageBox();

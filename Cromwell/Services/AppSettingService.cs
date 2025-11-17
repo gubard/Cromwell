@@ -38,6 +38,8 @@ public class AppSettingService : IAppSettingService
             {
                 IsEditGeneralKey = true,
                 GeneralKey = setting.GeneralKey,
+                IsEditTheme = true,
+                Theme = setting.Theme,
             },
         ], cancellationToken);
 
