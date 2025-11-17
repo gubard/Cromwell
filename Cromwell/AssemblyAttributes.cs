@@ -12,5 +12,4 @@ using Inanna.Ui;
 [assembly: ViewPair(typeof(ExceptionView), typeof(ExceptionViewModel))]
 [assembly: ViewPair(typeof(AppSettingView), typeof(AppSettingViewModel))]
 [assembly: ViewPair(typeof(NavigationBarView), typeof(NavigationBarViewModel))]
-[assembly: ViewPair(typeof(CredentialsTreeView), typeof(CredentialsTreeViewModel))]
 [assembly: ViewPair(typeof(EditCredentialView), typeof(EditCredentialViewModel))]
