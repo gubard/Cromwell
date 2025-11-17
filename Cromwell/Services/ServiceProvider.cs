@@ -13,15 +13,16 @@ using IServiceProvider = Inanna.Services.IServiceProvider;
 namespace Cromwell.Services;
 
 [ServiceProvider]
-[Transient(typeof(NavigationBarViewModel))]
 [Transient(typeof(AppSettingViewModel))]
 [Transient(typeof(CredentialsTreeViewModel))]
+[Transient(typeof(RootCredentialsViewModel))]
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
 [Transient(typeof(IAppSettingService), typeof(AppSettingService))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(ICredentialService), typeof(CredentialService))]
 [Transient(typeof(INotificationService), Factory = nameof(GetNotificationService) )]
+[Singleton(typeof(NavigationBarViewModel))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
 [Singleton(typeof(IApplicationResourceService), typeof(ApplicationResourceService))]
 [Singleton(typeof(IStringFormater), typeof(StringFormater))]

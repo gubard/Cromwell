@@ -8,12 +8,12 @@ public partial class MainViewModel : ViewModelBase
     public MainViewModel(
         StackViewModel stack,
         NavigationBarViewModel navigationBar,
-        CredentialsTreeViewModel credentialsTree
+        RootCredentialsViewModel rootCredentials
     )
     {
         Stack = stack;
         NavigationBar = navigationBar;
-        Stack.PushView(credentialsTree);
+        Stack.PushView(rootCredentials);
     }
 
     public StackViewModel Stack { get; }

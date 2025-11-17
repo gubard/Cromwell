@@ -10,6 +10,8 @@ public interface ICredentialService
     ValueTask AddAsync(CredentialEntity entity, CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetAsync(CancellationToken cancellationToken);
     ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken);
+    ValueTask<CredentialEntity[]> GetRootsAsync(CancellationToken cancellationToken);
+    ValueTask<CredentialEntity[]> GetChildrenAsync(Guid parentId, CancellationToken cancellationToken);
 
     ValueTask ChangeOrderAsync(
         Guid itemId,
@@ -56,6 +58,44 @@ public class CredentialService : ICredentialService
         
         await CredentialEntity.EditCredentialEntitysAsync(_dbContext, "App", edits, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public ValueTask<CredentialEntity[]> GetRootsAsync(CancellationToken cancellationToken)
+    {
+        var events = _dbContext.Set<EventEntity>();
+
+        var ids = events.Where(y => events.GroupBy(x => x.EntityId)
+               .Select(y =>
+                    y.Where(x =>
+                            x.EntityId == y.Key
+                         && x.EntityProperty == nameof(CredentialEntity.ParentId)
+                         && x.EntityType == nameof(CredentialEntity))
+                       .Max(x => x.Id))
+               .Contains(y.Id))
+           .Where(x => x.EntityGuidValue == null)
+           .Select(x => x.EntityId);
+
+        return CredentialEntity.GetCredentialEntitysAsync(events.Where(x => ids.Contains(x.EntityId)),
+            cancellationToken);
+    }
+
+    public ValueTask<CredentialEntity[]> GetChildrenAsync(Guid parentId, CancellationToken cancellationToken)
+    {
+        var events = _dbContext.Set<EventEntity>();
+
+        var ids = events.Where(y => events.GroupBy(x => x.EntityId)
+               .Select(y =>
+                    y.Where(x =>
+                            x.EntityId == y.Key
+                         && x.EntityProperty == nameof(CredentialEntity.ParentId)
+                         && x.EntityType == nameof(CredentialEntity))
+                       .Max(x => x.Id))
+               .Contains(y.Id))
+           .Where(x => x.EntityGuidValue == parentId)
+           .Select(x => x.EntityId);
+
+        return CredentialEntity.GetCredentialEntitysAsync(events.Where(x => ids.Contains(x.EntityId)),
+            cancellationToken);
     }
 
     public async ValueTask ChangeOrderAsync(

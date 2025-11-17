@@ -19,6 +19,7 @@
 
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://IconPacks.Avalonia.MaterialDesign/MaterialDesign.axaml" />
         <StyleInclude Source="avares://Inanna/Styles/Theme.axaml" />
     </Application.Styles>
 </Application>

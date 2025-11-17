@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
 using Inanna.Helpers;
@@ -14,7 +15,7 @@ public partial class NavigationBarViewModel : ViewModelBase
     private readonly IDialogService _dialogService;
     private readonly IServiceProvider _serviceProvider;
     private readonly IApplicationResourceService _applicationResourceService;
-    
+
     public NavigationBarViewModel(
         INavigator navigator,
         IAppSettingService appSettingService,
@@ -28,10 +29,41 @@ public partial class NavigationBarViewModel : ViewModelBase
         _dialogService = dialogService;
         _serviceProvider = serviceProvider;
         _applicationResourceService = applicationResourceService;
-        _navigator.ViewChanged += (_, _) => OnPropertyChanged(nameof(IsCanBack));
+
+        _navigator.ViewChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(IsCanBack));
+            OnPropertyChanged(nameof(Header));
+        };
     }
 
     public bool IsCanBack => !_navigator.IsEmpty;
+
+    public object Header
+    {
+        get
+        {
+            if (_navigator.CurrentView is null)
+            {
+                return new TextBlock
+                {
+                    Text = _applicationResourceService.GetResource<string>("Lang.Cromwell"),
+                    Classes = { "alignment-left-center", },
+                };
+            }
+
+            if (_navigator.CurrentView is IHeader header)
+            {
+                return header.Header;
+            }
+
+            return new TextBlock
+            {
+                Text = _applicationResourceService.GetResource<string>("Lang.Cromwell"),
+                Classes = { "alignment-left-center", },
+            };
+        }
+    }
 
     [RelayCommand]
     private Task ShowSettingsViewAsync(CancellationToken cancellationToken)
