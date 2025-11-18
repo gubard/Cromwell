@@ -1,3 +1,4 @@
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
 using Inanna.Enums;
@@ -10,19 +11,19 @@ public partial class EditCredentialViewModel : ViewModelBase
 {
     private readonly ICredentialService _credentialService;
     private readonly INotificationService _notificationService;
-    private readonly IApplicationResourceService _applicationResourceService;
+    private readonly IApplicationResourceService _appResourceService;
 
     public EditCredentialViewModel(
         CredentialParametersViewModel credentialParameters,
         ICredentialService credentialService,
         INotificationService notificationService,
-        IApplicationResourceService applicationResourceService
+        IApplicationResourceService appResourceService
     )
     {
         CredentialParameters = credentialParameters;
         _credentialService = credentialService;
         _notificationService = notificationService;
-        _applicationResourceService = applicationResourceService;
+        _appResourceService = appResourceService;
         CredentialParameters.PropertyChanged += (_, e) => OnPropertyChanged(nameof(CanSave));
     }
 
@@ -69,8 +70,14 @@ public partial class EditCredentialViewModel : ViewModelBase
                 },
             ], cancellationToken);
 
-            _notificationService.ShowNotification(_applicationResourceService.GetResource<string>("Lang.Saved"),
-                NotificationType.None);
+            _notificationService.ShowNotification(new TextBlock
+            {
+                Text = _appResourceService.GetResource<string>("Lang.Saved"),
+                Classes =
+                {
+                    "alignment-center",
+                },
+            }, NotificationType.None);
         });
     }
 }

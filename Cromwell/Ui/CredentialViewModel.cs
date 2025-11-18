@@ -128,6 +128,7 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
                 Length = parametersViewModel.Length,
                 Regex = parametersViewModel.Regex,
                 Type = parametersViewModel.Type,
+                ParentId = Credential.Id,
             }, cancellationToken);
 
             _dialogService.CloseMessageBox();
