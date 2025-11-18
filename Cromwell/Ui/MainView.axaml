@@ -20,10 +20,12 @@
 
         <c:DialogControl Identifier="MessageBox" Classes="adaptive-dialog-control">
             <c:NotificationPanel Identifier="Notifications">
-                <Grid RowDefinitions="Auto,*">
-                    <ContentControl Content="{Binding NavigationBar}" />
-                    <ContentControl Grid.Row="1" Content="{Binding Stack}" />
-                </Grid>
+                <SplitView IsPaneOpen="{Binding IsShowPane}" Pane="{Binding Pane}">
+                    <Grid RowDefinitions="Auto,*">
+                        <ContentControl Content="{Binding NavigationBar}" />
+                        <ContentControl Grid.Row="1" Content="{Binding Stack}" />
+                    </Grid>
+                </SplitView>
             </c:NotificationPanel>
         </c:DialogControl>
     </Panel>

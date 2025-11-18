@@ -14,6 +14,7 @@ namespace Cromwell.Services;
 
 [ServiceProvider]
 [Transient(typeof(AppSettingViewModel))]
+[Transient(typeof(PaneViewModel))]
 [Transient(typeof(RootCredentialsViewModel))]
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
 [Transient(typeof(IAppSettingService), typeof(AppSettingService))]

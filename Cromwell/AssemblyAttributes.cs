@@ -3,6 +3,7 @@ using Cromwell.Ui;
 using Inanna.Ui;
 
 [assembly: ViewPair(typeof(CredentialHeaderView), typeof(CredentialHeaderViewModel))]
+[assembly: ViewPair(typeof(PaneView), typeof(PaneViewModel))]
 [assembly: ViewPair(typeof(CredentialView), typeof(CredentialViewModel))]
 [assembly: ViewPair(typeof(RootCredentialsView), typeof(RootCredentialsViewModel))]
 [assembly: ViewPair(typeof(MainView), typeof(MainViewModel))]
