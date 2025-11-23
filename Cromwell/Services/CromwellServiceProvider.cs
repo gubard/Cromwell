@@ -20,7 +20,7 @@ namespace Cromwell.Services;
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(ICredentialService), typeof(CredentialService))]
-[Transient(typeof(INotificationService), Factory = nameof(GetNotificationService) )]
+[Transient(typeof(INotificationService), Factory = nameof(GetNotificationService))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
 [Singleton(typeof(IApplicationResourceService), typeof(ApplicationResourceService))]
 [Singleton(typeof(IStringFormater), typeof(StringFormater))]
@@ -30,6 +30,7 @@ namespace Cromwell.Services;
 [Singleton(typeof(DbContext), Factory = nameof(GetDbContext))]
 [Singleton(typeof(IServiceProvider), Factory = nameof(GetServiceProvider))]
 [Singleton(typeof(INavigator), typeof(Navigator))]
+[Singleton(typeof(IStorageService), typeof(StorageService))]
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
@@ -37,12 +38,12 @@ public interface ICromwellServiceProvider
     {
         return new NotificationService("Notifications", TimeSpan.FromSeconds(5));
     }
-    
+
     public static IDialogService GetDialogService()
     {
         return new DialogService("MessageBox");
     }
-    
+
     public static IServiceProvider GetServiceProvider()
     {
         return DiHelper.ServiceProvider;
@@ -53,13 +54,20 @@ public interface ICromwellServiceProvider
         return Application.Current ?? throw new NullReferenceException("Application not found");
     }
 
-    public static DbContext GetDbContext()
+    public static DbContext GetDbContext(IStorageService storageService)
     {
-        var file = new FileInfo(Path.Combine(Directory.GetCurrentDirectory(), "Cromwell.db"));
+        var appDirectory = storageService.GetAppDirectory();
+
+        if (!appDirectory.Exists)
+        {
+            appDirectory.Create();
+        }
+
+        var file = new FileInfo(Path.Combine(appDirectory.FullName, "Cromwell.db"));
 
         return new NestorDbContext<EventEntityTypeConfiguration>(
             new DbContextOptionsBuilder<NestorDbContext<EventEntityTypeConfiguration>>()
-               .UseSqlite($"Data Source={file}")
-               .Options);
+                .UseSqlite($"Data Source={file}")
+                .Options);
     }
 }
