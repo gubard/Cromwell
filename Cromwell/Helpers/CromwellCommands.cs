@@ -11,9 +11,9 @@ using Inanna.Services;
 
 namespace Cromwell.Helpers;
 
-public static class Commands
+public static class CromwellCommands
 {
-    static Commands()
+    static CromwellCommands()
     {
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
         var credentialService = DiHelper.ServiceProvider.GetService<ICredentialService>();
@@ -24,7 +24,6 @@ public static class Commands
         var notificationService = DiHelper.ServiceProvider.GetService<INotificationService>();
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
-        var mainViewModel = DiHelper.ServiceProvider.GetService<MainViewModel>();
 
         GeneratePasswordCommand = new AsyncRelayCommand<CredentialParametersViewModel>(async (parameters, ct) =>
         {
@@ -72,26 +71,10 @@ public static class Commands
             navigator.NavigateToAsync(
                 new RootCredentialsViewModel(credentialService, dialogService, stringFormater, appResourceService,
                     navigator, notificationService), ct));
-
-        ShowPaneCommand = new AsyncRelayCommand(ct =>
-        {
-            mainViewModel.IsShowPane = true;
-
-            return Task.CompletedTask;
-        });
-
-        HidePaneCommand = new AsyncRelayCommand(ct =>
-        {
-            mainViewModel.IsShowPane = false;
-
-            return Task.CompletedTask;
-        });
     }
 
     public static readonly ICommand GeneratePasswordCommand;
     public static readonly ICommand LoginToClipboardCommand;
     public static readonly ICommand OpenCredentialCommand;
     public static readonly ICommand NavigateToRootCredentialsViewCommand;
-    public static readonly ICommand ShowPaneCommand;
-    public static readonly ICommand HidePaneCommand;
 }

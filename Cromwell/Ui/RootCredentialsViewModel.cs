@@ -1,9 +1,6 @@
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Input;
-using Cromwell.Db;
 using Cromwell.Services;
-using Gaia.Extensions;
-using Gaia.Helpers;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
