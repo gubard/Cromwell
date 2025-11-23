@@ -84,8 +84,8 @@ public partial class CredentialView : UserControl
                             ParentId = null,
                         },
                     ], CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                    .GetAwaiter()
+                    .GetResult();
 
                 break;
             }
@@ -115,8 +115,8 @@ public partial class CredentialView : UserControl
                             ParentId = viewModel.Id,
                         },
                     ], CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                    .GetAwaiter()
+                    .GetResult();
 
                 break;
             }
@@ -140,8 +140,8 @@ public partial class CredentialView : UserControl
                 }
 
                 _credentialService.ChangeOrderAsync(viewModel.Id, [id,], false, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                    .GetAwaiter()
+                    .GetResult();
 
                 break;
             }
@@ -165,8 +165,8 @@ public partial class CredentialView : UserControl
                 }
 
                 _credentialService.ChangeOrderAsync(viewModel.Id, [id,], true, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                    .GetAwaiter()
+                    .GetResult();
 
                 break;
             }
@@ -196,8 +196,16 @@ public partial class CredentialView : UserControl
 
         dragData.Add(dataTransferItem);
         var item = sender.As<ILogical>()?.GetLogicalAncestors().OfType<TreeViewItem>().FirstOrDefault().As<Visual>();
-        item?.IsVisible = false;
-        await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
-        item?.IsVisible = true;
+
+        if (item is null)
+        {
+            await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+        }
+        else
+        {
+            item.IsVisible = false;
+            await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+            item.IsVisible = true;
+        }
     }
 }

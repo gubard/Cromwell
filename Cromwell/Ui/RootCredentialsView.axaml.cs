@@ -196,8 +196,16 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
 
         dragData.Add(dataTransferItem);
         var item = sender.As<ILogical>()?.GetLogicalAncestors().OfType<TreeViewItem>().FirstOrDefault().As<Visual>();
-        item?.IsVisible = false;
-        await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
-        item?.IsVisible = true;
+
+        if (item is null)
+        {
+            await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+        }
+        else
+        {
+            item.IsVisible = false;
+            await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+            item.IsVisible = true;
+        }
     }
 }

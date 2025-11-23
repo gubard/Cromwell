@@ -177,30 +177,4 @@ public partial class CredentialHeaderView : UserControl
 
         (_navigator.CurrentView as CredentialViewModel)?.InitializedCommand.Execute(null);
     }
-
-    private async void RectangleOnPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (sender is not IDataContextProvider dataContextProvider)
-        {
-            return;
-        }
-
-        if (dataContextProvider.DataContext is not CredentialParametersViewModel credentialParametersViewModel)
-        {
-            return;
-        }
-
-        e.Handled = true;
-        var dragData = new DataTransfer();
-        var dataTransferItem = new DataTransferItem();
-
-        dataTransferItem.Set(DataFormat.CreateBytesApplicationFormat(nameof(CredentialParametersViewModel)),
-            credentialParametersViewModel.Id.ToByteArray());
-
-        dragData.Add(dataTransferItem);
-        var item = sender.As<ILogical>()?.GetLogicalAncestors().OfType<TreeViewItem>().FirstOrDefault().As<Visual>();
-        item?.IsVisible = false;
-        await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
-        item?.IsVisible = true;
-    }
 }
