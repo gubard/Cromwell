@@ -6,7 +6,6 @@ using Inanna.Services;
 using Inanna.Ui;
 using Jab;
 using Microsoft.EntityFrameworkCore;
-using Nestor.Db;
 using Nestor.Db.Sqlite;
 using IServiceProvider = Inanna.Services.IServiceProvider;
 
@@ -65,9 +64,10 @@ public interface ICromwellServiceProvider
 
         var file = new FileInfo(Path.Combine(appDirectory.FullName, "Cromwell.db"));
 
-        return new NestorDbContext<EventEntityTypeConfiguration>(
-            new DbContextOptionsBuilder<NestorDbContext<EventEntityTypeConfiguration>>()
-                .UseSqlite($"Data Source={file}")
-                .Options);
+        var options = new DbContextOptionsBuilder<SqliteNestorDbContext>()
+           .UseSqlite($"Data Source={file}")
+           .Options;
+
+        return new SqliteNestorDbContext(options);
     }
 }

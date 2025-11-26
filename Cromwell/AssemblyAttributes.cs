@@ -1,5 +1,5 @@
-using Cromwell.Generator;
 using Cromwell.Ui;
+using Inanna.Generator;
 using Inanna.Ui;
 
 [assembly: ViewPair(typeof(CredentialHeaderView), typeof(CredentialHeaderViewModel))]

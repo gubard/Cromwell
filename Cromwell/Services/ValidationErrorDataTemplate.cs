@@ -1,11 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Cromwell.Services;
-using Inanna.Errors;
+using Gaia.Errors;
 using Inanna.Helpers;
 using Inanna.Services;
 
-namespace Cromwell.DataTemplates;
+namespace Cromwell.Services;
 
 public class ValidationErrorDataTemplate : IDataTemplate
 {
@@ -33,7 +32,7 @@ public class ValidationErrorDataTemplate : IDataTemplate
             },
             _ => new TextBlock
             {
-                Text = "Not found " + param.GetType(),
+                Text = $"Not found \"{param.GetType()}\"",
             },
         };
     }

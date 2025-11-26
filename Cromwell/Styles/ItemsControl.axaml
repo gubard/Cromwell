@@ -16,7 +16,8 @@
                             <ip:PackIconMaterialDesign Kind="Reorder"
                                                        Classes="s-20 alignment-center"
                                                        Background="Transparent"
-                                                       h:CromwellHelper.IsDragHandle="True" />
+                                                       h:CromwellHelper.IsDragHandle="True" 
+                                                       IsVisible="{OnPlatform  Default=True, Android=False, iOS=False}" />
                             <TextBlock Grid.Column="1" Classes="alignment-left-center text-wrap" Text="{Binding Name}" />
 
                             <c:ViewSelectorControl Grid.Column="2" State="{Binding Type}">

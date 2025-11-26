@@ -1,9 +1,9 @@
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Cromwell.Db;
-using Cromwell.Generator;
+using Gaia.Errors;
 using Gaia.Extensions;
-using Inanna.Errors;
+using Inanna.Generator;
 using Inanna.Models;
 
 namespace Cromwell.Ui;
