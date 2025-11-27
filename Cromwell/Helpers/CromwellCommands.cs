@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
 using Cromwell.Ui;
-using Gaia.Extensions;
 using Gaia.Helpers;
 using Inanna.Enums;
 using Inanna.Helpers;

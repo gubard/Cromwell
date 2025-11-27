@@ -3,7 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
 using Cromwell.Services;
-using Gaia.Extensions;
+using Gaia.Helpers;
 using Inanna.Helpers;
 
 namespace Cromwell.Ui;

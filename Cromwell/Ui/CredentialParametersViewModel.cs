@@ -2,7 +2,7 @@ using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Cromwell.Db;
 using Gaia.Errors;
-using Gaia.Extensions;
+using Gaia.Helpers;
 using Inanna.Generator;
 using Inanna.Models;
 
