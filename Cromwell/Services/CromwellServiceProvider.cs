@@ -1,13 +1,13 @@
 using Avalonia;
 using Cromwell.Ui;
+using Gaia.Helpers;
 using Gaia.Services;
-using Inanna.Helpers;
 using Inanna.Services;
 using Inanna.Ui;
 using Jab;
 using Microsoft.EntityFrameworkCore;
 using Nestor.Db.Sqlite;
-using IServiceProvider = Inanna.Services.IServiceProvider;
+using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Services;
 
