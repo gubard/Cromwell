@@ -1,6 +1,7 @@
 using Cromwell.Db;
 using Microsoft.EntityFrameworkCore;
 using Nestor.Db;
+using Nestor.Db.Models;
 
 namespace Cromwell.Services;
 

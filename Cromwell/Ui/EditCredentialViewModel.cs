@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
-using Inanna.Enums;
 using Inanna.Models;
 using Inanna.Services;
 

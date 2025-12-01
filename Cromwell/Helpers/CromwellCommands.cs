@@ -4,8 +4,8 @@ using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
 using Cromwell.Ui;
 using Gaia.Helpers;
-using Inanna.Enums;
 using Inanna.Helpers;
+using Inanna.Models;
 using Inanna.Services;
 
 namespace Cromwell.Helpers;

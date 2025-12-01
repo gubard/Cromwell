@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Nestor.Db;
+using Nestor.Db.Models;
 
 namespace Cromwell.Db;
 
