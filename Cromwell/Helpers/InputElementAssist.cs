@@ -8,17 +8,22 @@ using Inanna.Helpers;
 
 namespace Cromwell.Helpers;
 
-public static class CromwellHelper
+public static class InputElementAssist
 {
     public static readonly AttachedProperty<bool> IsDragHandleProperty =
-        AvaloniaProperty.RegisterAttached<InputElement, bool>("IsDragHandle", typeof(CromwellHelper));
+        AvaloniaProperty.RegisterAttached<InputElement, bool>("IsDragHandle", typeof(InputElementAssist));
 
-    public static void SetIsDragHandle(InputElement element, bool value) =>
+    public static void SetIsDragHandle(InputElement element, bool value)
+    {
         element.SetValue(IsDragHandleProperty, value);
+    }
 
-    public static bool GetIsDragHandle(InputElement element) => element.GetValue(IsDragHandleProperty);
+    public static bool GetIsDragHandle(InputElement element)
+    {
+        return element.GetValue(IsDragHandleProperty);
+    }
 
-    static CromwellHelper()
+    static InputElementAssist()
     {
         IsDragHandleProperty.Changed.AddClassHandler<Control, bool>((_, e) =>
         {
@@ -38,8 +43,7 @@ public static class CromwellHelper
         });
     }
 
-
-    public static async void DragOnPointerPressed(object? sender, PointerPressedEventArgs e)
+    private static async void DragOnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         if (sender is not IDataContextProvider dataContextProvider)
         {
