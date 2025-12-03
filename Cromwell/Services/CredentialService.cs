@@ -7,14 +7,13 @@ namespace Cromwell.Services;
 
 public interface ICredentialService
 {
-    ValueTask DeleteAsync(Guid id, CancellationToken cancellationToken);
-    ValueTask AddAsync(CredentialEntity entity, CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetAsync(CancellationToken cancellationToken);
-    ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetRootsAsync(CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetChildrenAsync(Guid parentId, CancellationToken cancellationToken);
     ValueTask<CredentialEntity[]> GetParentsAsync(Guid id, CancellationToken cancellationToken);
-
+    ValueTask DeleteAsync(Guid id, CancellationToken cancellationToken);
+    ValueTask AddAsync(CredentialEntity entity, CancellationToken cancellationToken);
+    ValueTask EditAsync(EditCredentialEntity[] edits, CancellationToken cancellationToken);
     ValueTask ChangeOrderAsync(Guid itemId, Guid[] entityIds, bool isAfter, CancellationToken cancellationToken);
 }
 
@@ -49,7 +48,7 @@ public class CredentialService : ICredentialService
         var credentials =
             await CredentialEntity.GetCredentialEntitysAsync(_dbContext.Set<EventEntity>(), cancellationToken);
 
-        edits.Where(x => x is { IsEditParentId: true, ParentId: not null, })
+        edits.Where(x => x is { IsEditParentId: true, ParentId: not null })
            .ToList()
            .ForEach(x => CheckParentId(credentials, credentials.Single(y => y.Id == x.Id), x.ParentId.Value));
 
