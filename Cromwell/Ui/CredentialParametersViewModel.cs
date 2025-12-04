@@ -1,7 +1,7 @@
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Gaia.Errors;
 using Gaia.Helpers;
+using Gaia.Models;
 using Inanna.Generator;
 using Inanna.Models;
 using Turtle.Contract.Models;

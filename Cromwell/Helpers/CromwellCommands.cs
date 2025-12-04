@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
 using Cromwell.Ui;
 using Gaia.Helpers;
+using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 using Turtle.Contract.Services;
@@ -24,7 +25,7 @@ public static class CromwellCommands
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
 
-        GeneratePasswordCommand = new AsyncRelayCommand<CredentialParametersViewModel>(async (parameters, ct) =>
+        GeneratePasswordCommand = UiHelper.CreateCommand<CredentialParametersViewModel>(async (parameters, ct) =>
         {
             var settings = await appSettingService.GetAppSettingsAsync();
 
@@ -46,7 +47,7 @@ public static class CromwellCommands
             }, NotificationType.Success);
         });
 
-        LoginToClipboardCommand = new AsyncRelayCommand<CredentialParametersViewModel>(async (parameters, ct) =>
+        LoginToClipboardCommand = UiHelper.CreateCommand<CredentialParametersViewModel>(async (parameters, ct) =>
         {
             await clipboardService.SetTextAsync(parameters.Login, ct);
 
@@ -61,13 +62,13 @@ public static class CromwellCommands
             }, NotificationType.Success);
         });
 
-        OpenCredentialCommand = new AsyncRelayCommand<CredentialParametersViewModel>((parameters, ct) =>
-            navigator.NavigateToAsync(
+        OpenCredentialCommand = UiHelper.CreateCommand<CredentialParametersViewModel>(async (parameters, ct) =>
+            await navigator.NavigateToAsync(
                 new CredentialViewModel(credentialService, dialogService, stringFormater, appResourceService, navigator,
                     notificationService, parameters), ct));
 
-        NavigateToRootCredentialsViewCommand = new AsyncRelayCommand(ct =>
-            navigator.NavigateToAsync(
+        NavigateToRootCredentialsViewCommand = UiHelper.CreateCommand(async ct =>
+            await navigator.NavigateToAsync(
                 new RootCredentialsViewModel(credentialService, dialogService, stringFormater, appResourceService,
                     navigator, notificationService), ct));
     }

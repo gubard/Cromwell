@@ -34,9 +34,9 @@ public partial class EditCredentialViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private Task SaveAsync(CancellationToken cancellationToken)
+    private async Task SaveAsync(CancellationToken cancellationToken)
     {
-        return WrapCommand(async () =>
+        await WrapCommand(async () =>
         {
             CredentialParameters.StartExecute();
 

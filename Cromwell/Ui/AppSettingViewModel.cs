@@ -24,9 +24,9 @@ public partial class AppSettingViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private async Task InitializedAsync(CancellationToken cancellationToken)
     {
-        return WrapCommand(async () =>
+        await WrapCommand(async () =>
         {
             var settings = await _appSettingService.GetAppSettingsAsync();
             GeneralKey = settings.GeneralKey;

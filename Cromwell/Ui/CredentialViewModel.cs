@@ -47,9 +47,9 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     public object Header { get; }
 
     [RelayCommand]
-    private Task InitializedAsync(CancellationToken ct)
+    private async Task InitializedAsync(CancellationToken ct)
     {
-        return WrapCommand(async () =>
+        await WrapCommand(async () =>
         {
             Credential.Children.Clear();
             var response = await _credentialService.GetAsync(new()
@@ -70,18 +70,18 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     }
 
     [RelayCommand]
-    private Task EditAsync(CredentialParametersViewModel credential, CancellationToken cancellationToken)
+    private async Task EditAsync(CredentialParametersViewModel credential, CancellationToken cancellationToken)
     {
-        return WrapCommand(() =>
+        await WrapCommand(() =>
             _navigator.NavigateToAsync(
                 new EditCredentialViewModel(credential, _credentialService, _notificationService,
                     _appResourceService), cancellationToken));
     }
 
     [RelayCommand]
-    private Task DeleteAsync(CredentialParametersViewModel parametersViewModel, CancellationToken cancellationToken)
+    private async Task DeleteAsync(CredentialParametersViewModel parametersViewModel, CancellationToken cancellationToken)
     {
-        return WrapCommand(async () =>
+        await WrapCommand(async () =>
         {
             await _credentialService.PostAsync(new()
             {
@@ -92,11 +92,11 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     }
 
     [RelayCommand]
-    private Task ShowCreateViewAsync(CancellationToken cancellationToken)
+    private async Task ShowCreateViewAsync(CancellationToken cancellationToken)
     {
         var credential = new CredentialParametersViewModel(Guid.CreateVersion7());
 
-        return WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
+        await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
             _stringFormater.Format(_appResourceService.GetResource<string>("Lang.CreatingNewItem"),
                 _appResourceService.GetResource<string>("Lang.Credential")), credential,
             new DialogButton(_appResourceService.GetResource<string>("Lang.Create"), CreateCommand,
@@ -104,9 +104,9 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     }
 
     [RelayCommand]
-    private Task CreateAsync(CredentialParametersViewModel parametersViewModel, CancellationToken cancellationToken)
+    private async Task CreateAsync(CredentialParametersViewModel parametersViewModel, CancellationToken cancellationToken)
     {
-        return WrapCommand(async () =>
+        await WrapCommand(async () =>
         {
             parametersViewModel.StartExecute();
 

@@ -5,4 +5,4 @@ using Turtle.Contract.Services;
 
 namespace Cromwell.Services;
 
-public class CredentialService(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions) : Service<TurtleGetRequest, TurtlePostRequest, TurtleGetResponse, TurtlePostResponse>(httpClient, jsonSerializerOptions), ICredentialService;
+public class CredentialService(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions, ITryPolicyService tryPolicyService) : Service<TurtleGetRequest, TurtlePostRequest, TurtleGetResponse, TurtlePostResponse>(httpClient, jsonSerializerOptions, tryPolicyService), ICredentialService;

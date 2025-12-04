@@ -37,7 +37,7 @@ namespace Cromwell.Services;
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
-    public static ICredentialService GetCredentialService(CredentialServiceOptions options)
+    public static ICredentialService GetCredentialService(CredentialServiceOptions options, ITryPolicyService tryPolicyService)
     {
         return new CredentialService(new()
         {
@@ -46,7 +46,7 @@ public interface ICromwellServiceProvider
         {
             TypeInfoResolver = TurtleJsonContext.Resolver,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        });
+        }, tryPolicyService);
     }
 
     public static INotificationService GetNotificationService()
