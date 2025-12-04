@@ -13,7 +13,7 @@ public partial class RootCredentialsViewModel : ViewModelBase
     private readonly ICredentialService _credentialService;
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;
-    private readonly IApplicationResourceService _applicationResourceService;
+    private readonly IApplicationResourceService _appResourceService;
     private readonly INavigator _navigator;
     private readonly INotificationService _notificationService;
 
@@ -21,7 +21,7 @@ public partial class RootCredentialsViewModel : ViewModelBase
         ICredentialService credentialService,
         IDialogService dialogService,
         IStringFormater stringFormater,
-        IApplicationResourceService applicationResourceService,
+        IApplicationResourceService appResourceService,
         INavigator navigator,
         INotificationService notificationService
     )
@@ -29,7 +29,7 @@ public partial class RootCredentialsViewModel : ViewModelBase
         _credentialService = credentialService;
         _dialogService = dialogService;
         _stringFormater = stringFormater;
-        _applicationResourceService = applicationResourceService;
+        _appResourceService = appResourceService;
         _navigator = navigator;
         _notificationService = notificationService;
     }
@@ -58,7 +58,7 @@ public partial class RootCredentialsViewModel : ViewModelBase
         return WrapCommand(() =>
             _navigator.NavigateToAsync(
                 new EditCredentialViewModel(credential, _credentialService, _notificationService,
-                    _applicationResourceService), cancellationToken));
+                    _appResourceService), cancellationToken));
     }
 
     [RelayCommand]
@@ -79,16 +79,11 @@ public partial class RootCredentialsViewModel : ViewModelBase
     {
         var credential = new CredentialParametersViewModel(Guid.CreateVersion7());
 
-        return WrapCommand(async () =>
-        {
-            await _dialogService.ShowMessageBoxAsync(new(
-                _stringFormater.Format(_applicationResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                    _applicationResourceService.GetResource<string>("Lang.Credential")), credential,
-                new DialogButton(_applicationResourceService.GetResource<string>("Lang.Create"), CreateCommand,
-                    credential, DialogButtonType.Primary), UiHelper.CancelButton));
-
-            await InitializedAsync(cancellationToken);
-        });
+        return WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
+            _stringFormater.Format(_appResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                _appResourceService.GetResource<string>("Lang.Credential")), credential,
+            new DialogButton(_appResourceService.GetResource<string>("Lang.Create"), CreateCommand,
+                credential, DialogButtonType.Primary), UiHelper.CancelButton)));
     }
 
     [RelayCommand]
