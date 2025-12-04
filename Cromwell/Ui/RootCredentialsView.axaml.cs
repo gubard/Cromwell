@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.VisualTree;
 using Cromwell.Services;
 using Gaia.Helpers;
+using Turtle.Contract.Services;
 
 namespace Cromwell.Ui;
 
@@ -71,17 +72,22 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
 
         var id = new Guid(data);
 
-        switch (tag)
+       switch (tag)
         {
             case "DropRoot":
             {
-                _credentialService.EditAsync([
-                        new(id)
-                        {
-                            IsEditParentId = true,
-                            ParentId = null,
-                        },
-                    ], CancellationToken.None)
+                _credentialService.PostAsync(new()
+                    {
+                        EditCredentials =
+                        [
+                            new()
+                            {
+                                Id = id,
+                                IsEditParentId = true,
+                                ParentId = null,
+                            },
+                        ],
+                    }, CancellationToken.None)
                    .GetAwaiter()
                    .GetResult();
 
@@ -106,13 +112,18 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _credentialService.EditAsync([
-                        new(id)
-                        {
-                            IsEditParentId = true,
-                            ParentId = viewModel.Id,
-                        },
-                    ], CancellationToken.None)
+                _credentialService.PostAsync(new()
+                    {
+                        EditCredentials =
+                        [
+                            new()
+                            {
+                                Id = id,
+                                IsEditParentId = true,
+                                ParentId = viewModel.Id,
+                            },
+                        ],
+                    }, CancellationToken.None)
                    .GetAwaiter()
                    .GetResult();
 
@@ -137,7 +148,18 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _credentialService.ChangeOrderAsync(viewModel.Id, [id,], false, CancellationToken.None)
+                _credentialService.PostAsync(new()
+                    {
+                        ChangeOrders =
+                        [
+                            new()
+                            {
+                                InsertIds = [id],
+                                IsAfter = false,
+                                StartId = viewModel.Id,
+                            },
+                        ],
+                    }, CancellationToken.None)
                    .GetAwaiter()
                    .GetResult();
 
@@ -162,7 +184,18 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _credentialService.ChangeOrderAsync(viewModel.Id, [id,], true, CancellationToken.None)
+                _credentialService.PostAsync(new()
+                    {
+                        ChangeOrders =
+                        [
+                            new()
+                            {
+                                InsertIds = [id],
+                                IsAfter = true,
+                                StartId = viewModel.Id,
+                            },
+                        ],
+                    }, CancellationToken.None)
                    .GetAwaiter()
                    .GetResult();
 

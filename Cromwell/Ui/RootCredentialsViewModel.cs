@@ -4,6 +4,7 @@ using Cromwell.Services;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
+using Turtle.Contract.Services;
 
 namespace Cromwell.Ui;
 
@@ -41,9 +42,12 @@ public partial class RootCredentialsViewModel : ViewModelBase
         return WrapCommand(async () =>
         {
             Credentials.Clear();
-            var credentials = await _credentialService.GetRootsAsync(cancellationToken);
+            var response = await _credentialService.GetAsync(new()
+            {
+                IsGetRoots = true,
+            }, cancellationToken);
 
-            Credentials.AddRange(credentials.OrderBy(x => x.OrderIndex)
+            Credentials.AddRange(response.Roots.OrderBy(x => x.OrderIndex)
                .Select(x => new CredentialParametersViewModel(x)));
         });
     }
@@ -62,7 +66,10 @@ public partial class RootCredentialsViewModel : ViewModelBase
     {
         return WrapCommand(async () =>
         {
-            await _credentialService.DeleteAsync(parametersViewModel.Id, cancellationToken);
+            await _credentialService.PostAsync(new()
+            {
+                DeleteIds = [parametersViewModel.Id],
+            }, cancellationToken);
             await InitializedAsync(cancellationToken);
         });
     }
@@ -96,20 +103,26 @@ public partial class RootCredentialsViewModel : ViewModelBase
                 return;
             }
 
-            await _credentialService.AddAsync(new()
+            await _credentialService.PostAsync(new()
             {
-                Id = parametersViewModel.Id,
-                Name = parametersViewModel.Name,
-                Login = parametersViewModel.Login,
-                Key = parametersViewModel.Key,
-                IsAvailableUpperLatin = parametersViewModel.IsAvailableUpperLatin,
-                IsAvailableLowerLatin = parametersViewModel.IsAvailableLowerLatin,
-                IsAvailableNumber = parametersViewModel.IsAvailableNumber,
-                IsAvailableSpecialSymbols = parametersViewModel.IsAvailableSpecialSymbols,
-                CustomAvailableCharacters = parametersViewModel.CustomAvailableCharacters,
-                Length = parametersViewModel.Length,
-                Regex = parametersViewModel.Regex,
-                Type = parametersViewModel.Type,
+                CreateCredentials =
+                [
+                    new()
+                    {
+                        Id = parametersViewModel.Id,
+                        Name = parametersViewModel.Name,
+                        Login = parametersViewModel.Login,
+                        Key = parametersViewModel.Key,
+                        IsAvailableUpperLatin = parametersViewModel.IsAvailableUpperLatin,
+                        IsAvailableLowerLatin = parametersViewModel.IsAvailableLowerLatin,
+                        IsAvailableNumber = parametersViewModel.IsAvailableNumber,
+                        IsAvailableSpecialSymbols = parametersViewModel.IsAvailableSpecialSymbols,
+                        CustomAvailableCharacters = parametersViewModel.CustomAvailableCharacters,
+                        Length = parametersViewModel.Length,
+                        Regex = parametersViewModel.Regex,
+                        Type = parametersViewModel.Type,
+                    },
+                ],
             }, cancellationToken);
 
             _dialogService.CloseMessageBox();

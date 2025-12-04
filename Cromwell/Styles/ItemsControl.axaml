@@ -4,7 +4,7 @@
         xmlns:h="clr-namespace:Cromwell.Helpers"
         xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
-        xmlns:db="clr-namespace:Cromwell.Db">
+        xmlns:m="clr-namespace:Turtle.Contract.Models;assembly=Turtle.Contract">
     <Style Selector="ItemsControl.credential-view">
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="ui:CredentialParametersViewModel">
@@ -21,7 +21,7 @@
                             <TextBlock Grid.Column="1" Classes="alignment-left-center text-wrap" Text="{Binding Name}" />
 
                             <c:ViewSelectorControl Grid.Column="2" State="{Binding Type}">
-                                <c:ViewSelectorItemControl State="{x:Static db:CredentialType.Value}">
+                                <c:ViewSelectorItemControl State="{x:Static m:CredentialType.Value}">
                                     <StackPanel Classes="horizontal">
                                         <Button Classes="alignment-center"
                                                 Content="{ip:MaterialDesign Login}"

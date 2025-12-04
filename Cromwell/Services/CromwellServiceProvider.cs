@@ -1,4 +1,6 @@
+using System.Text.Json;
 using Avalonia;
+using Cromwell.Models;
 using Cromwell.Ui;
 using Gaia.Helpers;
 using Gaia.Services;
@@ -7,6 +9,8 @@ using Inanna.Ui;
 using Jab;
 using Microsoft.EntityFrameworkCore;
 using Nestor.Db.Sqlite;
+using Turtle.Contract.Models;
+using Turtle.Contract.Services;
 using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Services;
@@ -18,7 +22,7 @@ namespace Cromwell.Services;
 [Transient(typeof(IAppSettingService), typeof(AppSettingService))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
-[Transient(typeof(ICredentialService), typeof(CredentialService))]
+[Transient(typeof(ICredentialService), Factory = nameof(GetCredentialService))]
 [Transient(typeof(INotificationService), Factory = nameof(GetNotificationService))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
 [Singleton(typeof(IApplicationResourceService), typeof(ApplicationResourceService))]
@@ -33,6 +37,18 @@ namespace Cromwell.Services;
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
+    public static ICredentialService GetCredentialService(CredentialServiceOptions options)
+    {
+        return new CredentialService(new()
+        {
+            BaseAddress = new(options.Url),
+        }, new()
+        {
+            TypeInfoResolver = TurtleJsonContext.Resolver,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        });
+    }
+
     public static INotificationService GetNotificationService()
     {
         return new NotificationService("Notifications", TimeSpan.FromSeconds(5));

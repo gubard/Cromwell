@@ -1,13 +1,13 @@
 using System.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Cromwell.Db;
 using Cromwell.Models;
 using Cromwell.Services;
 using Gaia.Helpers;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
+using Turtle.Contract.Services;
 
 namespace Cromwell.Ui;
 
@@ -47,21 +47,24 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     public object Header { get; }
 
     [RelayCommand]
-    private Task InitializedAsync(CancellationToken cancellationToken)
+    private Task InitializedAsync(CancellationToken ct)
     {
         return WrapCommand(async () =>
         {
             Credential.Children.Clear();
-            var parents = await _credentialService.GetParentsAsync(Credential.Id, cancellationToken);
-            var credentials = await _credentialService.GetChildrenAsync(Credential.Id, cancellationToken);
+            var response = await _credentialService.GetAsync(new()
+            {
+                GetChildrenIds = [Credential.Id],
+                GetParentsIds = [Credential.Id],
+            }, ct);
 
-            Credential.Children.AddRange(credentials.OrderBy(x => x.OrderIndex)
+            Credential.Children.AddRange(response.Children[Credential.Id].OrderBy(x => x.OrderIndex)
                .Select(x => new CredentialParametersViewModel(x)));
 
             Parents = Root.Instance
                .Cast<object>()
                .ToEnumerable()
-               .Concat(parents.Select(x => new CredentialParametersViewModel(x)))
+               .Concat(response.Parents[Credential.Id].Select(x => new CredentialParametersViewModel(x)))
                .ToArray();
         });
     }
@@ -80,7 +83,10 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     {
         return WrapCommand(async () =>
         {
-            await _credentialService.DeleteAsync(parametersViewModel.Id, cancellationToken);
+            await _credentialService.PostAsync(new()
+            {
+                DeleteIds = [parametersViewModel.Id],
+            }, cancellationToken);
             await InitializedAsync(cancellationToken);
         });
     }
@@ -114,55 +120,32 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
                 return;
             }
 
-            await _credentialService.AddAsync(new()
-            {
-                Id = parametersViewModel.Id,
-                Name = parametersViewModel.Name,
-                Login = parametersViewModel.Login,
-                Key = parametersViewModel.Key,
-                IsAvailableUpperLatin = parametersViewModel.IsAvailableUpperLatin,
-                IsAvailableLowerLatin = parametersViewModel.IsAvailableLowerLatin,
-                IsAvailableNumber = parametersViewModel.IsAvailableNumber,
-                IsAvailableSpecialSymbols = parametersViewModel.IsAvailableSpecialSymbols,
-                CustomAvailableCharacters = parametersViewModel.CustomAvailableCharacters,
-                Length = parametersViewModel.Length,
-                Regex = parametersViewModel.Regex,
-                Type = parametersViewModel.Type,
-                ParentId = Credential.Id,
-            }, cancellationToken);
+            await _credentialService.PostAsync(new()
+                {
+                    CreateCredentials =
+                    [
+                        new()
+                        {
+                            Id = parametersViewModel.Id,
+                            Name = parametersViewModel.Name,
+                            Login = parametersViewModel.Login,
+                            Key = parametersViewModel.Key,
+                            IsAvailableUpperLatin = parametersViewModel.IsAvailableUpperLatin,
+                            IsAvailableLowerLatin = parametersViewModel.IsAvailableLowerLatin,
+                            IsAvailableNumber = parametersViewModel.IsAvailableNumber,
+                            IsAvailableSpecialSymbols = parametersViewModel.IsAvailableSpecialSymbols,
+                            CustomAvailableCharacters = parametersViewModel.CustomAvailableCharacters,
+                            Length = parametersViewModel.Length,
+                            Regex = parametersViewModel.Regex,
+                            Type = parametersViewModel.Type,
+                            ParentId = Credential.Id,
+                        },
+                    ],
+                }
+                , cancellationToken);
 
             _dialogService.CloseMessageBox();
             await InitializedAsync(cancellationToken);
         });
-    }
-
-    private CredentialParametersViewModel[] Fill(CredentialEntity[] items)
-    {
-        var result = items.Where(x => x.ParentId == null)
-           .OrderBy(x => x.OrderIndex)
-           .Select(x => new CredentialParametersViewModel(x))
-           .ToArray();
-
-        foreach (var item in result)
-        {
-            Fill(item, items);
-        }
-
-        return result;
-    }
-
-    private void Fill(CredentialParametersViewModel parametersViewModel, CredentialEntity[] items)
-    {
-        var children = items.Where(x => x.ParentId == parametersViewModel.Id)
-           .OrderBy(x => x.OrderIndex)
-           .Select(x => new CredentialParametersViewModel(x))
-           .ToArray();
-
-        parametersViewModel.Children.AddRange(children);
-
-        foreach (var child in children)
-        {
-            Fill(child, items);
-        }
     }
 }

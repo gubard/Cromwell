@@ -2,8 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
-using Cromwell.Services;
 using Gaia.Helpers;
+using Turtle.Contract.Services;
 
 namespace Cromwell.Ui;
 
@@ -27,8 +27,10 @@ public partial class CredentialView : UserControl
         AddHandler(DragDrop.DragOverEvent, DragOver);
     }
 
-    public CredentialViewModel ViewModel =>
-        (CredentialViewModel)(DataContext ?? throw new NullReferenceException());
+    public CredentialViewModel ViewModel
+    {
+        get => (CredentialViewModel)(DataContext ?? throw new NullReferenceException());
+    }
 
     private void DragOver(object? sender, DragEventArgs e)
     {
@@ -75,15 +77,20 @@ public partial class CredentialView : UserControl
         {
             case "DropRoot":
             {
-                _credentialService.EditAsync([
-                        new(id)
-                        {
-                            IsEditParentId = true,
-                            ParentId = null,
-                        },
-                    ], CancellationToken.None)
-                    .GetAwaiter()
-                    .GetResult();
+                _credentialService.PostAsync(new()
+                    {
+                        EditCredentials =
+                        [
+                            new()
+                            {
+                                Id = id,
+                                IsEditParentId = true,
+                                ParentId = null,
+                            },
+                        ],
+                    }, CancellationToken.None)
+                   .GetAwaiter()
+                   .GetResult();
 
                 break;
             }
@@ -106,15 +113,20 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _credentialService.EditAsync([
-                        new(id)
-                        {
-                            IsEditParentId = true,
-                            ParentId = viewModel.Id,
-                        },
-                    ], CancellationToken.None)
-                    .GetAwaiter()
-                    .GetResult();
+                _credentialService.PostAsync(new()
+                    {
+                        EditCredentials =
+                        [
+                            new()
+                            {
+                                Id = id,
+                                IsEditParentId = true,
+                                ParentId = viewModel.Id,
+                            },
+                        ],
+                    }, CancellationToken.None)
+                   .GetAwaiter()
+                   .GetResult();
 
                 break;
             }
@@ -137,9 +149,20 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _credentialService.ChangeOrderAsync(viewModel.Id, [id,], false, CancellationToken.None)
-                    .GetAwaiter()
-                    .GetResult();
+                _credentialService.PostAsync(new()
+                    {
+                        ChangeOrders =
+                        [
+                            new()
+                            {
+                                InsertIds = [id],
+                                IsAfter = false,
+                                StartId = viewModel.Id,
+                            },
+                        ],
+                    }, CancellationToken.None)
+                   .GetAwaiter()
+                   .GetResult();
 
                 break;
             }
@@ -162,9 +185,20 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _credentialService.ChangeOrderAsync(viewModel.Id, [id,], true, CancellationToken.None)
-                    .GetAwaiter()
-                    .GetResult();
+                _credentialService.PostAsync(new()
+                    {
+                        ChangeOrders =
+                        [
+                            new()
+                            {
+                                InsertIds = [id],
+                                IsAfter = true,
+                                StartId = viewModel.Id,
+                            },
+                        ],
+                    }, CancellationToken.None)
+                   .GetAwaiter()
+                   .GetResult();
 
                 break;
             }

@@ -1,29 +1,29 @@
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Cromwell.Db;
 using Gaia.Errors;
 using Gaia.Helpers;
 using Inanna.Generator;
 using Inanna.Models;
+using Turtle.Contract.Models;
 
 namespace Cromwell.Ui;
 
 [EditNotify]
 public partial class CredentialParametersViewModel : ViewModelBase
 {
-    public CredentialParametersViewModel(CredentialEntity entity) : this(entity.Id)
+    public CredentialParametersViewModel(Credential item) : this(item.Id)
     {
-        Name = entity.Name;
-        Login = entity.Login;
-        Key = entity.Key;
-        IsAvailableUpperLatin = entity.IsAvailableUpperLatin;
-        IsAvailableLowerLatin = entity.IsAvailableLowerLatin;
-        IsAvailableNumber = entity.IsAvailableNumber;
-        IsAvailableSpecialSymbols = entity.IsAvailableSpecialSymbols;
-        CustomAvailableCharacters = entity.CustomAvailableCharacters;
-        Length = entity.Length;
-        Regex = entity.Regex;
-        Type = entity.Type;
+        Name = item.Name;
+        Login = item.Login;
+        Key = item.Key;
+        IsAvailableUpperLatin = item.IsAvailableUpperLatin;
+        IsAvailableLowerLatin = item.IsAvailableLowerLatin;
+        IsAvailableNumber = item.IsAvailableNumber;
+        IsAvailableSpecialSymbols = item.IsAvailableSpecialSymbols;
+        CustomAvailableCharacters = item.CustomAvailableCharacters;
+        Length = item.Length;
+        Regex = item.Regex;
+        Type = item.Type;
         ResetEdit();
     }
 
