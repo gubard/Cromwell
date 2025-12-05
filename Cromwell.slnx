@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/Gaia/">
+    <Project Path="../Gaia/Gaia/Gaia.csproj" />
+  </Folder>
+  <Folder Name="/Inanna/">
+    <Project Path="../Inanna/Inanna.SourceGenerator/Inanna.SourceGenerator.csproj" />
+    <Project Path="../Inanna/Inanna/Inanna.csproj" />
+  </Folder>
+  <Folder Name="/Nestor/">
+    <Project Path="../Nestor/Nestor.Db.Sqlite/Nestor.Db.Sqlite.csproj" />
+    <Project Path="../Nestor/Nestor.Db/Nestor.Db.csproj" />
+    <Project Path="../Nestor/Nestor.SourceGenerator/Nestor.SourceGenerator.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Cromwell/Cromwell.csproj" />
+</Solution>
