@@ -3,6 +3,7 @@ using Avalonia;
 using Cromwell.Models;
 using Cromwell.Ui;
 using Gaia.Helpers;
+using Gaia.Models;
 using Gaia.Services;
 using Inanna.Services;
 using Inanna.Ui;
@@ -37,7 +38,7 @@ namespace Cromwell.Services;
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
-    public static ICredentialService GetCredentialService(CredentialServiceOptions options, ITryPolicyService tryPolicyService)
+    public static ICredentialService GetCredentialService(CredentialServiceOptions options, ITryPolicyService tryPolicyService, IFactory<Memory<HttpHeader>> headersFactory)
     {
         return new CredentialService(new()
         {
@@ -46,7 +47,7 @@ public interface ICromwellServiceProvider
         {
             TypeInfoResolver = TurtleJsonContext.Resolver,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        }, tryPolicyService);
+        }, tryPolicyService, headersFactory);
     }
 
     public static INotificationService GetNotificationService()
