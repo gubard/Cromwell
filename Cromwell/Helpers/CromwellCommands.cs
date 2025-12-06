@@ -66,15 +66,9 @@ public static class CromwellCommands
             await navigator.NavigateToAsync(
                 new CredentialViewModel(credentialService, dialogService, stringFormater, appResourceService, navigator,
                     notificationService, parameters), ct));
-
-        NavigateToRootCredentialsViewCommand = UiHelper.CreateCommand(async ct =>
-            await navigator.NavigateToAsync(
-                new RootCredentialsViewModel(credentialService, dialogService, stringFormater, appResourceService,
-                    navigator, notificationService), ct));
     }
 
     public static readonly ICommand GeneratePasswordCommand;
     public static readonly ICommand LoginToClipboardCommand;
     public static readonly ICommand OpenCredentialCommand;
-    public static readonly ICommand NavigateToRootCredentialsViewCommand;
 }
