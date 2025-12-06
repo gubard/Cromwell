@@ -1,4 +1,5 @@
 using Avalonia.Collections;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Services;
 using Inanna.Helpers;
@@ -8,7 +9,7 @@ using Turtle.Contract.Services;
 
 namespace Cromwell.Ui;
 
-public partial class RootCredentialsViewModel : ViewModelBase
+public partial class RootCredentialsViewModel : ViewModelBase, IHeader
 {
     private readonly ICredentialService _credentialService;
     private readonly IDialogService _dialogService;
@@ -35,6 +36,18 @@ public partial class RootCredentialsViewModel : ViewModelBase
     }
 
     public AvaloniaList<CredentialParametersViewModel> Credentials { get; } = new();
+
+    public object Header
+    {
+        get => new TextBlock
+        {
+            Text = _appResourceService.GetResource<string>("Lang.Credentials"),
+            Classes =
+            {
+                "h2",
+            },
+        };
+    }
 
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken cancellationToken)
