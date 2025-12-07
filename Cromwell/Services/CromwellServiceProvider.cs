@@ -19,10 +19,8 @@ using IServiceProvider = Gaia.Services.IServiceProvider;
 namespace Cromwell.Services;
 
 [ServiceProviderModule]
-[Transient(typeof(AppSettingViewModel))]
 [Transient(typeof(RootCredentialsViewModel))]
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
-[Transient(typeof(IAppSettingService), typeof(AppSettingService))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(IUiCredentialService), Factory = nameof(GetUiCredentialService))]
@@ -33,7 +31,6 @@ namespace Cromwell.Services;
 [Singleton(typeof(IObjectPropertyStringValueGetter), typeof(ObjectPropertyStringValueGetter))]
 [Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
-[Singleton(typeof(DbContext), Factory = nameof(GetDbContext))]
 [Singleton(typeof(IServiceProvider), Factory = nameof(GetServiceProvider))]
 [Singleton(typeof(INavigator), typeof(Navigator))]
 [Singleton(typeof(IStorageService), typeof(StorageService))]
@@ -70,23 +67,5 @@ public interface ICromwellServiceProvider
     public static Application GetApplication()
     {
         return Application.Current ?? throw new NullReferenceException("Application not found");
-    }
-
-    public static DbContext GetDbContext(IStorageService storageService)
-    {
-        var appDirectory = storageService.GetAppDirectory();
-
-        if (!appDirectory.Exists)
-        {
-            appDirectory.Create();
-        }
-
-        var file = new FileInfo(Path.Combine(appDirectory.FullName, "Cromwell.db"));
-
-        var options = new DbContextOptionsBuilder<SqliteNestorDbContext>()
-           .UseSqlite($"Data Source={file}")
-           .Options;
-
-        return new SqliteNestorDbContext(options);
     }
 }

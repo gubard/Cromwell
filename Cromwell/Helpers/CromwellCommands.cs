@@ -1,6 +1,7 @@
 using System.Windows.Input;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
+using Cromwell.Models;
 using Cromwell.Services;
 using Cromwell.Ui;
 using Gaia.Helpers;
@@ -17,7 +18,7 @@ public static class CromwellCommands
     {
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
         var uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
-        var appSettingService = DiHelper.ServiceProvider.GetService<IAppSettingService>();
+        var appSettingService = DiHelper.ServiceProvider.GetService<ISettingsService<CromwellSettings>>();
         var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
         var passwordGeneratorService = DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
         var clipboardService = DiHelper.ServiceProvider.GetService<IClipboardService>();
@@ -27,7 +28,7 @@ public static class CromwellCommands
 
         GeneratePasswordCommand = UiHelper.CreateCommand<CredentialParametersViewModel>(async (parameters, ct) =>
         {
-            var settings = await appSettingService.GetAppSettingsAsync();
+            var settings = await appSettingService.GetSettingsAsync(ct);
 
             var password = passwordGeneratorService.GeneratePassword($"{settings.GeneralKey}{parameters.Key}",
                 new(
