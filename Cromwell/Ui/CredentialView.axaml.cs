@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using Cromwell.Services;
 using Gaia.Helpers;
 using Turtle.Contract.Services;
 
@@ -17,12 +18,12 @@ public partial class CredentialView : UserControl
         "DropParent",
     };
 
-    private readonly ICredentialService _credentialService;
+    private readonly IUiCredentialService _uiCredentialService;
 
     public CredentialView()
     {
         InitializeComponent();
-        _credentialService = DiHelper.ServiceProvider.GetService<ICredentialService>();
+        _uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
         AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(DragDrop.DragOverEvent, DragOver);
     }
@@ -77,7 +78,7 @@ public partial class CredentialView : UserControl
         {
             case "DropRoot":
             {
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         EditCredentials =
                         [
@@ -113,7 +114,7 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         EditCredentials =
                         [
@@ -149,7 +150,7 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         ChangeOrders =
                         [
@@ -185,7 +186,7 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         ChangeOrders =
                         [

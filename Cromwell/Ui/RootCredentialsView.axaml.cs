@@ -18,12 +18,12 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
         "DropParent",
     };
 
-    private readonly ICredentialService _credentialService;
+    private readonly IUiCredentialService _uiCredentialService;
 
     public RootCredentialsView()
     {
         InitializeComponent();
-        _credentialService = DiHelper.ServiceProvider.GetService<ICredentialService>();
+        _uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
         AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(DragDrop.DragOverEvent, DragOver);
     }
@@ -76,7 +76,7 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
         {
             case "DropRoot":
             {
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         EditCredentials =
                         [
@@ -112,7 +112,7 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         EditCredentials =
                         [
@@ -148,7 +148,7 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         ChangeOrders =
                         [
@@ -184,7 +184,7 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         ChangeOrders =
                         [

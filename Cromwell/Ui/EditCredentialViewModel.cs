@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
+using Cromwell.Services;
 using Inanna.Models;
 using Inanna.Services;
 using Turtle.Contract.Services;
@@ -8,19 +9,19 @@ namespace Cromwell.Ui;
 
 public partial class EditCredentialViewModel : ViewModelBase
 {
-    private readonly ICredentialService _credentialService;
+    private readonly IUiCredentialService _uiCredentialService;
     private readonly INotificationService _notificationService;
-    private readonly IApplicationResourceService _appResourceService;
+    private readonly IAppResourceService _appResourceService;
 
     public EditCredentialViewModel(
         CredentialParametersViewModel credentialParameters,
-        ICredentialService credentialService,
+        IUiCredentialService uiCredentialService,
         INotificationService notificationService,
-        IApplicationResourceService appResourceService
+        IAppResourceService appResourceService
     )
     {
         CredentialParameters = credentialParameters;
-        _credentialService = credentialService;
+        _uiCredentialService = uiCredentialService;
         _notificationService = notificationService;
         _appResourceService = appResourceService;
         CredentialParameters.PropertyChanged += (_, e) => OnPropertyChanged(nameof(CanSave));
@@ -45,7 +46,7 @@ public partial class EditCredentialViewModel : ViewModelBase
                 return;
             }
 
-            await _credentialService.PostAsync(new()
+            await _uiCredentialService.PostAsync(new()
             {
                 EditCredentials =
                 [

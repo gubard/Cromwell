@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using Cromwell.Services;
 using Gaia.Helpers;
 using Inanna.Services;
 using Turtle.Contract.Services;
@@ -18,13 +19,13 @@ public partial class CredentialHeaderView : UserControl
         "DropParent",
     };
 
-    private readonly ICredentialService _credentialService;
+    private readonly IUiCredentialService _uiCredentialService;
     private readonly INavigator _navigator;
 
     public CredentialHeaderView()
     {
         InitializeComponent();
-        _credentialService = DiHelper.ServiceProvider.GetService<ICredentialService>();
+        _uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
         _navigator = DiHelper.ServiceProvider.GetService<INavigator>();
         AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(DragDrop.DragOverEvent, DragOver);
@@ -80,7 +81,7 @@ public partial class CredentialHeaderView : UserControl
         {
             case "DropRoot":
             {
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         EditCredentials =
                         [
@@ -116,7 +117,7 @@ public partial class CredentialHeaderView : UserControl
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         EditCredentials =
                         [
@@ -152,7 +153,7 @@ public partial class CredentialHeaderView : UserControl
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         ChangeOrders =
                         [
@@ -188,7 +189,7 @@ public partial class CredentialHeaderView : UserControl
                     return;
                 }
 
-                _credentialService.PostAsync(new()
+                _uiCredentialService.PostAsync(new()
                     {
                         ChangeOrders =
                         [

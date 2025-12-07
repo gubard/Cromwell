@@ -11,23 +11,23 @@ namespace Cromwell.Ui;
 
 public partial class RootCredentialsViewModel : ViewModelBase, IHeader
 {
-    private readonly ICredentialService _credentialService;
+    private readonly IUiCredentialService _uiCredentialService;
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;
-    private readonly IApplicationResourceService _appResourceService;
+    private readonly IAppResourceService _appResourceService;
     private readonly INavigator _navigator;
     private readonly INotificationService _notificationService;
 
     public RootCredentialsViewModel(
-        ICredentialService credentialService,
+        IUiCredentialService uiCredentialService,
         IDialogService dialogService,
         IStringFormater stringFormater,
-        IApplicationResourceService appResourceService,
+        IAppResourceService appResourceService,
         INavigator navigator,
         INotificationService notificationService
     )
     {
-        _credentialService = credentialService;
+        _uiCredentialService = uiCredentialService;
         _dialogService = dialogService;
         _stringFormater = stringFormater;
         _appResourceService = appResourceService;
@@ -55,7 +55,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
         await WrapCommand(async () =>
         {
             Credentials.Clear();
-            var response = await _credentialService.GetAsync(new()
+            var response = await _uiCredentialService.GetAsync(new()
             {
                 IsGetRoots = true,
             }, cancellationToken);
@@ -70,7 +70,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
     {
         await WrapCommand(() =>
             _navigator.NavigateToAsync(
-                new EditCredentialViewModel(credential, _credentialService, _notificationService,
+                new EditCredentialViewModel(credential, _uiCredentialService, _notificationService,
                     _appResourceService), cancellationToken));
     }
 
@@ -79,7 +79,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
     {
         await WrapCommand(async () =>
         {
-            await _credentialService.PostAsync(new()
+            await _uiCredentialService.PostAsync(new()
             {
                 DeleteIds = [parametersViewModel.Id],
             }, cancellationToken);
@@ -111,7 +111,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
                 return;
             }
 
-            await _credentialService.PostAsync(new()
+            await _uiCredentialService.PostAsync(new()
             {
                 CreateCredentials =
                 [

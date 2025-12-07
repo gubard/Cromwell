@@ -5,11 +5,13 @@ using Cromwell.Ui;
 using Gaia.Helpers;
 using Gaia.Models;
 using Gaia.Services;
+using Inanna.Models;
 using Inanna.Services;
 using Inanna.Ui;
 using Jab;
 using Microsoft.EntityFrameworkCore;
 using Nestor.Db.Sqlite;
+using Nestor.Db.Sqlite.Helpers;
 using Turtle.Contract.Models;
 using Turtle.Contract.Services;
 using IServiceProvider = Gaia.Services.IServiceProvider;
@@ -23,10 +25,10 @@ namespace Cromwell.Services;
 [Transient(typeof(IAppSettingService), typeof(AppSettingService))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
-[Transient(typeof(ICredentialService), Factory = nameof(GetCredentialService))]
+[Transient(typeof(IUiCredentialService), Factory = nameof(GetUiCredentialService))]
 [Transient(typeof(INotificationService), Factory = nameof(GetNotificationService))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
-[Singleton(typeof(IApplicationResourceService), typeof(ApplicationResourceService))]
+[Singleton(typeof(IAppResourceService), typeof(AppResourceService))]
 [Singleton(typeof(IStringFormater), typeof(StringFormater))]
 [Singleton(typeof(IObjectPropertyStringValueGetter), typeof(ObjectPropertyStringValueGetter))]
 [Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
@@ -38,16 +40,16 @@ namespace Cromwell.Services;
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
-    public static ICredentialService GetCredentialService(CredentialServiceOptions options, ITryPolicyService tryPolicyService, IFactory<Memory<HttpHeader>> headersFactory)
+    public static IUiCredentialService GetUiCredentialService(CredentialServiceOptions options, ITryPolicyService tryPolicyService, IFactory<Memory<HttpHeader>> headersFactory, AppState appState)
     {
-        return new CredentialService(new()
+        return new UiCredentialService(new CredentialHttpService(new()
         {
             BaseAddress = new(options.Url),
         }, new()
         {
             TypeInfoResolver = TurtleJsonContext.Resolver,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        }, tryPolicyService, headersFactory);
+        }, tryPolicyService, headersFactory), new EfCredentialService(new FileInfo($"./storage/Cromwell/{appState.User.ThrowIfNull().Id}.db").InitDbContext()), appState);
     }
 
     public static INotificationService GetNotificationService()

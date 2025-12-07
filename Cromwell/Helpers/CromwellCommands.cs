@@ -16,9 +16,9 @@ public static class CromwellCommands
     static CromwellCommands()
     {
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
-        var credentialService = DiHelper.ServiceProvider.GetService<ICredentialService>();
+        var uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
         var appSettingService = DiHelper.ServiceProvider.GetService<IAppSettingService>();
-        var appResourceService = DiHelper.ServiceProvider.GetService<IApplicationResourceService>();
+        var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
         var passwordGeneratorService = DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
         var clipboardService = DiHelper.ServiceProvider.GetService<IClipboardService>();
         var notificationService = DiHelper.ServiceProvider.GetService<INotificationService>();
@@ -64,7 +64,7 @@ public static class CromwellCommands
 
         OpenCredentialCommand = UiHelper.CreateCommand<CredentialParametersViewModel>(async (parameters, ct) =>
             await navigator.NavigateToAsync(
-                new CredentialViewModel(credentialService, dialogService, stringFormater, appResourceService, navigator,
+                new CredentialViewModel(uiCredentialService, dialogService, stringFormater, appResourceService, navigator,
                     notificationService, parameters), ct));
     }
 
