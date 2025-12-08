@@ -37,14 +37,14 @@ public interface ICromwellServiceProvider
 {
     public static IUiCredentialService GetUiCredentialService(CredentialServiceOptions options, ITryPolicyService tryPolicyService, IFactory<Memory<HttpHeader>> headersFactory, AppState appState)
     {
-        return new UiCredentialService(new CredentialHttpService(new()
+        return new UiCredentialService(new(new()
         {
             BaseAddress = new(options.Url),
         }, new()
         {
             TypeInfoResolver = TurtleJsonContext.Resolver,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        }, tryPolicyService, headersFactory), new EfCredentialService(new FileInfo($"./storage/Cromwell/{appState.User.ThrowIfNull().Id}.db").InitDbContext()), appState);
+        }, tryPolicyService, headersFactory), new(new FileInfo($"./storage/Cromwell/{appState.User.ThrowIfNull().Id}.db").InitDbContext()), appState);
     }
 
     public static INotificationService GetNotificationService()

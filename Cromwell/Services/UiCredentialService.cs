@@ -9,10 +9,10 @@ public interface IUiCredentialService : IUiService<TurtleGetRequest,
     TurtlePostRequest, TurtleGetResponse, TurtlePostResponse>;
 
 public sealed class UiCredentialService(
-    CredentialHttpService httpService,
+    HttpCredentialService service,
     EfCredentialService efService,
     AppState appState)
     :
         UiService<TurtleGetRequest, TurtlePostRequest, TurtleGetResponse,
-            TurtlePostResponse, CredentialHttpService, EfCredentialService>(
-            httpService, efService, appState), IUiCredentialService;
+            TurtlePostResponse, HttpCredentialService, EfCredentialService>(
+            service, efService, appState), IUiCredentialService;
