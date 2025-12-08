@@ -9,8 +9,6 @@ using Inanna.Models;
 using Inanna.Services;
 using Inanna.Ui;
 using Jab;
-using Microsoft.EntityFrameworkCore;
-using Nestor.Db.Sqlite;
 using Nestor.Db.Sqlite.Helpers;
 using Turtle.Contract.Models;
 using Turtle.Contract.Services;

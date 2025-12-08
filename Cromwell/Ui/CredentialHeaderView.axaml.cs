@@ -5,7 +5,6 @@ using Avalonia.VisualTree;
 using Cromwell.Services;
 using Gaia.Helpers;
 using Inanna.Services;
-using Turtle.Contract.Services;
 
 namespace Cromwell.Ui;
 
