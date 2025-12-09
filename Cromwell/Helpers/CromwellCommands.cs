@@ -24,7 +24,7 @@ public static class CromwellCommands
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
 
-        GeneratePasswordCommand = UiHelper.CreateCommand<CredentialParametersViewModel>(async (parameters, ct) =>
+        GeneratePasswordCommand = UiHelper.CreateCommand<CredentialNotify>(async (parameters, ct) =>
         {
             var settings = await appSettingService.GetSettingsAsync(ct);
 
@@ -46,7 +46,7 @@ public static class CromwellCommands
             }, NotificationType.Success);
         });
 
-        LoginToClipboardCommand = UiHelper.CreateCommand<CredentialParametersViewModel>(async (parameters, ct) =>
+        LoginToClipboardCommand = UiHelper.CreateCommand<CredentialNotify>(async (parameters, ct) =>
         {
             await clipboardService.SetTextAsync(parameters.Login, ct);
 
@@ -61,7 +61,7 @@ public static class CromwellCommands
             }, NotificationType.Success);
         });
 
-        OpenCredentialCommand = UiHelper.CreateCommand<CredentialParametersViewModel>(async (parameters, ct) =>
+        OpenCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(async (parameters, ct) =>
             await navigator.NavigateToAsync(
                 new CredentialViewModel(uiCredentialService, dialogService, stringFormater, appResourceService, navigator,
                     notificationService, parameters), ct));

@@ -11,7 +11,6 @@ using Inanna.Ui;
 using Jab;
 using Nestor.Db.Sqlite.Helpers;
 using Turtle.Contract.Models;
-using Turtle.Contract.Services;
 using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Services;
@@ -21,12 +20,17 @@ namespace Cromwell.Services;
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
-[Transient(typeof(IUiCredentialService), Factory = nameof(GetUiCredentialService))]
-[Transient(typeof(INotificationService), Factory = nameof(GetNotificationService))]
+[Transient(typeof(IUiCredentialService),
+    Factory = nameof(GetUiCredentialService))]
+[Transient(typeof(INotificationService),
+    Factory = nameof(GetNotificationService))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
+[Singleton(typeof(ICredentialCache),
+    typeof(CredentialCache))]
 [Singleton(typeof(IAppResourceService), typeof(AppResourceService))]
 [Singleton(typeof(IStringFormater), typeof(StringFormater))]
-[Singleton(typeof(IObjectPropertyStringValueGetter), typeof(ObjectPropertyStringValueGetter))]
+[Singleton(typeof(IObjectPropertyStringValueGetter),
+    typeof(ObjectPropertyStringValueGetter))]
 [Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
 [Singleton(typeof(IServiceProvider), Factory = nameof(GetServiceProvider))]
@@ -35,21 +39,28 @@ namespace Cromwell.Services;
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
-    public static IUiCredentialService GetUiCredentialService(CredentialServiceOptions options, ITryPolicyService tryPolicyService, IFactory<Memory<HttpHeader>> headersFactory, AppState appState)
+    public static IUiCredentialService GetUiCredentialService(
+        CredentialServiceOptions options, ITryPolicyService tryPolicyService,
+        IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
+        ICredentialCache cache)
     {
         return new UiCredentialService(new(new()
-        {
-            BaseAddress = new(options.Url),
-        }, new()
-        {
-            TypeInfoResolver = TurtleJsonContext.Resolver,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        }, tryPolicyService, headersFactory), new(new FileInfo($"./storage/Cromwell/{appState.User.ThrowIfNull().Id}.db").InitDbContext()), appState);
+            {
+                BaseAddress = new(options.Url),
+            }, new()
+            {
+                TypeInfoResolver = TurtleJsonContext.Resolver,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            }, tryPolicyService, headersFactory),
+            new(new FileInfo(
+                    $"./storage/Cromwell/{appState.User.ThrowIfNull().Id}.db")
+               .InitDbContext()), appState, cache);
     }
 
     public static INotificationService GetNotificationService()
     {
-        return new NotificationService("Notifications", TimeSpan.FromSeconds(5));
+        return new NotificationService("Notifications",
+            TimeSpan.FromSeconds(5));
     }
 
     public static IDialogService GetDialogService()
@@ -64,6 +75,7 @@ public interface ICromwellServiceProvider
 
     public static Application GetApplication()
     {
-        return Application.Current ?? throw new NullReferenceException("Application not found");
+        return Application.Current
+         ?? throw new NullReferenceException("Application not found");
     }
 }

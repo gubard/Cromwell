@@ -1,6 +1,6 @@
-using Avalonia.Collections;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
+using Cromwell.Models;
 using Cromwell.Services;
 using Inanna.Helpers;
 using Inanna.Models;
@@ -16,6 +16,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
     private readonly IAppResourceService _appResourceService;
     private readonly INavigator _navigator;
     private readonly INotificationService _notificationService;
+    private readonly ICredentialCache _credentialCache;
 
     public RootCredentialsViewModel(
         IUiCredentialService uiCredentialService,
@@ -23,8 +24,8 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
         INavigator navigator,
-        INotificationService notificationService
-    )
+        INotificationService notificationService,
+        ICredentialCache credentialCache)
     {
         _uiCredentialService = uiCredentialService;
         _dialogService = dialogService;
@@ -32,9 +33,13 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
         _appResourceService = appResourceService;
         _navigator = navigator;
         _notificationService = notificationService;
+        _credentialCache = credentialCache;
     }
 
-    public AvaloniaList<CredentialParametersViewModel> Credentials { get; } = new();
+    public IEnumerable<CredentialNotify> Credentials
+    {
+        get => _credentialCache.Roots;
+    }
 
     public object Header
     {
@@ -52,29 +57,27 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
     private async Task InitializedAsync(CancellationToken cancellationToken)
     {
         await WrapCommand(async () =>
-        {
-            Credentials.Clear();
-            var response = await _uiCredentialService.GetAsync(new()
+            await _uiCredentialService.GetAsync(new()
             {
                 IsGetRoots = true,
-            }, cancellationToken);
-
-            Credentials.AddRange(response.Roots.OrderBy(x => x.OrderIndex)
-               .Select(x => new CredentialParametersViewModel(x)));
-        });
+            }, cancellationToken));
     }
 
     [RelayCommand]
-    private async Task EditAsync(CredentialParametersViewModel credential, CancellationToken cancellationToken)
+    private async Task EditAsync(CredentialParametersViewModel credential,
+        CancellationToken cancellationToken)
     {
         await WrapCommand(() =>
             _navigator.NavigateToAsync(
-                new EditCredentialViewModel(credential, _uiCredentialService, _notificationService,
+                new EditCredentialViewModel(credential, _uiCredentialService,
+                    _notificationService,
                     _appResourceService), cancellationToken));
     }
 
     [RelayCommand]
-    private async Task DeleteAsync(CredentialParametersViewModel parametersViewModel, CancellationToken cancellationToken)
+    private async Task DeleteAsync(
+        CredentialParametersViewModel parametersViewModel,
+        CancellationToken cancellationToken)
     {
         await WrapCommand(async () =>
         {
@@ -89,17 +92,24 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken cancellationToken)
     {
-        var credential = new CredentialParametersViewModel(Guid.CreateVersion7());
+        var credential =
+            new CredentialParametersViewModel(Guid.CreateVersion7());
 
         await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
-            _stringFormater.Format(_appResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                _appResourceService.GetResource<string>("Lang.Credential")), credential,
-            new DialogButton(_appResourceService.GetResource<string>("Lang.Create"), CreateCommand,
+            _stringFormater.Format(
+                _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                _appResourceService.GetResource<string>("Lang.Credential")),
+            credential,
+            new DialogButton(
+                _appResourceService.GetResource<string>("Lang.Create"),
+                CreateCommand,
                 credential, DialogButtonType.Primary), UiHelper.CancelButton)));
     }
 
     [RelayCommand]
-    private async Task CreateAsync(CredentialParametersViewModel parametersViewModel, CancellationToken cancellationToken)
+    private async Task CreateAsync(
+        CredentialParametersViewModel parametersViewModel,
+        CancellationToken cancellationToken)
     {
         await WrapCommand(async () =>
         {
@@ -120,11 +130,16 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
                         Name = parametersViewModel.Name,
                         Login = parametersViewModel.Login,
                         Key = parametersViewModel.Key,
-                        IsAvailableUpperLatin = parametersViewModel.IsAvailableUpperLatin,
-                        IsAvailableLowerLatin = parametersViewModel.IsAvailableLowerLatin,
-                        IsAvailableNumber = parametersViewModel.IsAvailableNumber,
-                        IsAvailableSpecialSymbols = parametersViewModel.IsAvailableSpecialSymbols,
-                        CustomAvailableCharacters = parametersViewModel.CustomAvailableCharacters,
+                        IsAvailableUpperLatin =
+                            parametersViewModel.IsAvailableUpperLatin,
+                        IsAvailableLowerLatin =
+                            parametersViewModel.IsAvailableLowerLatin,
+                        IsAvailableNumber =
+                            parametersViewModel.IsAvailableNumber,
+                        IsAvailableSpecialSymbols = parametersViewModel
+                           .IsAvailableSpecialSymbols,
+                        CustomAvailableCharacters = parametersViewModel
+                           .CustomAvailableCharacters,
                         Length = parametersViewModel.Length,
                         Regex = parametersViewModel.Regex,
                         Type = parametersViewModel.Type,

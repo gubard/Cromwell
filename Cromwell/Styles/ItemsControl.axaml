@@ -4,10 +4,11 @@
         xmlns:h="clr-namespace:Cromwell.Helpers"
         xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
-        xmlns:m="clr-namespace:Turtle.Contract.Models;assembly=Turtle.Contract">
+        xmlns:m="clr-namespace:Turtle.Contract.Models;assembly=Turtle.Contract"
+        xmlns:cm="clr-namespace:Cromwell.Models">
     <Style Selector="ItemsControl.credential-view">
         <Setter Property="ItemTemplate">
-            <DataTemplate DataType="ui:CredentialParametersViewModel">
+            <DataTemplate DataType="cm:CredentialNotify">
                 <Button Classes="alignment-stretch"
                         Command="{x:Static h:CromwellCommands.OpenCredentialCommand}"
                         CommandParameter="{Binding}">
