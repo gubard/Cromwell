@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using Cromwell.Models;
 using Cromwell.Services;
 using Gaia.Helpers;
 
@@ -77,20 +78,18 @@ public partial class CredentialView : UserControl
         {
             case "DropRoot":
             {
-                _uiCredentialService.PostAsync(new()
-                    {
-                        EditCredentials =
-                        [
-                            new()
-                            {
-                                Id = id,
-                                IsEditParentId = true,
-                                ParentId = null,
-                            },
-                        ],
-                    }, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                _uiCredentialService.Post(new()
+                {
+                    EditCredentials =
+                    [
+                        new()
+                        {
+                            Id = id,
+                            IsEditParentId = true,
+                            ParentId = null,
+                        },
+                    ],
+                });
 
                 break;
             }
@@ -101,7 +100,7 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+                var viewModel = dataContextProvider.DataContext.As<CredentialNotify>();
 
                 if (viewModel is null)
                 {
@@ -113,20 +112,18 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _uiCredentialService.PostAsync(new()
-                    {
-                        EditCredentials =
-                        [
-                            new()
-                            {
-                                Id = id,
-                                IsEditParentId = true,
-                                ParentId = viewModel.Id,
-                            },
-                        ],
-                    }, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                _uiCredentialService.Post(new()
+                {
+                    EditCredentials =
+                    [
+                        new()
+                        {
+                            Id = id,
+                            IsEditParentId = true,
+                            ParentId = viewModel.Id,
+                        },
+                    ],
+                });
 
                 break;
             }
@@ -137,7 +134,7 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+                var viewModel = dataContextProvider.DataContext.As<CredentialNotify>();
 
                 if (viewModel is null)
                 {
@@ -149,20 +146,18 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _uiCredentialService.PostAsync(new()
-                    {
-                        ChangeOrders =
-                        [
-                            new()
-                            {
-                                InsertIds = [id],
-                                IsAfter = false,
-                                StartId = viewModel.Id,
-                            },
-                        ],
-                    }, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                _uiCredentialService.Post(new()
+                {
+                    ChangeOrders =
+                    [
+                        new()
+                        {
+                            InsertIds = [id],
+                            IsAfter = false,
+                            StartId = viewModel.Id,
+                        },
+                    ],
+                });
 
                 break;
             }
@@ -173,7 +168,7 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+                var viewModel = dataContextProvider.DataContext.As<CredentialNotify>();
 
                 if (viewModel is null)
                 {
@@ -185,20 +180,18 @@ public partial class CredentialView : UserControl
                     return;
                 }
 
-                _uiCredentialService.PostAsync(new()
-                    {
-                        ChangeOrders =
-                        [
-                            new()
-                            {
-                                InsertIds = [id],
-                                IsAfter = true,
-                                StartId = viewModel.Id,
-                            },
-                        ],
-                    }, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                _uiCredentialService.Post(new()
+                {
+                    ChangeOrders =
+                    [
+                        new()
+                        {
+                            InsertIds = [id],
+                            IsAfter = true,
+                            StartId = viewModel.Id,
+                        },
+                    ],
+                });
 
                 break;
             }

@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
+using Cromwell.Models;
 using Cromwell.Ui;
 using Gaia.Helpers;
 using Inanna.Helpers;
@@ -50,7 +51,7 @@ public static class InputElementAssist
             return;
         }
 
-        if (dataContextProvider.DataContext is not CredentialParametersViewModel credentialParametersViewModel)
+        if (dataContextProvider.DataContext is not CredentialNotify credentialParametersViewModel)
         {
             return;
         }

@@ -44,8 +44,8 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
         {
             var item = GetItem(id);
             item.Parents.Clear();
-            item.Parents.AddRange(items.OrderBy(x => x.OrderIndex)
-               .Select(x => UpdateCredential(x, updatedIds)));
+            item.Parents.AddRange(items.Select(x =>
+                UpdateCredential(x, updatedIds)));
         }
     }
 

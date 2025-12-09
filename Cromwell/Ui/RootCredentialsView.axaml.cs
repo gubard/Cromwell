@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using Cromwell.Models;
 using Cromwell.Services;
 using Gaia.Helpers;
 
@@ -9,7 +10,7 @@ namespace Cromwell.Ui;
 
 public partial class RootCredentialsView : UserControl
 {
-private readonly ReadOnlyMemory<string> _dropTags = new[]
+    private readonly ReadOnlyMemory<string> _dropTags = new[]
     {
         "DropRoot",
         "DropUp",
@@ -22,13 +23,17 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
     public RootCredentialsView()
     {
         InitializeComponent();
-        _uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
+        _uiCredentialService =
+            DiHelper.ServiceProvider.GetService<IUiCredentialService>();
         AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(DragDrop.DragOverEvent, DragOver);
     }
 
-    public RootCredentialsViewModel ViewModel =>
-        (RootCredentialsViewModel)(DataContext ?? throw new NullReferenceException());
+    public RootCredentialsViewModel ViewModel
+    {
+        get => (RootCredentialsViewModel)(DataContext
+         ?? throw new NullReferenceException());
+    }
 
     private void DragOver(object? sender, DragEventArgs e)
     {
@@ -62,7 +67,8 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
     private void Drop(object? sender, DragEventArgs e)
     {
         var tag = FindObjectDropTag(e.Source);
-        var data = e.DataTransfer.Items[0].TryGetRaw(e.DataTransfer.Items[0].Formats[0]).As<byte[]>();
+        var data = e.DataTransfer.Items[0]
+           .TryGetRaw(e.DataTransfer.Items[0].Formats[0]).As<byte[]>();
 
         if (data is null)
         {
@@ -71,24 +77,22 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
 
         var id = new Guid(data);
 
-       switch (tag)
+        switch (tag)
         {
             case "DropRoot":
             {
-                _uiCredentialService.PostAsync(new()
-                    {
-                        EditCredentials =
-                        [
-                            new()
-                            {
-                                Id = id,
-                                IsEditParentId = true,
-                                ParentId = null,
-                            },
-                        ],
-                    }, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                _uiCredentialService.Post(new()
+                {
+                    EditCredentials =
+                    [
+                        new()
+                        {
+                            Id = id,
+                            IsEditParentId = true,
+                            ParentId = null,
+                        },
+                    ],
+                });
 
                 break;
             }
@@ -99,7 +103,8 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+                var viewModel = dataContextProvider.DataContext
+                   .As<CredentialNotify>();
 
                 if (viewModel is null)
                 {
@@ -111,20 +116,18 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _uiCredentialService.PostAsync(new()
-                    {
-                        EditCredentials =
-                        [
-                            new()
-                            {
-                                Id = id,
-                                IsEditParentId = true,
-                                ParentId = viewModel.Id,
-                            },
-                        ],
-                    }, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                _uiCredentialService.Post(new()
+                {
+                    EditCredentials =
+                    [
+                        new()
+                        {
+                            Id = id,
+                            IsEditParentId = true,
+                            ParentId = viewModel.Id,
+                        },
+                    ],
+                });
 
                 break;
             }
@@ -135,7 +138,8 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+                var viewModel = dataContextProvider.DataContext
+                   .As<CredentialNotify>();
 
                 if (viewModel is null)
                 {
@@ -147,20 +151,18 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _uiCredentialService.PostAsync(new()
-                    {
-                        ChangeOrders =
-                        [
-                            new()
-                            {
-                                InsertIds = [id],
-                                IsAfter = false,
-                                StartId = viewModel.Id,
-                            },
-                        ],
-                    }, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                _uiCredentialService.Post(new()
+                {
+                    ChangeOrders =
+                    [
+                        new()
+                        {
+                            InsertIds = [id],
+                            IsAfter = false,
+                            StartId = viewModel.Id,
+                        },
+                    ],
+                });
 
                 break;
             }
@@ -171,7 +173,8 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                var viewModel = dataContextProvider.DataContext.As<CredentialParametersViewModel>();
+                var viewModel = dataContextProvider.DataContext
+                   .As<CredentialNotify>();
 
                 if (viewModel is null)
                 {
@@ -183,20 +186,18 @@ private readonly ReadOnlyMemory<string> _dropTags = new[]
                     return;
                 }
 
-                _uiCredentialService.PostAsync(new()
-                    {
-                        ChangeOrders =
-                        [
-                            new()
-                            {
-                                InsertIds = [id],
-                                IsAfter = true,
-                                StartId = viewModel.Id,
-                            },
-                        ],
-                    }, CancellationToken.None)
-                   .GetAwaiter()
-                   .GetResult();
+                _uiCredentialService.Post(new()
+                {
+                    ChangeOrders =
+                    [
+                        new()
+                        {
+                            InsertIds = [id],
+                            IsAfter = true,
+                            StartId = viewModel.Id,
+                        },
+                    ],
+                });
 
                 break;
             }

@@ -1,5 +1,6 @@
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Cromwell.Models;
 using Gaia.Helpers;
 using Gaia.Models;
 using Inanna.Generator;
@@ -11,7 +12,7 @@ namespace Cromwell.Ui;
 [EditNotify]
 public partial class CredentialParametersViewModel : ViewModelBase
 {
-    public CredentialParametersViewModel(Credential item) : this(item.Id)
+    public CredentialParametersViewModel(CredentialNotify item)
     {
         Name = item.Name;
         Login = item.Login;
@@ -27,10 +28,8 @@ public partial class CredentialParametersViewModel : ViewModelBase
         ResetEdit();
     }
 
-    public CredentialParametersViewModel(Guid id)
+    public CredentialParametersViewModel()
     {
-        Id = id;
-
         SetValidation(nameof(Name),
             () => string.IsNullOrWhiteSpace(Name) ? [new PropertyEmptyValidationError(nameof(Name)),] : []);
 
@@ -52,7 +51,6 @@ public partial class CredentialParametersViewModel : ViewModelBase
                     : []);
 
         Length = 512;
-        Children = new();
         Name = string.Empty;
         Login = string.Empty;
         Key = string.Empty;
@@ -62,9 +60,6 @@ public partial class CredentialParametersViewModel : ViewModelBase
         IsAvailableLowerLatin = true;
         IsAvailableUpperLatin = true;
     }
-
-    public Guid Id { get; }
-    public AvaloniaList<CredentialParametersViewModel> Children { get; }
 
     [ObservableProperty]
     public partial bool IsEditName { get; set; }

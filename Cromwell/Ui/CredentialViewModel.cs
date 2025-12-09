@@ -52,36 +52,35 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     }
 
     [RelayCommand]
-    private async Task EditAsync(CredentialParametersViewModel credential,
-        CancellationToken cancellationToken)
+    private async Task EditAsync(CredentialNotify credential,
+        CancellationToken ct)
     {
         await WrapCommand(() =>
             _navigator.NavigateToAsync(
                 new EditCredentialViewModel(credential, _uiCredentialService,
                     _notificationService,
-                    _appResourceService), cancellationToken));
+                    _appResourceService), ct));
     }
 
     [RelayCommand]
     private async Task DeleteAsync(
-        CredentialParametersViewModel parametersViewModel,
-        CancellationToken cancellationToken)
+        CredentialNotify parametersViewModel,
+        CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
             await _uiCredentialService.PostAsync(new()
             {
                 DeleteIds = [parametersViewModel.Id],
-            }, cancellationToken);
-            await InitializedAsync(cancellationToken);
+            }, ct);
+            await InitializedAsync(ct);
         });
     }
 
     [RelayCommand]
-    private async Task ShowCreateViewAsync(CancellationToken cancellationToken)
+    private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential =
-            new CredentialParametersViewModel(Guid.CreateVersion7());
+        var credential = new CredentialParametersViewModel();
 
         await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
             _stringFormater.Format(
@@ -97,7 +96,7 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task CreateAsync(
         CredentialParametersViewModel parametersViewModel,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
@@ -114,7 +113,7 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
                     [
                         new()
                         {
-                            Id = parametersViewModel.Id,
+                            Id = Guid.NewGuid(),
                             Name = parametersViewModel.Name,
                             Login = parametersViewModel.Login,
                             Key = parametersViewModel.Key,
@@ -135,10 +134,10 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
                         },
                     ],
                 }
-                , cancellationToken);
+                , ct);
 
             _dialogService.CloseMessageBox();
-            await InitializedAsync(cancellationToken);
+            await InitializedAsync(ct);
         });
     }
 }

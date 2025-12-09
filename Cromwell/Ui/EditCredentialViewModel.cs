@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
+using Cromwell.Models;
 using Cromwell.Services;
 using Inanna.Models;
 using Inanna.Services;
@@ -11,19 +12,22 @@ public partial class EditCredentialViewModel : ViewModelBase
     private readonly IUiCredentialService _uiCredentialService;
     private readonly INotificationService _notificationService;
     private readonly IAppResourceService _appResourceService;
+    private readonly CredentialNotify _credential;
 
     public EditCredentialViewModel(
-        CredentialParametersViewModel credentialParameters,
+        CredentialNotify credential,
         IUiCredentialService uiCredentialService,
         INotificationService notificationService,
         IAppResourceService appResourceService
     )
     {
-        CredentialParameters = credentialParameters;
+        _credential = credential;
+        CredentialParameters = new(credential);
         _uiCredentialService = uiCredentialService;
         _notificationService = notificationService;
         _appResourceService = appResourceService;
-        CredentialParameters.PropertyChanged += (_, e) => OnPropertyChanged(nameof(CanSave));
+        CredentialParameters.PropertyChanged +=
+            (_, e) => OnPropertyChanged(nameof(CanSave));
     }
 
     public CredentialParametersViewModel CredentialParameters { get; }
@@ -34,7 +38,7 @@ public partial class EditCredentialViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task SaveAsync(CancellationToken cancellationToken)
+    private async Task SaveAsync(CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
@@ -51,17 +55,27 @@ public partial class EditCredentialViewModel : ViewModelBase
                 [
                     new()
                     {
-                        Id = CredentialParameters.Id,
-                        CustomAvailableCharacters = CredentialParameters.CustomAvailableCharacters,
-                        IsAvailableLowerLatin = CredentialParameters.IsAvailableLowerLatin,
-                        IsAvailableNumber = CredentialParameters.IsAvailableNumber,
-                        IsAvailableSpecialSymbols = CredentialParameters.IsAvailableSpecialSymbols,
-                        IsAvailableUpperLatin = CredentialParameters.IsAvailableUpperLatin,
-                        IsEditCustomAvailableCharacters = CredentialParameters.IsEditCustomAvailableCharacters,
-                        IsEditIsAvailableLowerLatin = CredentialParameters.IsEditIsAvailableLowerLatin,
-                        IsEditIsAvailableNumber = CredentialParameters.IsEditIsAvailableNumber,
-                        IsEditIsAvailableSpecialSymbols = CredentialParameters.IsEditIsAvailableSpecialSymbols,
-                        IsEditIsAvailableUpperLatin = CredentialParameters.IsEditIsAvailableUpperLatin,
+                        Id = _credential.Id,
+                        CustomAvailableCharacters = CredentialParameters
+                           .CustomAvailableCharacters,
+                        IsAvailableLowerLatin =
+                            CredentialParameters.IsAvailableLowerLatin,
+                        IsAvailableNumber =
+                            CredentialParameters.IsAvailableNumber,
+                        IsAvailableSpecialSymbols = CredentialParameters
+                           .IsAvailableSpecialSymbols,
+                        IsAvailableUpperLatin =
+                            CredentialParameters.IsAvailableUpperLatin,
+                        IsEditCustomAvailableCharacters = CredentialParameters
+                           .IsEditCustomAvailableCharacters,
+                        IsEditIsAvailableLowerLatin = CredentialParameters
+                           .IsEditIsAvailableLowerLatin,
+                        IsEditIsAvailableNumber = CredentialParameters
+                           .IsEditIsAvailableNumber,
+                        IsEditIsAvailableSpecialSymbols = CredentialParameters
+                           .IsEditIsAvailableSpecialSymbols,
+                        IsEditIsAvailableUpperLatin = CredentialParameters
+                           .IsEditIsAvailableUpperLatin,
                         IsEditKey = CredentialParameters.IsEditKey,
                         IsEditLength = CredentialParameters.IsEditLength,
                         IsEditLogin = CredentialParameters.IsEditLogin,
@@ -76,7 +90,7 @@ public partial class EditCredentialViewModel : ViewModelBase
                         Type = CredentialParameters.Type,
                     },
                 ],
-            }, cancellationToken);
+            }, ct);
 
             _notificationService.ShowNotification(new TextBlock
             {
