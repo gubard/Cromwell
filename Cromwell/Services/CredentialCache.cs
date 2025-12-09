@@ -1,6 +1,7 @@
 ﻿using Avalonia.Collections;
 using Cromwell.Models;
 using Gaia.Services;
+using Inanna.Helpers;
 using Turtle.Contract.Models;
 
 namespace Cromwell.Services;
@@ -26,26 +27,22 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
 
         if (source.Roots is not null)
         {
-            _roots.Clear();
-            _roots.AddRange(
-                source.Roots.OrderBy(x => x.OrderIndex)
-                   .Select(x => UpdateCredential(x, updatedIds)));
+            _roots.UpdateOrder(source.Roots.OrderBy(x => x.OrderIndex)
+               .Select(x => UpdateCredential(x, updatedIds)).ToArray());
         }
 
         foreach (var (id, items) in source.Children)
         {
             var item = GetItem(id);
-            item.Children.Clear();
-            item.Children.AddRange(items.OrderBy(x => x.OrderIndex)
-               .Select(x => UpdateCredential(x, updatedIds)));
+            item.Children.UpdateOrder(items.OrderBy(x => x.OrderIndex)
+               .Select(x => UpdateCredential(x, updatedIds)).ToArray());
         }
 
         foreach (var (id, items) in source.Parents)
         {
             var item = GetItem(id);
-            item.Parents.Clear();
-            item.Parents.AddRange(items.Select(x =>
-                UpdateCredential(x, updatedIds)));
+            item.Parents.UpdateOrder(items.Select(x =>
+                UpdateCredential(x, updatedIds)).ToArray());
         }
     }
 
