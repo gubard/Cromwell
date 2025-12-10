@@ -28,11 +28,6 @@ public partial class CredentialView : UserControl
         AddHandler(DragDrop.DragOverEvent, DragOver);
     }
 
-    public CredentialViewModel ViewModel
-    {
-        get => (CredentialViewModel)(DataContext ?? throw new NullReferenceException());
-    }
-
     private void DragOver(object? sender, DragEventArgs e)
     {
         var tag = FindObjectDropTag(e.Source);
@@ -196,7 +191,5 @@ public partial class CredentialView : UserControl
                 break;
             }
         }
-
-        ViewModel.InitializedCommand.Execute(null);
     }
 }

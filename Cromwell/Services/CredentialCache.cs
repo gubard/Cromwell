@@ -99,11 +99,11 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
 
             if (item.Parent is not null)
             {
-                item.Parent.Children.Insert(0, item);
+                item.Parent.Children.Add(item);
             }
             else
             {
-                _roots.Insert(0, item);
+                _roots.Add(item);
             }
         }
 

@@ -20,20 +20,13 @@ public partial class CredentialHeaderView : UserControl
     };
 
     private readonly IUiCredentialService _uiCredentialService;
-    private readonly INavigator _navigator;
 
     public CredentialHeaderView()
     {
         InitializeComponent();
         _uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
-        _navigator = DiHelper.ServiceProvider.GetService<INavigator>();
         AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(DragDrop.DragOverEvent, DragOver);
-    }
-
-    public CredentialHeaderViewModel ViewModel
-    {
-        get => (CredentialHeaderViewModel)(DataContext ?? throw new NullReferenceException());
     }
 
     private void DragOver(object? sender, DragEventArgs e)
@@ -199,7 +192,5 @@ public partial class CredentialHeaderView : UserControl
                 break;
             }
         }
-
-        (_navigator.CurrentView as CredentialViewModel)?.InitializedCommand.Execute(null);
     }
 }

@@ -9,12 +9,14 @@ public interface IUiCredentialService : IUiService<TurtleGetRequest,
     TurtlePostRequest, TurtleGetResponse, TurtlePostResponse>;
 
 public sealed class UiCredentialService(
-    HttpCredentialService service,
-    EfCredentialService efService,
+    IHttpCredentialService service,
+    IEfCredentialService efService,
     AppState appState,
-    ICredentialCache cache)
+    ICredentialCache cache,
+    INavigator navigator)
     :
         UiService<TurtleGetRequest, TurtlePostRequest, TurtleGetResponse,
-            TurtlePostResponse, HttpCredentialService, EfCredentialService,
+            TurtlePostResponse, IHttpCredentialService, IEfCredentialService,
             ICredentialCache>(
-            service, efService, appState, cache), IUiCredentialService;
+            service, efService, appState, cache, navigator),
+        IUiCredentialService;

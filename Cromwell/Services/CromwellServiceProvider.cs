@@ -11,6 +11,7 @@ using Inanna.Ui;
 using Jab;
 using Nestor.Db.Sqlite.Helpers;
 using Turtle.Contract.Models;
+using Turtle.Contract.Services;
 using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Services;
@@ -42,9 +43,10 @@ public interface ICromwellServiceProvider
     public static IUiCredentialService GetUiCredentialService(
         CredentialServiceOptions options, ITryPolicyService tryPolicyService,
         IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
-        ICredentialCache cache)
+        ICredentialCache cache,
+        INavigator navigator)
     {
-        return new UiCredentialService(new(new()
+        return new UiCredentialService(new HttpCredentialService(new()
             {
                 BaseAddress = new(options.Url),
             }, new()
@@ -52,9 +54,9 @@ public interface ICromwellServiceProvider
                 TypeInfoResolver = TurtleJsonContext.Resolver,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             }, tryPolicyService, headersFactory),
-            new(new FileInfo(
+            new EfCredentialService(new FileInfo(
                     $"./storage/Cromwell/{appState.User.ThrowIfNull().Id}.db")
-               .InitDbContext()), appState, cache);
+               .InitDbContext()), appState, cache, navigator);
     }
 
     public static INotificationService GetNotificationService()

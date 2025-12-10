@@ -7,7 +7,7 @@ using Inanna.Services;
 
 namespace Cromwell.Ui;
 
-public partial class CredentialViewModel : ViewModelBase, IHeader
+public partial class CredentialViewModel : ViewModelBase, IHeader, IRefresh
 {
     private readonly IUiCredentialService _uiCredentialService;
     private readonly IDialogService _dialogService;
@@ -36,13 +36,7 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
-        await WrapCommand(() =>
-            _uiCredentialService.GetAsync(new()
-            {
-                GetChildrenIds = [Credential.Id],
-                GetParentsIds = [Credential.Id],
-            }, ct)
-        );
+        await RefreshAsync(ct);
     }
 
     [RelayCommand]
@@ -105,7 +99,28 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
                 , ct);
 
             _dialogService.CloseMessageBox();
-            await InitializedAsync(ct);
         });
+    }
+
+    public async ValueTask RefreshAsync(CancellationToken ct)
+    {
+        await WrapCommand(() =>
+            _uiCredentialService.GetAsync(new()
+            {
+                GetChildrenIds = [Credential.Id],
+                GetParentsIds = [Credential.Id],
+            }, ct)
+        );
+    }
+
+    public void Refresh()
+    {
+        WrapCommand(() =>
+            _uiCredentialService.Get(new()
+            {
+                GetChildrenIds = [Credential.Id],
+                GetParentsIds = [Credential.Id],
+            })
+        );
     }
 }

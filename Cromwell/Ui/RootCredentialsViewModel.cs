@@ -8,7 +8,7 @@ using Inanna.Services;
 
 namespace Cromwell.Ui;
 
-public partial class RootCredentialsViewModel : ViewModelBase, IHeader
+public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
 {
     private readonly IUiCredentialService _uiCredentialService;
     private readonly IDialogService _dialogService;
@@ -50,11 +50,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
-        await WrapCommand(async () =>
-            await _uiCredentialService.GetAsync(new()
-            {
-                IsGetRoots = true,
-            }, ct));
+        await RefreshAsync(ct);
     }
 
     [RelayCommand]
@@ -115,7 +111,24 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
             }, ct);
 
             _dialogService.CloseMessageBox();
-            await InitializedAsync(ct);
         });
+    }
+
+    public async ValueTask RefreshAsync(CancellationToken ct)
+    {
+        await WrapCommand(async () =>
+            await _uiCredentialService.GetAsync(new()
+            {
+                IsGetRoots = true,
+            }, ct));
+    }
+
+    public void Refresh()
+    {
+        WrapCommand(() =>
+            _uiCredentialService.Get(new()
+            {
+                IsGetRoots = true,
+            }));
     }
 }

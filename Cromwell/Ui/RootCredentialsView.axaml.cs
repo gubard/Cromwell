@@ -29,12 +29,6 @@ public partial class RootCredentialsView : UserControl
         AddHandler(DragDrop.DragOverEvent, DragOver);
     }
 
-    public RootCredentialsViewModel ViewModel
-    {
-        get => (RootCredentialsViewModel)(DataContext
-         ?? throw new NullReferenceException());
-    }
-
     private void DragOver(object? sender, DragEventArgs e)
     {
         var tag = FindObjectDropTag(e.Source);
@@ -202,7 +196,5 @@ public partial class RootCredentialsView : UserControl
                 break;
             }
         }
-
-        ViewModel.InitializedCommand.Execute(null);
     }
 }
