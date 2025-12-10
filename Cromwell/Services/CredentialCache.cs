@@ -17,10 +17,7 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
 {
     private readonly AvaloniaList<CredentialNotify> _roots = [];
 
-    public IEnumerable<CredentialNotify> Roots
-    {
-        get => _roots;
-    }
+    public IEnumerable<CredentialNotify> Roots => _roots;
 
     public override void Update(TurtleGetResponse source)
     {

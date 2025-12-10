@@ -30,22 +30,16 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
         _credentialCache = credentialCache;
     }
 
-    public IEnumerable<CredentialNotify> Credentials
-    {
-        get => _credentialCache.Roots;
-    }
+    public IEnumerable<CredentialNotify> Credentials => _credentialCache.Roots;
 
-    public object Header
+    public object Header => new TextBlock
     {
-        get => new TextBlock
+        Text = _appResourceService.GetResource<string>("Lang.Credentials"),
+        Classes =
         {
-            Text = _appResourceService.GetResource<string>("Lang.Credentials"),
-            Classes =
-            {
-                "h2",
-            },
-        };
-    }
+            "h2",
+        },
+    };
 
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
@@ -71,14 +65,14 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
 
     [RelayCommand]
     private async Task CreateAsync(
-        CredentialParametersViewModel parametersViewModel,
+        CredentialParametersViewModel parameters,
         CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
-            parametersViewModel.StartExecute();
+            parameters.StartExecute();
 
-            if (parametersViewModel.HasErrors)
+            if (parameters.HasErrors)
             {
                 return;
             }
@@ -90,22 +84,22 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
                     new()
                     {
                         Id = Guid.NewGuid(),
-                        Name = parametersViewModel.Name,
-                        Login = parametersViewModel.Login,
-                        Key = parametersViewModel.Key,
+                        Name = parameters.Name,
+                        Login = parameters.Login,
+                        Key = parameters.Key,
                         IsAvailableUpperLatin =
-                            parametersViewModel.IsAvailableUpperLatin,
+                            parameters.IsAvailableUpperLatin,
                         IsAvailableLowerLatin =
-                            parametersViewModel.IsAvailableLowerLatin,
+                            parameters.IsAvailableLowerLatin,
                         IsAvailableNumber =
-                            parametersViewModel.IsAvailableNumber,
-                        IsAvailableSpecialSymbols = parametersViewModel
+                            parameters.IsAvailableNumber,
+                        IsAvailableSpecialSymbols = parameters
                            .IsAvailableSpecialSymbols,
-                        CustomAvailableCharacters = parametersViewModel
+                        CustomAvailableCharacters = parameters
                            .CustomAvailableCharacters,
-                        Length = parametersViewModel.Length,
-                        Regex = parametersViewModel.Regex,
-                        Type = parametersViewModel.Type,
+                        Length = parameters.Length,
+                        Regex = parameters.Regex,
+                        Type = parameters.Type,
                     },
                 ],
             }, ct);

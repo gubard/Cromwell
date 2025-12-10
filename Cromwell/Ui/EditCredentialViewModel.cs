@@ -31,11 +31,7 @@ public partial class EditCredentialViewModel : ViewModelBase
     }
 
     public CredentialParametersViewModel CredentialParameters { get; }
-
-    public bool CanSave
-    {
-        get => CredentialParameters is { HasErrors: false, IsEdit: true };
-    }
+    public bool CanSave => CredentialParameters is { HasErrors: false, IsEdit: true };
 
     [RelayCommand]
     private async Task SaveAsync(CancellationToken ct)

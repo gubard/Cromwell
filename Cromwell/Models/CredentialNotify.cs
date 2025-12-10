@@ -18,11 +18,7 @@ public partial class CredentialNotify : ObservableObject,
 
     public Guid Id { get; }
     public AvaloniaList<CredentialNotify> Children { get; } = new();
-
-    public IEnumerable<object> Parents
-    {
-        get => _parents;
-    }
+    public IEnumerable<object> Parents => _parents;
 
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
