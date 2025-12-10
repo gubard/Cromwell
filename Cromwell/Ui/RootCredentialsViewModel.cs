@@ -21,25 +21,20 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        ICredentialCache credentialCache)
+        ICredentialCache credentialCache,
+        RootCredentialsHeaderViewModel header)
     {
         _uiCredentialService = uiCredentialService;
         _dialogService = dialogService;
         _stringFormater = stringFormater;
         _appResourceService = appResourceService;
         _credentialCache = credentialCache;
+        Header = header;
     }
 
     public IEnumerable<CredentialNotify> Credentials => _credentialCache.Roots;
-
-    public object Header => new TextBlock
-    {
-        Text = _appResourceService.GetResource<string>("Lang.Credentials"),
-        Classes =
-        {
-            "h2",
-        },
-    };
+    public RootCredentialsHeaderViewModel Header { get; }
+    object IHeader.Header => Header;
 
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)

@@ -18,6 +18,7 @@ namespace Cromwell.Services;
 
 [ServiceProviderModule]
 [Transient(typeof(RootCredentialsViewModel))]
+[Transient(typeof(RootCredentialsHeaderViewModel))]
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
@@ -44,7 +45,8 @@ public interface ICromwellServiceProvider
         CredentialServiceOptions options, ITryPolicyService tryPolicyService,
         IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
         ICredentialCache cache,
-        INavigator navigator)
+        INavigator navigator,
+        IStorageService storageService)
     {
         return new UiCredentialService(new HttpCredentialService(new()
             {
@@ -55,7 +57,7 @@ public interface ICromwellServiceProvider
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             }, tryPolicyService, headersFactory),
             new EfCredentialService(new FileInfo(
-                    $"./storage/Cromwell/{appState.User.ThrowIfNull().Id}.db")
+                    $"{storageService.GetAppDirectory()}/Cromwell/{appState.User.ThrowIfNull().Id}.db")
                .InitDbContext()), appState, cache, navigator);
     }
 
