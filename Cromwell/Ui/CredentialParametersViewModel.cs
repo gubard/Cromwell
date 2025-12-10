@@ -11,8 +11,10 @@ namespace Cromwell.Ui;
 [EditNotify]
 public partial class CredentialParametersViewModel : ViewModelBase
 {
-    public CredentialParametersViewModel(CredentialNotify item)
+    public CredentialParametersViewModel(CredentialNotify item, ValidationMode validationMode, bool isShowEdit)
     {
+        IsShowEdit = isShowEdit;
+        InitValidation(validationMode);
         Name = item.Name;
         Login = item.Login;
         Key = item.Key;
@@ -27,28 +29,10 @@ public partial class CredentialParametersViewModel : ViewModelBase
         ResetEdit();
     }
 
-    public CredentialParametersViewModel()
+    public CredentialParametersViewModel(ValidationMode validationMode, bool isShowEdit)
     {
-        SetValidation(nameof(Name),
-            () => string.IsNullOrWhiteSpace(Name) ? [new PropertyEmptyValidationError(nameof(Name)),] : []);
-
-        SetValidation(nameof(Login),
-            () => string.IsNullOrWhiteSpace(Login) ? [new PropertyEmptyValidationError(nameof(Login)),] : []);
-
-        SetValidation(nameof(Key),
-            () => string.IsNullOrWhiteSpace(Key) ? [new PropertyEmptyValidationError(nameof(Key)),] : []);
-
-        SetValidation(nameof(Length), () => Length == 0 ? [new PropertyZeroValidationError(nameof(Length)),] : []);
-
-        SetValidation(nameof(IsAvailableUpperLatin),
-            () => !IsAvailableLowerLatin
-             && !IsAvailableNumber
-             && !IsAvailableSpecialSymbols
-             && !IsAvailableUpperLatin
-             && CustomAvailableCharacters.IsNullOrWhiteSpace()
-                    ? [new PropertyEmptyValidationError("AvailableCharacters"),]
-                    : []);
-
+        IsShowEdit = isShowEdit;
+        InitValidation(validationMode);
         Length = 512;
         Name = string.Empty;
         Login = string.Empty;
@@ -58,8 +42,11 @@ public partial class CredentialParametersViewModel : ViewModelBase
         IsAvailableNumber = true;
         IsAvailableLowerLatin = true;
         IsAvailableUpperLatin = true;
+        ResetEdit();
     }
-
+    
+    public bool IsShowEdit { get; }
+    
     [ObservableProperty]
     public partial bool IsEditName { get; set; }
 
@@ -125,4 +112,113 @@ public partial class CredentialParametersViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial CredentialType Type { get; set; }
+
+    public EditCredential CreateEditCredential()
+    {
+        return new()
+        {
+            CustomAvailableCharacters = CustomAvailableCharacters,
+            IsAvailableLowerLatin =
+                IsAvailableLowerLatin,
+            IsAvailableNumber =
+                IsAvailableNumber,
+            IsAvailableSpecialSymbols = IsAvailableSpecialSymbols,
+            IsAvailableUpperLatin =
+                IsAvailableUpperLatin,
+            IsEditCustomAvailableCharacters = IsEditCustomAvailableCharacters,
+            IsEditIsAvailableLowerLatin = IsEditIsAvailableLowerLatin,
+            IsEditIsAvailableNumber = IsEditIsAvailableNumber,
+            IsEditIsAvailableSpecialSymbols = IsEditIsAvailableSpecialSymbols,
+            IsEditIsAvailableUpperLatin = IsEditIsAvailableUpperLatin,
+            IsEditKey = IsEditKey,
+            IsEditLength = IsEditLength,
+            IsEditLogin = IsEditLogin,
+            IsEditName = IsEditName,
+            IsEditRegex = IsEditRegex,
+            Login = Login,
+            IsEditType = IsEditType,
+            Key = Key,
+            Length = Length,
+            Name = Name,
+            Regex = Regex,
+            Type = Type,
+        };
+    }
+
+    private ValidationError[] ValidateAvailableCharacters()
+    {
+        return !IsAvailableLowerLatin
+         && !IsAvailableNumber
+         && !IsAvailableSpecialSymbols
+         && !IsAvailableUpperLatin
+         && CustomAvailableCharacters.IsNullOrWhiteSpace()
+                ? [new PropertyEmptyValidationError("AvailableCharacters"),]
+                : [];
+    }
+
+    private ValidationError[] ValidateLength()
+    {
+        return Length == 0 ? [new PropertyZeroValidationError(nameof(Length)),] : [];
+    }
+
+    private ValidationError[] ValidateKey()
+    {
+        return string.IsNullOrWhiteSpace(Key) ? [new PropertyEmptyValidationError(nameof(Key)),] : [];
+    }
+
+    private ValidationError[] ValidateLogin()
+    {
+        return string.IsNullOrWhiteSpace(Login) ? [new PropertyEmptyValidationError(nameof(Login)),] : [];
+    }
+
+    private ValidationError[] ValidateName()
+    {
+        return string.IsNullOrWhiteSpace(Name) ? [new PropertyEmptyValidationError(nameof(Name)),] : [];
+    }
+
+    private void InitValidation(ValidationMode validationMode)
+    {
+        SetValidation(nameof(Name),
+            () =>
+                validationMode switch
+                {
+                    ValidationMode.ValidateAll => ValidateName(),
+                    ValidationMode.ValidateOnlyEdited => IsEditName ? ValidateName() : [],
+                    _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+                }
+        );
+
+        SetValidation(nameof(Login),
+            () => validationMode switch
+            {
+                ValidationMode.ValidateAll => ValidateLogin(),
+                ValidationMode.ValidateOnlyEdited => IsEditLogin ? ValidateLogin() : [],
+                _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+            });
+
+        SetValidation(nameof(Key), () => validationMode switch
+        {
+            ValidationMode.ValidateAll => ValidateKey(),
+            ValidationMode.ValidateOnlyEdited => IsEditKey ? ValidateKey() : [],
+            _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+        });
+
+        SetValidation(nameof(Length), () => validationMode switch
+        {
+            ValidationMode.ValidateAll => ValidateLength(),
+            ValidationMode.ValidateOnlyEdited => IsEditLength ? ValidateLength() : [],
+            _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+        });
+
+        SetValidation(nameof(CustomAvailableCharacters),
+            () => validationMode switch
+            {
+                ValidationMode.ValidateAll => ValidateAvailableCharacters(),
+                ValidationMode.ValidateOnlyEdited => IsEditCustomAvailableCharacters || IsEditIsAvailableLowerLatin
+                 || IsEditIsAvailableNumber || IsEditIsAvailableSpecialSymbols || IsEditIsAvailableUpperLatin
+                        ? ValidateAvailableCharacters()
+                        : [],
+                _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+            });
+    }
 }

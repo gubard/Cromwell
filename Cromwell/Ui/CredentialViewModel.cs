@@ -42,7 +42,7 @@ public partial class CredentialViewModel : ViewModelBase, IHeader, IRefresh
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = new CredentialParametersViewModel();
+        var credential = new CredentialParametersViewModel(ValidationMode.ValidateAll, false);
 
         await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
             _stringFormater.Format(

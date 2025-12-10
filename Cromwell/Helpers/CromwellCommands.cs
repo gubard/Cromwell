@@ -87,14 +87,14 @@ public static class CromwellCommands
                 navigator.NavigateToAsync(
                     new EditCredentialViewModel(credential, uiCredentialService,
                         notificationService,
-                        appResourceService), ct));
+                        appResourceService, stringFormater), ct));
 
         DeleteCredentialCommand =
             UiHelper.CreateCommand<CredentialNotify, TurtlePostResponse>(
                 (credential, ct) =>
                     uiCredentialService.PostAsync(new()
                     {
-                        DeleteIds = [credential.Id],
+                        DeleteIds = [credential.Id,],
                     }, ct));
     }
 

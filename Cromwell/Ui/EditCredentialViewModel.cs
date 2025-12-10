@@ -7,31 +7,42 @@ using Inanna.Services;
 
 namespace Cromwell.Ui;
 
-public partial class EditCredentialViewModel : ViewModelBase
+public partial class EditCredentialViewModel : ViewModelBase, IHeader
 {
     private readonly IUiCredentialService _uiCredentialService;
     private readonly INotificationService _notificationService;
     private readonly IAppResourceService _appResourceService;
     private readonly CredentialNotify _credential;
+    private readonly IStringFormater _stringFormater;
 
     public EditCredentialViewModel(
         CredentialNotify credential,
         IUiCredentialService uiCredentialService,
         INotificationService notificationService,
-        IAppResourceService appResourceService
-    )
+        IAppResourceService appResourceService, IStringFormater stringFormater)
     {
         _credential = credential;
-        CredentialParameters = new(credential);
+        CredentialParameters = new(credential, ValidationMode.ValidateAll, true);
         _uiCredentialService = uiCredentialService;
         _notificationService = notificationService;
         _appResourceService = appResourceService;
+        _stringFormater = stringFormater;
         CredentialParameters.PropertyChanged +=
             (_, e) => OnPropertyChanged(nameof(CanSave));
     }
 
     public CredentialParametersViewModel CredentialParameters { get; }
-    public bool CanSave => CredentialParameters is { HasErrors: false, IsEdit: true };
+    public bool CanSave => CredentialParameters is { HasErrors: false, IsEdit: true, };
+
+    public object Header => new TextBlock
+    {
+        Text = _stringFormater.Format(_appResourceService.GetResource<string>("Lang.EditItem"), _credential.Name),
+        Classes =
+        {
+            "h2",
+            "alignment-left-center",
+        },
+    };
 
     [RelayCommand]
     private async Task SaveAsync(CancellationToken ct)
@@ -51,7 +62,7 @@ public partial class EditCredentialViewModel : ViewModelBase
                 [
                     new()
                     {
-                        Ids = [_credential.Id],
+                        Ids = [_credential.Id,],
                         CustomAvailableCharacters = CredentialParameters
                            .CustomAvailableCharacters,
                         IsAvailableLowerLatin =
@@ -94,6 +105,8 @@ public partial class EditCredentialViewModel : ViewModelBase
                 Classes =
                 {
                     "alignment-center",
+                    "h2",
+                    "m-5",
                 },
             }, NotificationType.None);
         });
