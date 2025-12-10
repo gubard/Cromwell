@@ -41,8 +41,8 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
         foreach (var (id, items) in source.Parents)
         {
             var item = GetItem(id);
-            item.Parents.UpdateOrder(items.Select(x =>
-                UpdateCredential(x, updatedIds)).ToArray());
+            item.UpdateParents(
+                items.Select(x => UpdateCredential(x, updatedIds)));
         }
     }
 

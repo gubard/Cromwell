@@ -1,6 +1,7 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gaia.Services;
+using Inanna.Helpers;
 using Turtle.Contract.Models;
 
 namespace Cromwell.Models;
@@ -8,6 +9,8 @@ namespace Cromwell.Models;
 public partial class CredentialNotify : ObservableObject,
     IStaticFactory<Guid, CredentialNotify>
 {
+    private readonly AvaloniaList<object> _parents = [];
+
     private CredentialNotify(Guid id)
     {
         Id = id;
@@ -15,7 +18,11 @@ public partial class CredentialNotify : ObservableObject,
 
     public Guid Id { get; }
     public AvaloniaList<CredentialNotify> Children { get; } = new();
-    public AvaloniaList<CredentialNotify> Parents { get; } = new();
+
+    public IEnumerable<object> Parents
+    {
+        get => _parents;
+    }
 
     [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
@@ -54,5 +61,11 @@ public partial class CredentialNotify : ObservableObject,
     public static CredentialNotify Create(Guid input)
     {
         return new(input);
+    }
+
+    public void UpdateParents(IEnumerable<CredentialNotify> parents)
+    {
+        _parents.UpdateOrder(Root.IEnumerableInstance
+           .Concat(parents.OfType<object>()).ToArray());
     }
 }
