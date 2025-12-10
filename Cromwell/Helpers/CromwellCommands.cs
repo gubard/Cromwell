@@ -55,6 +55,8 @@ public static class CromwellCommands
                     Classes =
                     {
                         "alignment-center",
+                        "m-5",
+                        "h2",
                     },
                 }, NotificationType.Success);
             });
@@ -72,6 +74,8 @@ public static class CromwellCommands
                     Classes =
                     {
                         "alignment-center",
+                        "m-5",
+                        "h2",
                     },
                 }, NotificationType.Success);
             });
