@@ -58,6 +58,9 @@ public partial class CredentialNotify : ObservableObject,
     [ObservableProperty]
     public partial CredentialType Type { get; set; }
 
+    [ObservableProperty]
+    public partial CredentialNotify? Parent { get; set; }
+
     public static CredentialNotify Create(Guid input)
     {
         return new(input);

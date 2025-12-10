@@ -55,7 +55,7 @@ public partial class EditCredentialViewModel : ViewModelBase
                 [
                     new()
                     {
-                        Id = _credential.Id,
+                        Ids = [_credential.Id],
                         CustomAvailableCharacters = CredentialParameters
                            .CustomAvailableCharacters,
                         IsAvailableLowerLatin =

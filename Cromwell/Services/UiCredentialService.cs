@@ -1,5 +1,4 @@
-﻿using Gaia.Services;
-using Inanna.Models;
+﻿using Inanna.Models;
 using Inanna.Services;
 using Turtle.Contract.Models;
 using Turtle.Contract.Services;
@@ -17,5 +16,5 @@ public sealed class UiCredentialService(
     :
         UiService<TurtleGetRequest, TurtlePostRequest, TurtleGetResponse,
             TurtlePostResponse, HttpCredentialService, EfCredentialService,
-            ICache<TurtleGetResponse>>(
+            ICredentialCache>(
             service, efService, appState, cache), IUiCredentialService;

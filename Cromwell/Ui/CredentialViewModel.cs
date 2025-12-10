@@ -13,16 +13,12 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;
     private readonly IAppResourceService _appResourceService;
-    private readonly INavigator _navigator;
-    private readonly INotificationService _notificationService;
 
     public CredentialViewModel(
         IUiCredentialService credentialService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        INavigator navigator,
-        INotificationService notificationService,
         CredentialNotify credential
     )
     {
@@ -30,8 +26,6 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
         _dialogService = dialogService;
         _stringFormater = stringFormater;
         _appResourceService = appResourceService;
-        _navigator = navigator;
-        _notificationService = notificationService;
         Credential = credential;
         Header = new CredentialHeaderViewModel(credential);
     }
@@ -52,32 +46,6 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
     }
 
     [RelayCommand]
-    private async Task EditAsync(CredentialNotify credential,
-        CancellationToken ct)
-    {
-        await WrapCommand(() =>
-            _navigator.NavigateToAsync(
-                new EditCredentialViewModel(credential, _uiCredentialService,
-                    _notificationService,
-                    _appResourceService), ct));
-    }
-
-    [RelayCommand]
-    private async Task DeleteAsync(
-        CredentialNotify parametersViewModel,
-        CancellationToken ct)
-    {
-        await WrapCommand(async () =>
-        {
-            await _uiCredentialService.PostAsync(new()
-            {
-                DeleteIds = [parametersViewModel.Id],
-            }, ct);
-            await InitializedAsync(ct);
-        });
-    }
-
-    [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
         var credential = new CredentialParametersViewModel();
@@ -95,14 +63,14 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
 
     [RelayCommand]
     private async Task CreateAsync(
-        CredentialParametersViewModel parametersViewModel,
+        CredentialParametersViewModel parameters,
         CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
-            parametersViewModel.StartExecute();
+            parameters.StartExecute();
 
-            if (parametersViewModel.HasErrors)
+            if (parameters.HasErrors)
             {
                 return;
             }
@@ -114,22 +82,22 @@ public partial class CredentialViewModel : ViewModelBase, IHeader
                         new()
                         {
                             Id = Guid.NewGuid(),
-                            Name = parametersViewModel.Name,
-                            Login = parametersViewModel.Login,
-                            Key = parametersViewModel.Key,
-                            IsAvailableUpperLatin = parametersViewModel
+                            Name = parameters.Name,
+                            Login = parameters.Login,
+                            Key = parameters.Key,
+                            IsAvailableUpperLatin = parameters
                                .IsAvailableUpperLatin,
-                            IsAvailableLowerLatin = parametersViewModel
+                            IsAvailableLowerLatin = parameters
                                .IsAvailableLowerLatin,
                             IsAvailableNumber =
-                                parametersViewModel.IsAvailableNumber,
-                            IsAvailableSpecialSymbols = parametersViewModel
+                                parameters.IsAvailableNumber,
+                            IsAvailableSpecialSymbols = parameters
                                .IsAvailableSpecialSymbols,
-                            CustomAvailableCharacters = parametersViewModel
+                            CustomAvailableCharacters = parameters
                                .CustomAvailableCharacters,
-                            Length = parametersViewModel.Length,
-                            Regex = parametersViewModel.Regex,
-                            Type = parametersViewModel.Type,
+                            Length = parameters.Length,
+                            Regex = parameters.Regex,
+                            Type = parameters.Type,
                             ParentId = Credential.Id,
                         },
                     ],

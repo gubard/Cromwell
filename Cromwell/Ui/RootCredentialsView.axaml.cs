@@ -87,7 +87,7 @@ public partial class RootCredentialsView : UserControl
                     [
                         new()
                         {
-                            Id = id,
+                            Ids = [id],
                             IsEditParentId = true,
                             ParentId = null,
                         },
@@ -122,7 +122,7 @@ public partial class RootCredentialsView : UserControl
                     [
                         new()
                         {
-                            Id = id,
+                            Ids = [id],
                             IsEditParentId = true,
                             ParentId = viewModel.Id,
                         },

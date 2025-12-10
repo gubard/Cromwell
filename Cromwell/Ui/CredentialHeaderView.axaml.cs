@@ -87,7 +87,7 @@ public partial class CredentialHeaderView : UserControl
                     [
                         new()
                         {
-                            Id = id,
+                            Ids = [id],
                             IsEditParentId = true,
                             ParentId = null,
                         },
@@ -121,7 +121,7 @@ public partial class CredentialHeaderView : UserControl
                     [
                         new()
                         {
-                            Id = id,
+                            Ids = [id],
                             IsEditParentId = true,
                             ParentId = viewModel.Id,
                         },

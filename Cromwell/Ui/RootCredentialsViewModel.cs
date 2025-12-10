@@ -14,8 +14,6 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;
     private readonly IAppResourceService _appResourceService;
-    private readonly INavigator _navigator;
-    private readonly INotificationService _notificationService;
     private readonly ICredentialCache _credentialCache;
 
     public RootCredentialsViewModel(
@@ -23,16 +21,12 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        INavigator navigator,
-        INotificationService notificationService,
         ICredentialCache credentialCache)
     {
         _uiCredentialService = uiCredentialService;
         _dialogService = dialogService;
         _stringFormater = stringFormater;
         _appResourceService = appResourceService;
-        _navigator = navigator;
-        _notificationService = notificationService;
         _credentialCache = credentialCache;
     }
 
@@ -61,31 +55,6 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader
             {
                 IsGetRoots = true,
             }, ct));
-    }
-
-    [RelayCommand]
-    private async Task EditAsync(CredentialNotify credential,
-        CancellationToken ct)
-    {
-        await WrapCommand(() =>
-            _navigator.NavigateToAsync(
-                new EditCredentialViewModel(credential, _uiCredentialService,
-                    _notificationService,
-                    _appResourceService), ct));
-    }
-
-    [RelayCommand]
-    private async Task DeleteAsync(CredentialNotify credential,
-        CancellationToken ct)
-    {
-        await WrapCommand(async () =>
-        {
-            await _uiCredentialService.PostAsync(new()
-            {
-                DeleteIds = [credential.Id],
-            }, ct);
-            await InitializedAsync(ct);
-        });
     }
 
     [RelayCommand]
