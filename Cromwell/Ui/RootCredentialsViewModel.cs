@@ -1,4 +1,5 @@
 using Avalonia.Collections;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
@@ -39,6 +40,10 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
             {
                 Kind = PackIconMaterialDesignKind.Edit,
             }, false),
+            new(ShowMultiDeleteCommand, null, new PackIconMaterialDesign
+            {
+                Kind = PackIconMaterialDesignKind.Delete,
+            }, false),
         ]);
 
         _selectedCredentials.PropertyChanged += (_, e) =>
@@ -71,6 +76,38 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
     object IHeader.Header => Header;
 
     [RelayCommand]
+    private async Task MultiDelete(CancellationToken ct)
+    {
+        await WrapCommand(async () =>
+        {
+            await _uiCredentialService.PostAsync(new()
+            {
+                DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray(),
+            }, ct);
+
+            _dialogService.CloseMessageBox();
+        });
+    }
+
+    [RelayCommand]
+    private async Task ShowMultiDelete(CancellationToken ct)
+    {
+        var header = _appResourceService.GetResource<string>("Lang.Delete");
+
+        var button = new DialogButton(
+            _appResourceService.GetResource<string>("Lang.Delete"),
+            MultiDeleteCommand, null, DialogButtonType.Primary);
+
+        await WrapCommand(() =>
+            _dialogService.ShowMessageBoxAsync(new(header, new TextBlock
+            {
+                Text = _stringFormater.Format(
+                    _appResourceService.GetResource<string>("Lang.DeleteAsk"),
+                    SelectedCredentials.Select(x => x.Name).JoinString(", ")),
+            }, button, UiHelper.CancelButton)));
+    }
+
+    [RelayCommand]
     private async Task ShowMultiEdit(CancellationToken ct)
     {
         var credential = new CredentialParametersViewModel(ValidationMode.ValidateOnlyEdited, true);
@@ -88,13 +125,10 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
     }
 
     [RelayCommand]
-    private async Task MultiEdit(
-        (IEnumerable<CredentialNotify> credentials, CredentialParametersViewModel parameters) value,
-        CancellationToken ct)
+    private async Task MultiEdit(CredentialParametersViewModel parameters, CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
-            var (credentials, parameters) = value;
             parameters.StartExecute();
 
             if (parameters.HasErrors)
@@ -103,7 +137,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
             }
 
             var editCredentials = parameters.CreateEditCredential();
-            editCredentials.Ids = credentials.Select(x => x.Id).ToArray();
+            editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
             var response = await _uiCredentialService.PostAsync(new()
             {
                 EditCredentials =
