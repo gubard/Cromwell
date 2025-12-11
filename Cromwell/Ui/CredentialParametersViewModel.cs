@@ -4,17 +4,18 @@ using Gaia.Helpers;
 using Gaia.Models;
 using Inanna.Generator;
 using Inanna.Models;
+using Inanna.Ui;
 using Turtle.Contract.Models;
 
 namespace Cromwell.Ui;
 
 [EditNotify]
-public partial class CredentialParametersViewModel : ViewModelBase
+public partial class CredentialParametersViewModel : ParametersViewModelBase
 {
-    public CredentialParametersViewModel(CredentialNotify item, ValidationMode validationMode, bool isShowEdit)
+    public CredentialParametersViewModel(CredentialNotify item, ValidationMode validationMode, bool isShowEdit) : base(
+        validationMode, isShowEdit)
     {
-        IsShowEdit = isShowEdit;
-        InitValidation(validationMode);
+        InitValidation();
         Name = item.Name;
         Login = item.Login;
         Key = item.Key;
@@ -29,10 +30,10 @@ public partial class CredentialParametersViewModel : ViewModelBase
         ResetEdit();
     }
 
-    public CredentialParametersViewModel(ValidationMode validationMode, bool isShowEdit)
+    public CredentialParametersViewModel(ValidationMode validationMode, bool isShowEdit) : base(validationMode,
+        isShowEdit)
     {
-        IsShowEdit = isShowEdit;
-        InitValidation(validationMode);
+        InitValidation();
         Length = 512;
         Name = string.Empty;
         Login = string.Empty;
@@ -44,9 +45,7 @@ public partial class CredentialParametersViewModel : ViewModelBase
         IsAvailableUpperLatin = true;
         ResetEdit();
     }
-    
-    public bool IsShowEdit { get; }
-    
+
     [ObservableProperty]
     public partial bool IsEditName { get; set; }
 
@@ -176,49 +175,49 @@ public partial class CredentialParametersViewModel : ViewModelBase
         return string.IsNullOrWhiteSpace(Name) ? [new PropertyEmptyValidationError(nameof(Name)),] : [];
     }
 
-    private void InitValidation(ValidationMode validationMode)
+    private void InitValidation()
     {
         SetValidation(nameof(Name),
             () =>
-                validationMode switch
+                ValidationMode switch
                 {
                     ValidationMode.ValidateAll => ValidateName(),
                     ValidationMode.ValidateOnlyEdited => IsEditName ? ValidateName() : [],
-                    _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+                    _ => throw new ArgumentOutOfRangeException(nameof(ValidationMode), ValidationMode, null),
                 }
         );
 
         SetValidation(nameof(Login),
-            () => validationMode switch
+            () => ValidationMode switch
             {
                 ValidationMode.ValidateAll => ValidateLogin(),
                 ValidationMode.ValidateOnlyEdited => IsEditLogin ? ValidateLogin() : [],
-                _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+                _ => throw new ArgumentOutOfRangeException(nameof(ValidationMode), ValidationMode, null),
             });
 
-        SetValidation(nameof(Key), () => validationMode switch
+        SetValidation(nameof(Key), () => ValidationMode switch
         {
             ValidationMode.ValidateAll => ValidateKey(),
             ValidationMode.ValidateOnlyEdited => IsEditKey ? ValidateKey() : [],
-            _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+            _ => throw new ArgumentOutOfRangeException(nameof(ValidationMode), ValidationMode, null),
         });
 
-        SetValidation(nameof(Length), () => validationMode switch
+        SetValidation(nameof(Length), () => ValidationMode switch
         {
             ValidationMode.ValidateAll => ValidateLength(),
             ValidationMode.ValidateOnlyEdited => IsEditLength ? ValidateLength() : [],
-            _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+            _ => throw new ArgumentOutOfRangeException(nameof(ValidationMode), ValidationMode, null),
         });
 
         SetValidation(nameof(CustomAvailableCharacters),
-            () => validationMode switch
+            () => ValidationMode switch
             {
                 ValidationMode.ValidateAll => ValidateAvailableCharacters(),
                 ValidationMode.ValidateOnlyEdited => IsEditCustomAvailableCharacters || IsEditIsAvailableLowerLatin
                  || IsEditIsAvailableNumber || IsEditIsAvailableSpecialSymbols || IsEditIsAvailableUpperLatin
                         ? ValidateAvailableCharacters()
                         : [],
-                _ => throw new ArgumentOutOfRangeException(nameof(validationMode), validationMode, null),
+                _ => throw new ArgumentOutOfRangeException(nameof(ValidationMode), ValidationMode, null),
             });
     }
 }

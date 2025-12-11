@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
+using Gaia.Services;
 using Inanna.Models;
 using Inanna.Services;
 
