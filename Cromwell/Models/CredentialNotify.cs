@@ -21,6 +21,9 @@ public partial class CredentialNotify : ObservableObject,
     public IEnumerable<object> Parents => _parents;
 
     [ObservableProperty]
+    public partial bool IsDrag { get; set; }
+
+    [ObservableProperty]
     public partial string Name { get; set; } = string.Empty;
 
     [ObservableProperty]

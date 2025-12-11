@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
 using Cromwell.Models;
-using Cromwell.Ui;
 using Gaia.Helpers;
 using Inanna.Helpers;
 
@@ -51,7 +50,7 @@ public static class InputElementAssist
             return;
         }
 
-        if (dataContextProvider.DataContext is not CredentialNotify credentialParametersViewModel)
+        if (dataContextProvider.DataContext is not CredentialNotify credential)
         {
             return;
         }
@@ -60,21 +59,12 @@ public static class InputElementAssist
         var dragData = new DataTransfer();
         var dataTransferItem = new DataTransferItem();
 
-        dataTransferItem.Set(DataFormat.CreateBytesApplicationFormat(nameof(CredentialParametersViewModel)),
-            credentialParametersViewModel.Id.ToByteArray());
+        dataTransferItem.Set(DataFormat.CreateBytesApplicationFormat(nameof(CredentialNotify)),
+            credential.Id.ToByteArray());
 
         dragData.Add(dataTransferItem);
-        var item = sender.As<ILogical>()?.GetLogicalAncestors().OfType<TreeViewItem>().FirstOrDefault().As<Visual>();
-
-        if (item is null)
-        {
-            await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
-        }
-        else
-        {
-            item.IsVisible = false;
-            await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
-            item.IsVisible = true;
-        }
+        credential.IsDrag = true;
+        await TopLevelAssist.DoDragDropAsync(e, dragData, DragDropEffects.Move);
+        credential.IsDrag = false;
     }
 }

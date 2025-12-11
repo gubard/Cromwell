@@ -25,6 +25,7 @@
         <PackageReference Include="CommunityToolkit.Mvvm" />
         <PackageReference Include="Jab" PrivateAssets="all" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="System.Reactive" />
     </ItemGroup>
 
     <ItemGroup>
