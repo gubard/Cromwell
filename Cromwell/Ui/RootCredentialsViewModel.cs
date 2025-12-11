@@ -1,9 +1,6 @@
-using Avalonia.Collections;
-using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
-using Gaia.Helpers;
 using Gaia.Services;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
@@ -12,28 +9,18 @@ using Inanna.Services;
 
 namespace Cromwell.Ui;
 
-public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
+public sealed partial class RootCredentialsViewModel : MultiCredentialsViewModelBase, IHeader, IRefresh
 {
-    private readonly IUiCredentialService _uiCredentialService;
-    private readonly IDialogService _dialogService;
-    private readonly IStringFormater _stringFormater;
-    private readonly IAppResourceService _appResourceService;
     private readonly ICredentialCache _credentialCache;
-    private readonly AvaloniaList<CredentialNotify> _selectedCredentials;
 
     public RootCredentialsViewModel(
         IUiCredentialService uiCredentialService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        ICredentialCache credentialCache)
+        ICredentialCache credentialCache) : base(uiCredentialService, dialogService, stringFormater, appResourceService)
     {
-        _uiCredentialService = uiCredentialService;
-        _dialogService = dialogService;
-        _stringFormater = stringFormater;
-        _appResourceService = appResourceService;
         _credentialCache = credentialCache;
-        _selectedCredentials = [];
 
         Header = new([
             new(ShowMultiEditCommand, null, new PackIconMaterialDesign
@@ -71,86 +58,8 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
     }
 
     public IEnumerable<CredentialNotify> Credentials => _credentialCache.Roots;
-    public IEnumerable<CredentialNotify> SelectedCredentials => _selectedCredentials;
     public RootCredentialsHeaderViewModel Header { get; }
     object IHeader.Header => Header;
-
-    [RelayCommand]
-    private async Task MultiDelete(CancellationToken ct)
-    {
-        await WrapCommand(async () =>
-        {
-            await _uiCredentialService.PostAsync(new()
-            {
-                DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray(),
-            }, ct);
-
-            _dialogService.CloseMessageBox();
-        });
-    }
-
-    [RelayCommand]
-    private async Task ShowMultiDelete(CancellationToken ct)
-    {
-        var header = _appResourceService.GetResource<string>("Lang.Delete");
-
-        var button = new DialogButton(
-            _appResourceService.GetResource<string>("Lang.Delete"),
-            MultiDeleteCommand, null, DialogButtonType.Primary);
-
-        await WrapCommand(() =>
-            _dialogService.ShowMessageBoxAsync(new(header, new TextBlock
-            {
-                Text = _stringFormater.Format(
-                    _appResourceService.GetResource<string>("Lang.DeleteAsk"),
-                    SelectedCredentials.Select(x => x.Name).JoinString(", ")),
-            }, button, UiHelper.CancelButton)));
-    }
-
-    [RelayCommand]
-    private async Task ShowMultiEdit(CancellationToken ct)
-    {
-        var credential = new CredentialParametersViewModel(ValidationMode.ValidateOnlyEdited, true);
-
-        var header = _stringFormater.Format(
-            _appResourceService.GetResource<string>("Lang.EditItem"),
-            SelectedCredentials.Select(x => x.Name).JoinString(", "));
-
-        var button = new DialogButton(
-            _appResourceService.GetResource<string>("Lang.Edit"),
-            MultiEditCommand, (SelectedCredentials, credential), DialogButtonType.Primary);
-
-        await WrapCommand(() =>
-            _dialogService.ShowMessageBoxAsync(new(header, credential, button, UiHelper.CancelButton)));
-    }
-
-    [RelayCommand]
-    private async Task MultiEdit(CredentialParametersViewModel parameters, CancellationToken ct)
-    {
-        await WrapCommand(async () =>
-        {
-            parameters.StartExecute();
-
-            if (parameters.HasErrors)
-            {
-                return (IValidationErrors)EmptyValidationErrors.Instance;
-            }
-
-            var editCredentials = parameters.CreateEditCredential();
-            editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
-            var response = await _uiCredentialService.PostAsync(new()
-            {
-                EditCredentials =
-                [
-                    editCredentials,
-                ],
-            }, ct);
-
-            _dialogService.CloseMessageBox();
-
-            return response;
-        });
-    }
 
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
@@ -163,13 +72,13 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
     {
         var credential = new CredentialParametersViewModel(ValidationMode.ValidateAll, false);
 
-        await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
-            _stringFormater.Format(
-                _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                _appResourceService.GetResource<string>("Lang.Credential")),
+        await WrapCommand(() => DialogService.ShowMessageBoxAsync(new(
+            StringFormater.Format(
+                AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                AppResourceService.GetResource<string>("Lang.Credential")),
             credential,
             new DialogButton(
-                _appResourceService.GetResource<string>("Lang.Create"),
+                AppResourceService.GetResource<string>("Lang.Create"),
                 CreateCommand,
                 credential, DialogButtonType.Primary), UiHelper.CancelButton)));
     }
@@ -188,7 +97,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
                 return (IValidationErrors)EmptyValidationErrors.Instance;
             }
 
-            var response = await _uiCredentialService.PostAsync(new()
+            var response = await UiCredentialService.PostAsync(new()
             {
                 CreateCredentials =
                 [
@@ -215,7 +124,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
                 ],
             }, ct);
 
-            _dialogService.CloseMessageBox();
+            DialogService.CloseMessageBox();
 
             return response;
         });
@@ -224,7 +133,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
     public async ValueTask RefreshAsync(CancellationToken ct)
     {
         await WrapCommand(async () =>
-            await _uiCredentialService.GetAsync(new()
+            await UiCredentialService.GetAsync(new()
             {
                 IsGetRoots = true,
             }, ct));
@@ -233,7 +142,7 @@ public partial class RootCredentialsViewModel : ViewModelBase, IHeader, IRefresh
     public void Refresh()
     {
         WrapCommand(() =>
-            _uiCredentialService.Get(new()
+            UiCredentialService.Get(new()
             {
                 IsGetRoots = true,
             }));

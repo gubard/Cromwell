@@ -1,37 +1,63 @@
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
+using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 
 namespace Cromwell.Ui;
 
-public partial class CredentialViewModel : ViewModelBase, IHeader, IRefresh
+public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase, IHeader, IRefresh
 {
-    private readonly IUiCredentialService _uiCredentialService;
-    private readonly IDialogService _dialogService;
-    private readonly IStringFormater _stringFormater;
-    private readonly IAppResourceService _appResourceService;
 
     public CredentialViewModel(
-        IUiCredentialService credentialService,
+        IUiCredentialService uiCredentialService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
         CredentialNotify credential
-    )
+    ) : base(uiCredentialService, dialogService, stringFormater, appResourceService)
     {
-        _uiCredentialService = credentialService;
-        _dialogService = dialogService;
-        _stringFormater = stringFormater;
-        _appResourceService = appResourceService;
         Credential = credential;
-        Header = new CredentialHeaderViewModel(credential);
+        Header = new(credential, [
+            new(ShowMultiEditCommand, null, new PackIconMaterialDesign
+            {
+                Kind = PackIconMaterialDesignKind.Edit,
+            }, false),
+            new(ShowMultiDeleteCommand, null, new PackIconMaterialDesign
+            {
+                Kind = PackIconMaterialDesignKind.Delete,
+            }, false),
+        ]);
+
+        _selectedCredentials.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName != nameof(_selectedCredentials.Count))
+            {
+                return;
+            }
+
+            if (_selectedCredentials.Count == 0)
+            {
+                foreach (var headerCommand in Header.Commands)
+                {
+                    headerCommand.IsEnable = false;
+                }
+            }
+            else
+            {
+                foreach (var headerCommand in Header.Commands)
+                {
+                    headerCommand.IsEnable = true;
+                }
+            }
+        };
     }
 
     public CredentialNotify Credential { get; }
-    public object Header { get; }
+    public CredentialHeaderViewModel Header { get; }
+    object IHeader.Header => Header;
 
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
@@ -44,13 +70,13 @@ public partial class CredentialViewModel : ViewModelBase, IHeader, IRefresh
     {
         var credential = new CredentialParametersViewModel(ValidationMode.ValidateAll, false);
 
-        await WrapCommand(() => _dialogService.ShowMessageBoxAsync(new(
-            _stringFormater.Format(
-                _appResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                _appResourceService.GetResource<string>("Lang.Credential")),
+        await WrapCommand(() => DialogService.ShowMessageBoxAsync(new(
+            StringFormater.Format(
+                AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                AppResourceService.GetResource<string>("Lang.Credential")),
             credential,
             new DialogButton(
-                _appResourceService.GetResource<string>("Lang.Create"),
+                AppResourceService.GetResource<string>("Lang.Create"),
                 CreateCommand,
                 credential, DialogButtonType.Primary), UiHelper.CancelButton)));
     }
@@ -69,7 +95,7 @@ public partial class CredentialViewModel : ViewModelBase, IHeader, IRefresh
                 return;
             }
 
-            await _uiCredentialService.PostAsync(new()
+            await UiCredentialService.PostAsync(new()
                 {
                     CreateCredentials =
                     [
@@ -98,17 +124,17 @@ public partial class CredentialViewModel : ViewModelBase, IHeader, IRefresh
                 }
                 , ct);
 
-            _dialogService.CloseMessageBox();
+            DialogService.CloseMessageBox();
         });
     }
 
     public async ValueTask RefreshAsync(CancellationToken ct)
     {
         await WrapCommand(() =>
-            _uiCredentialService.GetAsync(new()
+            UiCredentialService.GetAsync(new()
             {
-                GetChildrenIds = [Credential.Id],
-                GetParentsIds = [Credential.Id],
+                GetChildrenIds = [Credential.Id,],
+                GetParentsIds = [Credential.Id,],
             }, ct)
         );
     }
@@ -116,10 +142,10 @@ public partial class CredentialViewModel : ViewModelBase, IHeader, IRefresh
     public void Refresh()
     {
         WrapCommand(() =>
-            _uiCredentialService.Get(new()
+            UiCredentialService.Get(new()
             {
-                GetChildrenIds = [Credential.Id],
-                GetParentsIds = [Credential.Id],
+                GetChildrenIds = [Credential.Id,],
+                GetParentsIds = [Credential.Id,],
             })
         );
     }
