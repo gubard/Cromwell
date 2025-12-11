@@ -26,11 +26,11 @@ public sealed partial class RootCredentialsViewModel : MultiCredentialsViewModel
             new(ShowMultiEditCommand, null, new PackIconMaterialDesign
             {
                 Kind = PackIconMaterialDesignKind.Edit,
-            }, false),
+            }, isEnable:false),
             new(ShowMultiDeleteCommand, null, new PackIconMaterialDesign
             {
                 Kind = PackIconMaterialDesignKind.Delete,
-            }, false),
+            }, ButtonType.Danger, false),
         ]);
 
         _selectedCredentials.PropertyChanged += (_, e) =>
