@@ -106,7 +106,7 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
 
         foreach (var edit in source.EditCredentials)
         {
-            var items = Find(edit.Ids);
+            var items = edit.Ids.Select(GetItem).ToArray();
 
             if (edit.IsEditName)
             {
@@ -209,13 +209,7 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
 
         foreach (var changeOrder in source.ChangeOrders)
         {
-            var item = Find(changeOrder.StartId);
-
-            if (item is null)
-            {
-                continue;
-            }
-            
+            var item = GetItem(changeOrder.StartId);
             var siblings = item.Parent is not null ? item.Children : _roots;
             var index = siblings.IndexOf(item);
 
@@ -223,8 +217,8 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
             {
                 continue;
             }
-            
-            var insertItems = Find(changeOrder.InsertIds);
+
+            var insertItems = changeOrder.InsertIds.Select(GetItem);
 
             foreach (var insertItem in insertItems)
             {
@@ -234,13 +228,8 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
 
         foreach (var deleteId in source.DeleteIds)
         {
+            var deleteItem = GetItem(deleteId);
             Items.Remove(deleteId);
-            var deleteItem = Find(deleteId);
-
-            if (deleteItem is null)
-            {
-                continue;
-            }
 
             if (deleteItem.Parent is not null)
             {
@@ -259,7 +248,7 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
         {
             return;
         }
-        
+
         if (item.Parent is not null)
         {
             item.Parent.Children.Remove(item);
@@ -279,91 +268,5 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
         {
             _roots.Add(item);
         }
-    }
-
-    private List<CredentialNotify> Find(Guid[] ids)
-    {
-        var result = new List<CredentialNotify>();
-
-        foreach (var root in _roots)
-        {
-            if (ids.Contains(root.Id))
-            {
-                result.Add(root);
-
-                if (ids.Length == result.Count)
-                {
-                    return result;
-                }
-            }
-
-            Find(ids, root, result);
-
-            if (ids.Length == result.Count)
-            {
-                return result;
-            }
-        }
-
-        return result;
-    }
-
-    private void Find(Guid[] ids, CredentialNotify credential,
-        List<CredentialNotify> result)
-    {
-        foreach (var child in credential.Children)
-        {
-            if (ids.Contains(child.Id))
-            {
-                result.Add(child);
-
-                if (ids.Length == result.Count)
-                {
-                    return;
-                }
-            }
-
-            Find(ids, child, result);
-
-            if (ids.Length == result.Count)
-            {
-                return;
-            }
-        }
-    }
-
-    private CredentialNotify? Find(Guid id)
-    {
-        foreach (var root in _roots)
-        {
-            if (root.Id == id)
-            {
-                return root;
-            }
-
-            var item = Find(id, root);
-
-            if (item is not null)
-            {
-                return item;
-            }
-        }
-
-        return null;
-    }
-
-    private CredentialNotify? Find(Guid id, CredentialNotify credential)
-    {
-        foreach (var child in credential.Children)
-        {
-            if (child.Id == id)
-            {
-                return child;
-            }
-
-            return Find(id, child);
-        }
-
-        return null;
     }
 }
