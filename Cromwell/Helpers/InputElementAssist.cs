@@ -1,9 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.LogicalTree;
 using Cromwell.Models;
-using Gaia.Helpers;
 using Inanna.Helpers;
 
 namespace Cromwell.Helpers;
