@@ -130,10 +130,10 @@ public sealed partial class RootCredentialsViewModel : MultiCredentialsViewModel
         });
     }
 
-    public async ValueTask RefreshAsync(CancellationToken ct)
+    public ValueTask RefreshAsync(CancellationToken ct)
     {
-        await WrapCommand(async () =>
-            await UiCredentialService.GetAsync(new()
+        return WrapCommand( () =>
+             UiCredentialService.GetAsync(new()
             {
                 IsGetRoots = true,
             }, ct));

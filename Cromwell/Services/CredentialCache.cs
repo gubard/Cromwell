@@ -44,35 +44,6 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
         }
     }
 
-    private CredentialNotify UpdateCredential(Credential credential,
-        HashSet<Guid> updatedIds)
-    {
-        var item = GetItem(credential.Id);
-
-        if (updatedIds.Contains(credential.Id))
-        {
-            return item;
-        }
-
-        item.CustomAvailableCharacters = credential.CustomAvailableCharacters;
-        item.Name = credential.Name;
-        item.Login = credential.Login;
-        item.Key = credential.Key;
-        item.IsAvailableUpperLatin = credential.IsAvailableUpperLatin;
-        item.IsAvailableLowerLatin = credential.IsAvailableLowerLatin;
-        item.IsAvailableNumber = credential.IsAvailableNumber;
-        item.IsAvailableSpecialSymbols = credential.IsAvailableSpecialSymbols;
-        item.Length = credential.Length;
-        item.Regex = credential.Regex;
-        item.Type = credential.Type;
-        item.Parent = credential.ParentId.HasValue
-            ? GetItem(credential.ParentId.Value)
-            : null;
-
-
-        return item;
-    }
-
     public void Update(TurtlePostRequest source)
     {
         foreach (var create in source.CreateCredentials)
@@ -240,6 +211,35 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
                 _roots.Remove(deleteItem);
             }
         }
+    }
+
+    private CredentialNotify UpdateCredential(Credential credential,
+        HashSet<Guid> updatedIds)
+    {
+        var item = GetItem(credential.Id);
+
+        if (updatedIds.Contains(credential.Id))
+        {
+            return item;
+        }
+
+        item.CustomAvailableCharacters = credential.CustomAvailableCharacters;
+        item.Name = credential.Name;
+        item.Login = credential.Login;
+        item.Key = credential.Key;
+        item.IsAvailableUpperLatin = credential.IsAvailableUpperLatin;
+        item.IsAvailableLowerLatin = credential.IsAvailableLowerLatin;
+        item.IsAvailableNumber = credential.IsAvailableNumber;
+        item.IsAvailableSpecialSymbols = credential.IsAvailableSpecialSymbols;
+        item.Length = credential.Length;
+        item.Regex = credential.Regex;
+        item.Type = credential.Type;
+        item.Parent = credential.ParentId.HasValue
+            ? GetItem(credential.ParentId.Value)
+            : null;
+
+
+        return item;
     }
 
     private void ChangeParent(CredentialNotify item, Guid? newParentId)

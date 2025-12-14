@@ -49,7 +49,8 @@ public interface ICromwellServiceProvider
         IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
         ICredentialCache cache,
         INavigator navigator,
-        IStorageService storageService)
+        IStorageService storageService,
+        GaiaValues gaiaValues)
     {
         return new UiCredentialService(new HttpCredentialService(new()
             {
@@ -61,7 +62,7 @@ public interface ICromwellServiceProvider
             }, tryPolicyService, headersFactory),
             new EfCredentialService(new FileInfo(
                     $"{storageService.GetAppDirectory()}/Cromwell/{appState.User.ThrowIfNull().Id}.db")
-               .InitDbContext()), appState, cache, navigator);
+               .InitDbContext(), gaiaValues), appState, cache, navigator);
     }
 
     public static INotificationService GetNotificationService()
