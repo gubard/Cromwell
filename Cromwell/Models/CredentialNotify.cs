@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Gaia.Services;
 using Inanna.Helpers;
+using Inanna.Models;
 using Turtle.Contract.Models;
 
 namespace Cromwell.Models;
@@ -67,7 +68,7 @@ public partial class CredentialNotify : ObservableObject,
 
     public void UpdateParents(IEnumerable<CredentialNotify> parents)
     {
-        _parents.UpdateOrder(Root.IEnumerableInstance
-           .Concat(parents.OfType<object>()).ToArray());
+        _parents.UpdateOrder(HomeMark.IEnumerableInstance
+           .Concat(parents).ToArray());
     }
 }
