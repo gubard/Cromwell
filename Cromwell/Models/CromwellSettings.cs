@@ -5,7 +5,7 @@ namespace Cromwell.Models;
 [SourceEntity(nameof(Id))]
 public partial class CromwellSettings
 {
-    private static readonly string DefaultGeneralKey = Guid.Empty.ToString().ToUpper();
+    private static readonly string DefaultGeneralKey = Guid.NewGuid().ToString().ToUpper();
 
     public Guid Id { get; set; }
     public string GeneralKey { get; set; } = DefaultGeneralKey;
