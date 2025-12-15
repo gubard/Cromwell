@@ -4,7 +4,7 @@
     <Style Selector="ListBox.credential-view">
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="m:CredentialNotify">
-                <TextBlock Classes="alignment-left-center text-wrap" Text="{Binding Name}" />
+                <TextBlock Classes="align-left-center text-wrap" Text="{Binding Name}" />
             </DataTemplate>
         </Setter>
     </Style>

@@ -43,7 +43,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader
                 _appResourceService.GetResource<string>("Lang.EditItem"),
                 _credential.Name
             ),
-            Classes = { "h2", "alignment-left-center" },
+            Classes = { "h2", "align-left-center" },
         };
 
     [RelayCommand]
@@ -104,7 +104,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader
                 new TextBlock
                 {
                     Text = _appResourceService.GetResource<string>("Lang.Saved"),
-                    Classes = { "alignment-center", "h2", "m-5" },
+                    Classes = { "align-center", "h2", "m-5" },
                 },
                 NotificationType.None
             );

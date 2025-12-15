@@ -52,7 +52,7 @@ public static class CromwellCommands
                             appResourceService.GetResource<string>("Lang.Copied"),
                             appResourceService.GetResource<string>("Lang.Password")
                         ),
-                        Classes = { "alignment-center", "m-5", "h2" },
+                        Classes = { "align-center", "m-5", "h2" },
                     },
                     NotificationType.Success
                 );
@@ -71,7 +71,7 @@ public static class CromwellCommands
                             appResourceService.GetResource<string>("Lang.Copied"),
                             appResourceService.GetResource<string>("Lang.Login")
                         ),
-                        Classes = { "alignment-center", "m-5", "h2" },
+                        Classes = { "align-center", "m-5", "h2" },
                     },
                     NotificationType.Success
                 );
