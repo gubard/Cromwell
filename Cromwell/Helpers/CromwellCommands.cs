@@ -16,22 +16,17 @@ public static class CromwellCommands
 {
     static CromwellCommands()
     {
-        var dialogService =
-            DiHelper.ServiceProvider.GetService<IDialogService>();
-        var uiCredentialService =
-            DiHelper.ServiceProvider.GetService<IUiCredentialService>();
-        var appSettingService = DiHelper.ServiceProvider
-           .GetService<ISettingsService<CromwellSettings>>();
-        var appResourceService =
-            DiHelper.ServiceProvider.GetService<IAppResourceService>();
-        var passwordGeneratorService = DiHelper.ServiceProvider
-           .GetService<IPasswordGeneratorService>();
-        var clipboardService =
-            DiHelper.ServiceProvider.GetService<IClipboardService>();
-        var notificationService =
-            DiHelper.ServiceProvider.GetService<INotificationService>();
-        var stringFormater =
-            DiHelper.ServiceProvider.GetService<IStringFormater>();
+        var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
+        var uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
+        var appSettingService = DiHelper.ServiceProvider.GetService<
+            ISettingsService<CromwellSettings>
+        >();
+        var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
+        var passwordGeneratorService =
+            DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
+        var clipboardService = DiHelper.ServiceProvider.GetService<IClipboardService>();
+        var notificationService = DiHelper.ServiceProvider.GetService<INotificationService>();
+        var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
 
         GeneratePasswordCommand = UiHelper.CreateCommand<CredentialNotify>(
@@ -43,64 +38,78 @@ public static class CromwellCommands
                     $"{settings.GeneralKey}{parameters.Key}",
                     new(
                         $"{parameters.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{parameters.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{parameters.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{parameters.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{parameters.CustomAvailableCharacters}",
-                        parameters.Length, parameters.Regex));
+                        parameters.Length,
+                        parameters.Regex
+                    )
+                );
 
                 await clipboardService.SetTextAsync(password, ct);
 
-                notificationService.ShowNotification(new TextBlock
-                {
-                    Text = stringFormater.Format(
-                        appResourceService.GetResource<string>("Lang.Copied"),
-                        appResourceService
-                           .GetResource<string>("Lang.Password")),
-                    Classes =
+                notificationService.ShowNotification(
+                    new TextBlock
                     {
-                        "alignment-center",
-                        "m-5",
-                        "h2",
+                        Text = stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.Copied"),
+                            appResourceService.GetResource<string>("Lang.Password")
+                        ),
+                        Classes = { "alignment-center", "m-5", "h2" },
                     },
-                }, NotificationType.Success);
-            });
+                    NotificationType.Success
+                );
+            }
+        );
 
         LoginToClipboardCommand = UiHelper.CreateCommand<CredentialNotify>(
             async (parameters, ct) =>
             {
                 await clipboardService.SetTextAsync(parameters.Login, ct);
 
-                notificationService.ShowNotification(new TextBlock
-                {
-                    Text = stringFormater.Format(
-                        appResourceService.GetResource<string>("Lang.Copied"),
-                        appResourceService.GetResource<string>("Lang.Login")),
-                    Classes =
+                notificationService.ShowNotification(
+                    new TextBlock
                     {
-                        "alignment-center",
-                        "m-5",
-                        "h2",
+                        Text = stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.Copied"),
+                            appResourceService.GetResource<string>("Lang.Login")
+                        ),
+                        Classes = { "alignment-center", "m-5", "h2" },
                     },
-                }, NotificationType.Success);
-            });
+                    NotificationType.Success
+                );
+            }
+        );
 
         OpenCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(
             (parameters, ct) =>
                 navigator.NavigateToAsync(
-                    new CredentialViewModel(uiCredentialService, dialogService,
-                        stringFormater, appResourceService, parameters), ct));
+                    new CredentialViewModel(
+                        uiCredentialService,
+                        dialogService,
+                        stringFormater,
+                        appResourceService,
+                        parameters
+                    ),
+                    ct
+                )
+        );
 
         EditCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(
             (credential, ct) =>
                 navigator.NavigateToAsync(
-                    new EditCredentialViewModel(credential, uiCredentialService,
+                    new EditCredentialViewModel(
+                        credential,
+                        uiCredentialService,
                         notificationService,
-                        appResourceService, stringFormater), ct));
+                        appResourceService,
+                        stringFormater
+                    ),
+                    ct
+                )
+        );
 
-        DeleteCredentialCommand =
-            UiHelper.CreateCommand<CredentialNotify, TurtlePostResponse>(
-                (credential, ct) =>
-                    uiCredentialService.PostAsync(new()
-                    {
-                        DeleteIds = [credential.Id,],
-                    }, ct));
+        DeleteCredentialCommand = UiHelper.CreateCommand<CredentialNotify, TurtlePostResponse>(
+            (credential, ct) =>
+                uiCredentialService.PostAsync(new() { DeleteIds = [credential.Id] }, ct)
+        );
     }
 
     public static readonly ICommand GeneratePasswordCommand;

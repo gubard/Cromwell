@@ -11,26 +11,34 @@ namespace Cromwell.Ui;
 
 public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase, IHeader, IRefresh
 {
-
     public CredentialViewModel(
         IUiCredentialService uiCredentialService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
         CredentialNotify credential
-    ) : base(uiCredentialService, dialogService, stringFormater, appResourceService)
+    )
+        : base(uiCredentialService, dialogService, stringFormater, appResourceService)
     {
         Credential = credential;
-        Header = new(credential, [
-            new(ShowMultiEditCommand, null, new PackIconMaterialDesign
-            {
-                Kind = PackIconMaterialDesignKind.Edit,
-            }, isEnable: false),
-            new(ShowMultiDeleteCommand, null, new PackIconMaterialDesign
-            {
-                Kind = PackIconMaterialDesignKind.Delete,
-            }, ButtonType.Danger, false),
-        ]);
+        Header = new(
+            credential,
+            [
+                new(
+                    ShowMultiEditCommand,
+                    null,
+                    new PackIconMaterialDesign { Kind = PackIconMaterialDesignKind.Edit },
+                    isEnable: false
+                ),
+                new(
+                    ShowMultiDeleteCommand,
+                    null,
+                    new PackIconMaterialDesign { Kind = PackIconMaterialDesignKind.Delete },
+                    ButtonType.Danger,
+                    false
+                ),
+            ]
+        );
 
         _selectedCredentials.PropertyChanged += (_, e) =>
         {
@@ -71,21 +79,28 @@ public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase,
     {
         var credential = new CredentialParametersViewModel(ValidationMode.ValidateAll, false);
 
-        await WrapCommand(() => DialogService.ShowMessageBoxAsync(new(
-            StringFormater.Format(
-                AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                AppResourceService.GetResource<string>("Lang.Credential")),
-            credential,
-            new DialogButton(
-                AppResourceService.GetResource<string>("Lang.Create"),
-                CreateCommand,
-                credential, DialogButtonType.Primary), UiHelper.CancelButton)));
+        await WrapCommand(() =>
+            DialogService.ShowMessageBoxAsync(
+                new(
+                    StringFormater.Format(
+                        AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                        AppResourceService.GetResource<string>("Lang.Credential")
+                    ),
+                    credential,
+                    new DialogButton(
+                        AppResourceService.GetResource<string>("Lang.Create"),
+                        CreateCommand,
+                        credential,
+                        DialogButtonType.Primary
+                    ),
+                    UiHelper.CancelButton
+                )
+            )
+        );
     }
 
     [RelayCommand]
-    private async Task CreateAsync(
-        CredentialParametersViewModel parameters,
-        CancellationToken ct)
+    private async Task CreateAsync(CredentialParametersViewModel parameters, CancellationToken ct)
     {
         await WrapCommand(async () =>
         {
@@ -96,7 +111,8 @@ public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase,
                 return;
             }
 
-            await UiCredentialService.PostAsync(new()
+            await UiCredentialService.PostAsync(
+                new()
                 {
                     CreateCredentials =
                     [
@@ -106,24 +122,20 @@ public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase,
                             Name = parameters.Name,
                             Login = parameters.Login,
                             Key = parameters.Key,
-                            IsAvailableUpperLatin = parameters
-                               .IsAvailableUpperLatin,
-                            IsAvailableLowerLatin = parameters
-                               .IsAvailableLowerLatin,
-                            IsAvailableNumber =
-                                parameters.IsAvailableNumber,
-                            IsAvailableSpecialSymbols = parameters
-                               .IsAvailableSpecialSymbols,
-                            CustomAvailableCharacters = parameters
-                               .CustomAvailableCharacters,
+                            IsAvailableUpperLatin = parameters.IsAvailableUpperLatin,
+                            IsAvailableLowerLatin = parameters.IsAvailableLowerLatin,
+                            IsAvailableNumber = parameters.IsAvailableNumber,
+                            IsAvailableSpecialSymbols = parameters.IsAvailableSpecialSymbols,
+                            CustomAvailableCharacters = parameters.CustomAvailableCharacters,
                             Length = parameters.Length,
                             Regex = parameters.Regex,
                             Type = parameters.Type,
                             ParentId = Credential.Id,
                         },
                     ],
-                }
-                , ct);
+                },
+                ct
+            );
 
             DialogService.CloseMessageBox();
         });
@@ -132,22 +144,19 @@ public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase,
     public async ValueTask RefreshAsync(CancellationToken ct)
     {
         await WrapCommand(() =>
-            UiCredentialService.GetAsync(new()
-            {
-                GetChildrenIds = [Credential.Id,],
-                GetParentsIds = [Credential.Id,],
-            }, ct)
+            UiCredentialService.GetAsync(
+                new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] },
+                ct
+            )
         );
     }
 
     public void Refresh()
     {
         WrapCommand(() =>
-            UiCredentialService.Get(new()
-            {
-                GetChildrenIds = [Credential.Id,],
-                GetParentsIds = [Credential.Id,],
-            })
+            UiCredentialService.Get(
+                new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] }
+            )
         );
     }
 }

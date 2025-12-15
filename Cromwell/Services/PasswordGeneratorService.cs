@@ -3,8 +3,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Cromwell.Models;
-using Gaia.Services;
 using Gaia.Helpers;
+using Gaia.Services;
 
 namespace Cromwell.Services;
 
@@ -29,7 +29,9 @@ public class PasswordGeneratorService : IPasswordGeneratorService
         using var sha = SHA512.Create();
         var hash = new ReadOnlySpan<byte>(sha.ComputeHash(bytes));
         var resultBytes = new byte[passwordOptions.Length].AsSpan();
-        var availableBytes = SearchValues.Create(Encoding.ASCII.GetBytes(passwordOptions.AvailableCharacters));
+        var availableBytes = SearchValues.Create(
+            Encoding.ASCII.GetBytes(passwordOptions.AvailableCharacters)
+        );
         GeneratePassword(resultBytes, hash, availableBytes, sha);
         var tryCount = 0;
 

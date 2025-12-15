@@ -1,46 +1,54 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <LangVersion>preview</LangVersion>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-        <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
-        <ImplicitUsings>enable</ImplicitUsings>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)\GeneratedFiles</CompilerGeneratedFilesOutputPath>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <AvaloniaResource Include="Assets\**" />
-    </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Avalonia" />
-        <PackageReference Include="Avalonia.Themes.Fluent" />
-        <PackageReference Include="Avalonia.Fonts.Inter" />
-        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Include="Avalonia.Diagnostics">
-            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
-            <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="CommunityToolkit.Mvvm" />
-        <PackageReference Include="Jab" PrivateAssets="all" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-        <PackageReference Include="System.Reactive" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="Avalonia.Fonts.Inter" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Include="Avalonia.Diagnostics">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Jab" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="System.Reactive" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\Inanna\Inanna.SourceGenerator\Inanna.SourceGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-      <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
-      <ProjectReference Include="..\..\Nestor\Nestor.Db.Sqlite\Nestor.Db.Sqlite.csproj" />
-      <ProjectReference Include="..\..\Nestor\Nestor.Db\Nestor.Db.csproj" />
-      <ProjectReference Include="..\..\Nestor\Nestor.SourceGenerator\Nestor.SourceGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
-      <ProjectReference Include="..\..\Turtle\Turtle.Contract\Turtle.Contract.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference
+      Include="..\..\Inanna\Inanna.SourceGenerator\Inanna.SourceGenerator.csproj"
+      ReferenceOutputAssembly="false"
+      OutputItemType="Analyzer"
+    />
+    <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
+    <ProjectReference Include="..\..\Nestor\Nestor.Db.Sqlite\Nestor.Db.Sqlite.csproj" />
+    <ProjectReference Include="..\..\Nestor\Nestor.Db\Nestor.Db.csproj" />
+    <ProjectReference
+      Include="..\..\Nestor\Nestor.SourceGenerator\Nestor.SourceGenerator.csproj"
+      ReferenceOutputAssembly="false"
+      OutputItemType="Analyzer"
+    />
+    <ProjectReference Include="..\..\Turtle\Turtle.Contract\Turtle.Contract.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <Compile Update="Ui\CredentialParametersView.axaml.cs">
-        <DependentUpon>EditCredentialView.axaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Ui\CredentialParametersView.axaml.cs">
+      <DependentUpon>EditCredentialView.axaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

@@ -59,7 +59,10 @@ public class DropUserControl : UserControl
     private void Drop(object? sender, DragEventArgs e)
     {
         var tag = FindObjectDropTag(e.Source);
-        var data = e.DataTransfer.Items[0].TryGetRaw(e.DataTransfer.Items[0].Formats[0]).As<byte[]>();
+        var data = e
+            .DataTransfer.Items[0]
+            .TryGetRaw(e.DataTransfer.Items[0].Formats[0])
+            .As<byte[]>();
 
         if (data is null)
         {
@@ -72,18 +75,20 @@ public class DropUserControl : UserControl
         {
             case "DropRoot":
             {
-                _uiCredentialService.Post(new()
-                {
-                    EditCredentials =
-                    [
-                        new()
-                        {
-                            Ids = [id],
-                            IsEditParentId = true,
-                            ParentId = null,
-                        },
-                    ],
-                });
+                _uiCredentialService.Post(
+                    new()
+                    {
+                        EditCredentials =
+                        [
+                            new()
+                            {
+                                Ids = [id],
+                                IsEditParentId = true,
+                                ParentId = null,
+                            },
+                        ],
+                    }
+                );
 
                 break;
             }
@@ -106,18 +111,20 @@ public class DropUserControl : UserControl
                     return;
                 }
 
-                _uiCredentialService.Post(new()
-                {
-                    EditCredentials =
-                    [
-                        new()
-                        {
-                            Ids = [id],
-                            IsEditParentId = true,
-                            ParentId = viewModel.Id,
-                        },
-                    ],
-                });
+                _uiCredentialService.Post(
+                    new()
+                    {
+                        EditCredentials =
+                        [
+                            new()
+                            {
+                                Ids = [id],
+                                IsEditParentId = true,
+                                ParentId = viewModel.Id,
+                            },
+                        ],
+                    }
+                );
 
                 break;
             }
@@ -140,18 +147,20 @@ public class DropUserControl : UserControl
                     return;
                 }
 
-                _uiCredentialService.Post(new()
-                {
-                    ChangeOrders =
-                    [
-                        new()
-                        {
-                            InsertIds = [id],
-                            IsAfter = false,
-                            StartId = viewModel.Id,
-                        },
-                    ],
-                });
+                _uiCredentialService.Post(
+                    new()
+                    {
+                        ChangeOrders =
+                        [
+                            new()
+                            {
+                                InsertIds = [id],
+                                IsAfter = false,
+                                StartId = viewModel.Id,
+                            },
+                        ],
+                    }
+                );
 
                 break;
             }
@@ -174,18 +183,20 @@ public class DropUserControl : UserControl
                     return;
                 }
 
-                _uiCredentialService.Post(new()
-                {
-                    ChangeOrders =
-                    [
-                        new()
-                        {
-                            InsertIds = [id],
-                            IsAfter = true,
-                            StartId = viewModel.Id,
-                        },
-                    ],
-                });
+                _uiCredentialService.Post(
+                    new()
+                    {
+                        ChangeOrders =
+                        [
+                            new()
+                            {
+                                InsertIds = [id],
+                                IsAfter = true,
+                                StartId = viewModel.Id,
+                            },
+                        ],
+                    }
+                );
 
                 break;
             }

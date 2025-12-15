@@ -9,7 +9,10 @@ namespace Cromwell.Helpers;
 public static class InputElementAssist
 {
     public static readonly AttachedProperty<bool> IsDragHandleProperty =
-        AvaloniaProperty.RegisterAttached<InputElement, bool>("IsDragHandle", typeof(InputElementAssist));
+        AvaloniaProperty.RegisterAttached<InputElement, bool>(
+            "IsDragHandle",
+            typeof(InputElementAssist)
+        );
 
     public static void SetIsDragHandle(InputElement element, bool value)
     {
@@ -23,22 +26,24 @@ public static class InputElementAssist
 
     static InputElementAssist()
     {
-        IsDragHandleProperty.Changed.AddClassHandler<Control, bool>((_, e) =>
-        {
-            if (e.Sender is not InputElement element)
+        IsDragHandleProperty.Changed.AddClassHandler<Control, bool>(
+            (_, e) =>
             {
-                return;
-            }
+                if (e.Sender is not InputElement element)
+                {
+                    return;
+                }
 
-            if (e.NewValue.GetValueOrDefault<bool>())
-            {
-                element.PointerPressed += DragOnPointerPressed;
+                if (e.NewValue.GetValueOrDefault<bool>())
+                {
+                    element.PointerPressed += DragOnPointerPressed;
+                }
+                else
+                {
+                    element.PointerPressed -= DragOnPointerPressed;
+                }
             }
-            else
-            {
-                element.PointerPressed -= DragOnPointerPressed;
-            }
-        });
+        );
     }
 
     private static async void DragOnPointerPressed(object? sender, PointerPressedEventArgs e)
@@ -57,8 +62,10 @@ public static class InputElementAssist
         var dragData = new DataTransfer();
         var dataTransferItem = new DataTransferItem();
 
-        dataTransferItem.Set(DataFormat.CreateBytesApplicationFormat(nameof(CredentialNotify)),
-            credential.Id.ToByteArray());
+        dataTransferItem.Set(
+            DataFormat.CreateBytesApplicationFormat(nameof(CredentialNotify)),
+            credential.Id.ToByteArray()
+        );
 
         dragData.Add(dataTransferItem);
         credential.IsDrag = true;

@@ -6,14 +6,12 @@ using Turtle.Contract.Models;
 
 namespace Cromwell.Services;
 
-public interface ICredentialCache : ICache<TurtleGetResponse>,
-    ICache<TurtlePostRequest>
+public interface ICredentialCache : ICache<TurtleGetResponse>, ICache<TurtlePostRequest>
 {
     IEnumerable<CredentialNotify> Roots { get; }
 }
 
-public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
-    ICredentialCache
+public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>, ICredentialCache
 {
     private readonly AvaloniaList<CredentialNotify> _roots = [];
 
@@ -25,22 +23,29 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
 
         if (source.Roots is not null)
         {
-            _roots.UpdateOrder(source.Roots.OrderBy(x => x.OrderIndex)
-               .Select(x => UpdateCredential(x, updatedIds)).ToArray());
+            _roots.UpdateOrder(
+                source
+                    .Roots.OrderBy(x => x.OrderIndex)
+                    .Select(x => UpdateCredential(x, updatedIds))
+                    .ToArray()
+            );
         }
 
         foreach (var (id, items) in source.Children)
         {
             var item = GetItem(id);
-            item.Children.UpdateOrder(items.OrderBy(x => x.OrderIndex)
-               .Select(x => UpdateCredential(x, updatedIds)).ToArray());
+            item.Children.UpdateOrder(
+                items
+                    .OrderBy(x => x.OrderIndex)
+                    .Select(x => UpdateCredential(x, updatedIds))
+                    .ToArray()
+            );
         }
 
         foreach (var (id, items) in source.Parents)
         {
             var item = GetItem(id);
-            item.UpdateParents(
-                items.Select(x => UpdateCredential(x, updatedIds)));
+            item.UpdateParents(items.Select(x => UpdateCredential(x, updatedIds)));
         }
     }
 
@@ -55,15 +60,12 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
             item.IsAvailableUpperLatin = create.IsAvailableUpperLatin;
             item.IsAvailableLowerLatin = create.IsAvailableLowerLatin;
             item.IsAvailableNumber = create.IsAvailableNumber;
-            item.IsAvailableSpecialSymbols =
-                create.IsAvailableSpecialSymbols;
+            item.IsAvailableSpecialSymbols = create.IsAvailableSpecialSymbols;
             item.Length = create.Length;
             item.Regex = create.Regex;
             item.Type = create.Type;
 
-            item.Parent = create.ParentId.HasValue
-                ? GetItem(create.ParentId.Value)
-                : null;
+            item.Parent = create.ParentId.HasValue ? GetItem(create.ParentId.Value) : null;
 
             if (item.Parent is not null)
             {
@@ -131,8 +133,7 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
             {
                 foreach (var item in items)
                 {
-                    item.IsAvailableSpecialSymbols =
-                        edit.IsAvailableSpecialSymbols;
+                    item.IsAvailableSpecialSymbols = edit.IsAvailableSpecialSymbols;
                 }
             }
 
@@ -140,8 +141,7 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
             {
                 foreach (var item in items)
                 {
-                    item.CustomAvailableCharacters =
-                        edit.CustomAvailableCharacters;
+                    item.CustomAvailableCharacters = edit.CustomAvailableCharacters;
                 }
             }
 
@@ -213,8 +213,7 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
         }
     }
 
-    private CredentialNotify UpdateCredential(Credential credential,
-        HashSet<Guid> updatedIds)
+    private CredentialNotify UpdateCredential(Credential credential, HashSet<Guid> updatedIds)
     {
         var item = GetItem(credential.Id);
 
@@ -234,10 +233,7 @@ public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>,
         item.Length = credential.Length;
         item.Regex = credential.Regex;
         item.Type = credential.Type;
-        item.Parent = credential.ParentId.HasValue
-            ? GetItem(credential.ParentId.Value)
-            : null;
-
+        item.Parent = credential.ParentId.HasValue ? GetItem(credential.ParentId.Value) : null;
 
         return item;
     }

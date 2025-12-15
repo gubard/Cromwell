@@ -7,7 +7,9 @@ namespace Cromwell.Ui;
 public partial class RootCredentialsHeaderViewModel : ViewModelBase
 {
     private readonly AvaloniaList<InannaCommand> _commands;
-    [ObservableProperty] private bool _isMulti;
+
+    [ObservableProperty]
+    private bool _isMulti;
 
     public RootCredentialsHeaderViewModel(IEnumerable<InannaCommand> commands)
     {

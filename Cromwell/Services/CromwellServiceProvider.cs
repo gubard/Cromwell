@@ -22,13 +22,10 @@ namespace Cromwell.Services;
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
-[Transient(typeof(IUiCredentialService),
-    Factory = nameof(GetUiCredentialService))]
-[Transient(typeof(INotificationService),
-    Factory = nameof(GetNotificationService))]
+[Transient(typeof(IUiCredentialService), Factory = nameof(GetUiCredentialService))]
+[Transient(typeof(INotificationService), Factory = nameof(GetNotificationService))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
-[Singleton(typeof(ICredentialCache),
-    typeof(CredentialCache))]
+[Singleton(typeof(ICredentialCache), typeof(CredentialCache))]
 [Singleton(typeof(IAppResourceService), typeof(AppResourceService))]
 [Singleton(typeof(IStringFormater), Factory = nameof(GetStringFormater))]
 [Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
@@ -45,30 +42,42 @@ public interface ICromwellServiceProvider
     }
 
     public static IUiCredentialService GetUiCredentialService(
-        CredentialServiceOptions options, ITryPolicyService tryPolicyService,
-        IFactory<Memory<HttpHeader>> headersFactory, AppState appState,
+        CredentialServiceOptions options,
+        ITryPolicyService tryPolicyService,
+        IFactory<Memory<HttpHeader>> headersFactory,
+        AppState appState,
         ICredentialCache cache,
         INavigator navigator,
         IStorageService storageService,
-        GaiaValues gaiaValues)
+        GaiaValues gaiaValues
+    )
     {
-        return new UiCredentialService(new HttpCredentialService(new()
-            {
-                BaseAddress = new(options.Url),
-            }, new()
-            {
-                TypeInfoResolver = TurtleJsonContext.Resolver,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            }, tryPolicyService, headersFactory),
-            new EfCredentialService(new FileInfo(
-                    $"{storageService.GetAppDirectory()}/Cromwell/{appState.User.ThrowIfNull().Id}.db")
-               .InitDbContext(), gaiaValues), appState, cache, navigator);
+        return new UiCredentialService(
+            new HttpCredentialService(
+                new() { BaseAddress = new(options.Url) },
+                new()
+                {
+                    TypeInfoResolver = TurtleJsonContext.Resolver,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                },
+                tryPolicyService,
+                headersFactory
+            ),
+            new EfCredentialService(
+                new FileInfo(
+                    $"{storageService.GetAppDirectory()}/Cromwell/{appState.User.ThrowIfNull().Id}.db"
+                ).InitDbContext(),
+                gaiaValues
+            ),
+            appState,
+            cache,
+            navigator
+        );
     }
 
     public static INotificationService GetNotificationService()
     {
-        return new NotificationService("Notifications",
-            TimeSpan.FromSeconds(5));
+        return new NotificationService("Notifications", TimeSpan.FromSeconds(5));
     }
 
     public static IDialogService GetDialogService()
@@ -83,7 +92,6 @@ public interface ICromwellServiceProvider
 
     public static Application GetApplication()
     {
-        return Application.Current
-         ?? throw new NullReferenceException("Application not found");
+        return Application.Current ?? throw new NullReferenceException("Application not found");
     }
 }

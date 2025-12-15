@@ -19,8 +19,12 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     protected readonly IStringFormater StringFormater;
     protected readonly IAppResourceService AppResourceService;
 
-    protected MultiCredentialsViewModelBase(IUiCredentialService uiCredentialService, IDialogService dialogService,
-        IStringFormater stringFormater, IAppResourceService appResourceService)
+    protected MultiCredentialsViewModelBase(
+        IUiCredentialService uiCredentialService,
+        IDialogService dialogService,
+        IStringFormater stringFormater,
+        IAppResourceService appResourceService
+    )
     {
         _selectedCredentials = new();
         UiCredentialService = uiCredentialService;
@@ -36,10 +40,10 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     {
         await WrapCommand(async () =>
         {
-            await UiCredentialService.PostAsync(new()
-            {
-                DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray(),
-            }, ct);
+            await UiCredentialService.PostAsync(
+                new() { DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray() },
+                ct
+            );
 
             DialogService.CloseMessageBox();
         });
@@ -52,15 +56,27 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
 
         var button = new DialogButton(
             AppResourceService.GetResource<string>("Lang.Delete"),
-            MultiDeleteCommand, null, DialogButtonType.Primary);
+            MultiDeleteCommand,
+            null,
+            DialogButtonType.Primary
+        );
 
         await WrapCommand(() =>
-            DialogService.ShowMessageBoxAsync(new(header, new TextBlock
-            {
-                Text = StringFormater.Format(
-                    AppResourceService.GetResource<string>("Lang.DeleteAsk"),
-                    SelectedCredentials.Select(x => x.Name).JoinString(", ")),
-            }, button, UiHelper.CancelButton)));
+            DialogService.ShowMessageBoxAsync(
+                new(
+                    header,
+                    new TextBlock
+                    {
+                        Text = StringFormater.Format(
+                            AppResourceService.GetResource<string>("Lang.DeleteAsk"),
+                            SelectedCredentials.Select(x => x.Name).JoinString(", ")
+                        ),
+                    },
+                    button,
+                    UiHelper.CancelButton
+                )
+            )
+        );
     }
 
     [RelayCommand]
@@ -70,14 +86,21 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
 
         var header = StringFormater.Format(
             AppResourceService.GetResource<string>("Lang.EditItem"),
-            SelectedCredentials.Select(x => x.Name).JoinString(", "));
+            SelectedCredentials.Select(x => x.Name).JoinString(", ")
+        );
 
         var button = new DialogButton(
             AppResourceService.GetResource<string>("Lang.Edit"),
-            MultiEditCommand, (SelectedCredentials, credential), DialogButtonType.Primary);
+            MultiEditCommand,
+            (SelectedCredentials, credential),
+            DialogButtonType.Primary
+        );
 
         await WrapCommand(() =>
-            DialogService.ShowMessageBoxAsync(new(header, credential, button, UiHelper.CancelButton)));
+            DialogService.ShowMessageBoxAsync(
+                new(header, credential, button, UiHelper.CancelButton)
+            )
+        );
     }
 
     [RelayCommand]
@@ -94,13 +117,10 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
 
             var editCredentials = parameters.CreateEditCredential();
             editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
-            var response = await UiCredentialService.PostAsync(new()
-            {
-                EditCredentials =
-                [
-                    editCredentials,
-                ],
-            }, ct);
+            var response = await UiCredentialService.PostAsync(
+                new() { EditCredentials = [editCredentials] },
+                ct
+            );
 
             DialogService.CloseMessageBox();
 

@@ -7,8 +7,7 @@ using Turtle.Contract.Models;
 
 namespace Cromwell.Models;
 
-public partial class CredentialNotify : ObservableObject,
-    IStaticFactory<Guid, CredentialNotify>
+public partial class CredentialNotify : ObservableObject, IStaticFactory<Guid, CredentialNotify>
 {
     private readonly AvaloniaList<object> _parents = [];
 
@@ -46,8 +45,7 @@ public partial class CredentialNotify : ObservableObject,
     public partial bool IsAvailableSpecialSymbols { get; set; }
 
     [ObservableProperty]
-    public partial string CustomAvailableCharacters { get; set; } =
-        string.Empty;
+    public partial string CustomAvailableCharacters { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial ushort Length { get; set; }
@@ -68,7 +66,6 @@ public partial class CredentialNotify : ObservableObject,
 
     public void UpdateParents(IEnumerable<CredentialNotify> parents)
     {
-        _parents.UpdateOrder(HomeMark.IEnumerableInstance
-           .Concat(parents).ToArray());
+        _parents.UpdateOrder(HomeMark.IEnumerableInstance.Concat(parents).ToArray());
     }
 }
