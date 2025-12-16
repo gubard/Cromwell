@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Gaia.Helpers;
 using Gaia.Services;
 using Inanna.Helpers;
 using Inanna.Models;
@@ -66,6 +67,7 @@ public partial class CredentialNotify : ObservableObject, IStaticFactory<Guid, C
 
     public void UpdateParents(IEnumerable<CredentialNotify> parents)
     {
-        _parents.UpdateOrder(HomeMark.IEnumerableInstance.Concat(parents).ToArray());
+        var allParents = HomeMark.Instance.Cast<object>().ToEnumerable().Concat(parents).ToArray();
+        _parents.UpdateOrder(allParents);
     }
 }
