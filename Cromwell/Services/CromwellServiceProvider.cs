@@ -27,7 +27,6 @@ namespace Cromwell.Services;
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
 [Singleton(typeof(ICredentialCache), typeof(CredentialCache))]
 [Singleton(typeof(IAppResourceService), typeof(AppResourceService))]
-[Singleton(typeof(IStringFormater), Factory = nameof(GetStringFormater))]
 [Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
 [Singleton(typeof(IServiceProvider), Factory = nameof(GetServiceProvider))]
@@ -36,11 +35,6 @@ namespace Cromwell.Services;
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
-    public static IStringFormater GetStringFormater()
-    {
-        return StringFormater.Instance;
-    }
-
     public static IUiCredentialService GetUiCredentialService(
         CredentialServiceOptions options,
         ITryPolicyService tryPolicyService,
