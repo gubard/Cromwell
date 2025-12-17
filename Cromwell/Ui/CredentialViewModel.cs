@@ -79,75 +79,83 @@ public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase,
     {
         var credential = new CredentialParametersViewModel(ValidationMode.ValidateAll, false);
 
-        await WrapCommand(() =>
-            DialogService.ShowMessageBoxAsync(
-                new(
-                    StringFormater.Format(
-                        AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                        AppResourceService.GetResource<string>("Lang.Credential")
-                    ),
-                    credential,
-                    new DialogButton(
-                        AppResourceService.GetResource<string>("Lang.Create"),
-                        CreateCommand,
+        await WrapCommandAsync(
+            () =>
+                DialogService.ShowMessageBoxAsync(
+                    new(
+                        StringFormater.Format(
+                            AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                            AppResourceService.GetResource<string>("Lang.Credential")
+                        ),
                         credential,
-                        DialogButtonType.Primary
+                        new DialogButton(
+                            AppResourceService.GetResource<string>("Lang.Create"),
+                            CreateCommand,
+                            credential,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
                     ),
-                    UiHelper.CancelButton
-                )
-            )
+                    ct
+                ),
+            ct
         );
     }
 
     [RelayCommand]
     private async Task CreateAsync(CredentialParametersViewModel parameters, CancellationToken ct)
     {
-        await WrapCommand(async () =>
-        {
-            parameters.StartExecute();
-
-            if (parameters.HasErrors)
+        await WrapCommandAsync(
+            async () =>
             {
-                return;
-            }
+                parameters.StartExecute();
 
-            await UiCredentialService.PostAsync(
-                new()
+                if (parameters.HasErrors)
                 {
-                    CreateCredentials =
-                    [
-                        new()
-                        {
-                            Id = Guid.NewGuid(),
-                            Name = parameters.Name,
-                            Login = parameters.Login,
-                            Key = parameters.Key,
-                            IsAvailableUpperLatin = parameters.IsAvailableUpperLatin,
-                            IsAvailableLowerLatin = parameters.IsAvailableLowerLatin,
-                            IsAvailableNumber = parameters.IsAvailableNumber,
-                            IsAvailableSpecialSymbols = parameters.IsAvailableSpecialSymbols,
-                            CustomAvailableCharacters = parameters.CustomAvailableCharacters,
-                            Length = parameters.Length,
-                            Regex = parameters.Regex,
-                            Type = parameters.Type,
-                            ParentId = Credential.Id,
-                        },
-                    ],
-                },
-                ct
-            );
+                    return;
+                }
 
-            DialogService.CloseMessageBox();
-        });
+                await UiCredentialService.PostAsync(
+                    new()
+                    {
+                        CreateCredentials =
+                        [
+                            new()
+                            {
+                                Id = Guid.NewGuid(),
+                                Name = parameters.Name,
+                                Login = parameters.Login,
+                                Key = parameters.Key,
+                                IsAvailableUpperLatin = parameters.IsAvailableUpperLatin,
+                                IsAvailableLowerLatin = parameters.IsAvailableLowerLatin,
+                                IsAvailableNumber = parameters.IsAvailableNumber,
+                                IsAvailableSpecialSymbols = parameters.IsAvailableSpecialSymbols,
+                                CustomAvailableCharacters = parameters.CustomAvailableCharacters,
+                                Length = parameters.Length,
+                                Regex = parameters.Regex,
+                                Type = parameters.Type,
+                                ParentId = Credential.Id,
+                            },
+                        ],
+                    },
+                    ct
+                );
+
+                DialogService.CloseMessageBox();
+            },
+            ct
+        );
     }
 
     public async ValueTask RefreshAsync(CancellationToken ct)
     {
-        await WrapCommand(() =>
-            UiCredentialService.GetAsync(
-                new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] },
-                ct
-            )
+        await WrapCommandAsync(
+            () =>
+                UiCredentialService.GetAsync(
+                    new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] },
+                    ct
+                ),
+            ct
         );
     }
 

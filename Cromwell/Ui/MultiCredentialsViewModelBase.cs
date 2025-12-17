@@ -38,15 +38,18 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     [RelayCommand]
     private async Task MultiDelete(CancellationToken ct)
     {
-        await WrapCommand(async () =>
-        {
-            await UiCredentialService.PostAsync(
-                new() { DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray() },
-                ct
-            );
+        await WrapCommandAsync(
+            async () =>
+            {
+                await UiCredentialService.PostAsync(
+                    new() { DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray() },
+                    ct
+                );
 
-            DialogService.CloseMessageBox();
-        });
+                DialogService.CloseMessageBox();
+            },
+            ct
+        );
     }
 
     [RelayCommand]
@@ -61,21 +64,24 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             DialogButtonType.Primary
         );
 
-        await WrapCommand(() =>
-            DialogService.ShowMessageBoxAsync(
-                new(
-                    header,
-                    new TextBlock
-                    {
-                        Text = StringFormater.Format(
-                            AppResourceService.GetResource<string>("Lang.DeleteAsk"),
-                            SelectedCredentials.Select(x => x.Name).JoinString(", ")
-                        ),
-                    },
-                    button,
-                    UiHelper.CancelButton
-                )
-            )
+        await WrapCommandAsync(
+            () =>
+                DialogService.ShowMessageBoxAsync(
+                    new(
+                        header,
+                        new TextBlock
+                        {
+                            Text = StringFormater.Format(
+                                AppResourceService.GetResource<string>("Lang.DeleteAsk"),
+                                SelectedCredentials.Select(x => x.Name).JoinString(", ")
+                            ),
+                        },
+                        button,
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                ),
+            ct
         );
     }
 
@@ -96,35 +102,41 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             DialogButtonType.Primary
         );
 
-        await WrapCommand(() =>
-            DialogService.ShowMessageBoxAsync(
-                new(header, credential, button, UiHelper.CancelButton)
-            )
+        await WrapCommandAsync(
+            () =>
+                DialogService.ShowMessageBoxAsync(
+                    new(header, credential, button, UiHelper.CancelButton),
+                    ct
+                ),
+            ct
         );
     }
 
     [RelayCommand]
     private async Task MultiEdit(CredentialParametersViewModel parameters, CancellationToken ct)
     {
-        await WrapCommand(async () =>
-        {
-            parameters.StartExecute();
-
-            if (parameters.HasErrors)
+        await WrapCommandAsync(
+            async () =>
             {
-                return (IValidationErrors)EmptyValidationErrors.Instance;
-            }
+                parameters.StartExecute();
 
-            var editCredentials = parameters.CreateEditCredential();
-            editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
-            var response = await UiCredentialService.PostAsync(
-                new() { EditCredentials = [editCredentials] },
-                ct
-            );
+                if (parameters.HasErrors)
+                {
+                    return (IValidationErrors)EmptyValidationErrors.Instance;
+                }
 
-            DialogService.CloseMessageBox();
+                var editCredentials = parameters.CreateEditCredential();
+                editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
+                var response = await UiCredentialService.PostAsync(
+                    new() { EditCredentials = [editCredentials] },
+                    ct
+                );
 
-            return response;
-        });
+                DialogService.CloseMessageBox();
+
+                return response;
+            },
+            ct
+        );
     }
 }
