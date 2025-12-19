@@ -31,7 +31,6 @@ namespace Cromwell.Services;
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
 [Singleton(typeof(IServiceProvider), Factory = nameof(GetServiceProvider))]
 [Singleton(typeof(INavigator), typeof(Navigator))]
-[Singleton(typeof(IStorageService), typeof(StorageService))]
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
