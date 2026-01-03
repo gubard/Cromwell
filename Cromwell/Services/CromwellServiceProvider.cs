@@ -9,6 +9,7 @@ using Inanna.Models;
 using Inanna.Services;
 using Inanna.Ui;
 using Jab;
+using Nestor.Db.Services;
 using Nestor.Db.Sqlite.Helpers;
 using Turtle.Contract.Models;
 using Turtle.Contract.Services;
@@ -42,7 +43,8 @@ public interface ICromwellServiceProvider
         ICredentialCache cache,
         INavigator navigator,
         IStorageService storageService,
-        GaiaValues gaiaValues
+        GaiaValues gaiaValues,
+        IMigrator migrator
     )
     {
         return new UiCredentialService(
@@ -59,7 +61,7 @@ public interface ICromwellServiceProvider
             new EfCredentialService(
                 new FileInfo(
                     $"{storageService.GetAppDirectory()}/Cromwell/{appState.User.ThrowIfNull().Id}.db"
-                ).InitDbContext(),
+                ).InitDbContext(migrator),
                 gaiaValues
             ),
             appState,
