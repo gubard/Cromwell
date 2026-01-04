@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
@@ -108,50 +109,52 @@ public sealed partial class RootCredentialsViewModel
     [RelayCommand]
     private async Task CreateAsync(CredentialParametersViewModel parameters, CancellationToken ct)
     {
-        await WrapCommandAsync(
-            async () =>
+        await WrapCommandAsync(() => CreateCore(parameters, ct).ConfigureAwait(false), ct);
+    }
+
+    private async ValueTask<IValidationErrors> CreateCore(
+        CredentialParametersViewModel parameters,
+        CancellationToken ct
+    )
+    {
+        parameters.StartExecute();
+
+        if (parameters.HasErrors)
+        {
+            return new EmptyValidationErrors();
+        }
+
+        var response = await UiCredentialService.PostAsync(
+            new()
             {
-                parameters.StartExecute();
-
-                if (parameters.HasErrors)
-                {
-                    return (IValidationErrors)EmptyValidationErrors.Instance;
-                }
-
-                var response = await UiCredentialService.PostAsync(
+                CreateCredentials =
+                [
                     new()
                     {
-                        CreateCredentials =
-                        [
-                            new()
-                            {
-                                Id = Guid.NewGuid(),
-                                Name = parameters.Name,
-                                Login = parameters.Login,
-                                Key = parameters.Key,
-                                IsAvailableUpperLatin = parameters.IsAvailableUpperLatin,
-                                IsAvailableLowerLatin = parameters.IsAvailableLowerLatin,
-                                IsAvailableNumber = parameters.IsAvailableNumber,
-                                IsAvailableSpecialSymbols = parameters.IsAvailableSpecialSymbols,
-                                CustomAvailableCharacters = parameters.CustomAvailableCharacters,
-                                Length = parameters.Length,
-                                Regex = parameters.Regex,
-                                Type = parameters.Type,
-                            },
-                        ],
+                        Id = Guid.NewGuid(),
+                        Name = parameters.Name,
+                        Login = parameters.Login,
+                        Key = parameters.Key,
+                        IsAvailableUpperLatin = parameters.IsAvailableUpperLatin,
+                        IsAvailableLowerLatin = parameters.IsAvailableLowerLatin,
+                        IsAvailableNumber = parameters.IsAvailableNumber,
+                        IsAvailableSpecialSymbols = parameters.IsAvailableSpecialSymbols,
+                        CustomAvailableCharacters = parameters.CustomAvailableCharacters,
+                        Length = parameters.Length,
+                        Regex = parameters.Regex,
+                        Type = parameters.Type,
                     },
-                    ct
-                );
-
-                DialogService.CloseMessageBox();
-
-                return response;
+                ],
             },
             ct
         );
+
+        DialogService.CloseMessageBox();
+
+        return response;
     }
 
-    public ValueTask RefreshAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
             () => UiCredentialService.GetAsync(new() { IsGetRoots = true }, ct),

@@ -29,53 +29,57 @@ public static class CromwellCommands
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
 
+        async ValueTask GeneratePasswordAsync(CredentialNotify parameters, CancellationToken ct)
+        {
+            var settings = await appSettingService.GetSettingsAsync(ct);
+
+            var password = passwordGeneratorService.GeneratePassword(
+                $"{settings.GeneralKey}{parameters.Key}",
+                new(
+                    $"{parameters.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{parameters.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{parameters.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{parameters.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{parameters.CustomAvailableCharacters}",
+                    parameters.Length,
+                    parameters.Regex
+                )
+            );
+
+            await clipboardService.SetTextAsync(password, ct);
+
+            notificationService.ShowNotification(
+                new TextBlock
+                {
+                    Text = stringFormater.Format(
+                        appResourceService.GetResource<string>("Lang.Copied"),
+                        appResourceService.GetResource<string>("Lang.Password")
+                    ),
+                    Classes = { "align-center", "m-5", "h2" },
+                },
+                NotificationType.Success
+            );
+        }
+
         GeneratePasswordCommand = UiHelper.CreateCommand<CredentialNotify>(
-            async (parameters, ct) =>
-            {
-                var settings = await appSettingService.GetSettingsAsync(ct);
-
-                var password = passwordGeneratorService.GeneratePassword(
-                    $"{settings.GeneralKey}{parameters.Key}",
-                    new(
-                        $"{parameters.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{parameters.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{parameters.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{parameters.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{parameters.CustomAvailableCharacters}",
-                        parameters.Length,
-                        parameters.Regex
-                    )
-                );
-
-                await clipboardService.SetTextAsync(password, ct);
-
-                notificationService.ShowNotification(
-                    new TextBlock
-                    {
-                        Text = stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.Copied"),
-                            appResourceService.GetResource<string>("Lang.Password")
-                        ),
-                        Classes = { "align-center", "m-5", "h2" },
-                    },
-                    NotificationType.Success
-                );
-            }
+            (parameters, ct) => GeneratePasswordAsync(parameters, ct).ConfigureAwait(false)
         );
 
-        LoginToClipboardCommand = UiHelper.CreateCommand<CredentialNotify>(
-            async (parameters, ct) =>
-            {
-                await clipboardService.SetTextAsync(parameters.Login, ct);
+        async ValueTask LoginToClipboardAsync(CredentialNotify parameters, CancellationToken ct)
+        {
+            await clipboardService.SetTextAsync(parameters.Login, ct);
 
-                notificationService.ShowNotification(
-                    new TextBlock
-                    {
-                        Text = stringFormater.Format(
-                            appResourceService.GetResource<string>("Lang.Copied"),
-                            appResourceService.GetResource<string>("Lang.Login")
-                        ),
-                        Classes = { "align-center", "m-5", "h2" },
-                    },
-                    NotificationType.Success
-                );
-            }
+            notificationService.ShowNotification(
+                new TextBlock
+                {
+                    Text = stringFormater.Format(
+                        appResourceService.GetResource<string>("Lang.Copied"),
+                        appResourceService.GetResource<string>("Lang.Login")
+                    ),
+                    Classes = { "align-center", "m-5", "h2" },
+                },
+                NotificationType.Success
+            );
+        }
+
+        LoginToClipboardCommand = UiHelper.CreateCommand<CredentialNotify>(
+            (parameters, ct) => LoginToClipboardAsync(parameters, ct).ConfigureAwait(false)
         );
 
         OpenCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(

@@ -49,69 +49,67 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader
     [RelayCommand]
     private async Task SaveAsync(CancellationToken ct)
     {
-        await WrapCommandAsync(
-            async () =>
+        await WrapCommandAsync(() => SaveCore(ct).ConfigureAwait(false), ct);
+    }
+
+    private async ValueTask<IValidationErrors> SaveCore(CancellationToken ct)
+    {
+        CredentialParameters.StartExecute();
+
+        if (CredentialParameters.HasErrors)
+        {
+            return new EmptyValidationErrors();
+        }
+
+        var response = await _uiCredentialService.PostAsync(
+            new()
             {
-                CredentialParameters.StartExecute();
-
-                if (CredentialParameters.HasErrors)
-                {
-                    return;
-                }
-
-                await _uiCredentialService.PostAsync(
+                EditCredentials =
+                [
                     new()
                     {
-                        EditCredentials =
-                        [
-                            new()
-                            {
-                                Ids = [_credential.Id],
-                                CustomAvailableCharacters =
-                                    CredentialParameters.CustomAvailableCharacters,
-                                IsAvailableLowerLatin = CredentialParameters.IsAvailableLowerLatin,
-                                IsAvailableNumber = CredentialParameters.IsAvailableNumber,
-                                IsAvailableSpecialSymbols =
-                                    CredentialParameters.IsAvailableSpecialSymbols,
-                                IsAvailableUpperLatin = CredentialParameters.IsAvailableUpperLatin,
-                                IsEditCustomAvailableCharacters =
-                                    CredentialParameters.IsEditCustomAvailableCharacters,
-                                IsEditIsAvailableLowerLatin =
-                                    CredentialParameters.IsEditIsAvailableLowerLatin,
-                                IsEditIsAvailableNumber =
-                                    CredentialParameters.IsEditIsAvailableNumber,
-                                IsEditIsAvailableSpecialSymbols =
-                                    CredentialParameters.IsEditIsAvailableSpecialSymbols,
-                                IsEditIsAvailableUpperLatin =
-                                    CredentialParameters.IsEditIsAvailableUpperLatin,
-                                IsEditKey = CredentialParameters.IsEditKey,
-                                IsEditLength = CredentialParameters.IsEditLength,
-                                IsEditLogin = CredentialParameters.IsEditLogin,
-                                IsEditName = CredentialParameters.IsEditName,
-                                IsEditRegex = CredentialParameters.IsEditRegex,
-                                Login = CredentialParameters.Login,
-                                IsEditType = CredentialParameters.IsEditType,
-                                Key = CredentialParameters.Key,
-                                Length = CredentialParameters.Length,
-                                Name = CredentialParameters.Name,
-                                Regex = CredentialParameters.Regex,
-                                Type = CredentialParameters.Type,
-                            },
-                        ],
+                        Ids = [_credential.Id],
+                        CustomAvailableCharacters = CredentialParameters.CustomAvailableCharacters,
+                        IsAvailableLowerLatin = CredentialParameters.IsAvailableLowerLatin,
+                        IsAvailableNumber = CredentialParameters.IsAvailableNumber,
+                        IsAvailableSpecialSymbols = CredentialParameters.IsAvailableSpecialSymbols,
+                        IsAvailableUpperLatin = CredentialParameters.IsAvailableUpperLatin,
+                        IsEditCustomAvailableCharacters =
+                            CredentialParameters.IsEditCustomAvailableCharacters,
+                        IsEditIsAvailableLowerLatin =
+                            CredentialParameters.IsEditIsAvailableLowerLatin,
+                        IsEditIsAvailableNumber = CredentialParameters.IsEditIsAvailableNumber,
+                        IsEditIsAvailableSpecialSymbols =
+                            CredentialParameters.IsEditIsAvailableSpecialSymbols,
+                        IsEditIsAvailableUpperLatin =
+                            CredentialParameters.IsEditIsAvailableUpperLatin,
+                        IsEditKey = CredentialParameters.IsEditKey,
+                        IsEditLength = CredentialParameters.IsEditLength,
+                        IsEditLogin = CredentialParameters.IsEditLogin,
+                        IsEditName = CredentialParameters.IsEditName,
+                        IsEditRegex = CredentialParameters.IsEditRegex,
+                        Login = CredentialParameters.Login,
+                        IsEditType = CredentialParameters.IsEditType,
+                        Key = CredentialParameters.Key,
+                        Length = CredentialParameters.Length,
+                        Name = CredentialParameters.Name,
+                        Regex = CredentialParameters.Regex,
+                        Type = CredentialParameters.Type,
                     },
-                    ct
-                );
-
-                _notificationService.ShowNotification(
-                    new TextBlock
-                    {
-                        Text = _appResourceService.GetResource<string>("Lang.Saved"),
-                        Classes = { "align-center", "h2", "m-5" },
-                    },
-                    NotificationType.None
-                );
+                ],
             },
             ct
         );
+
+        _notificationService.ShowNotification(
+            new TextBlock
+            {
+                Text = _appResourceService.GetResource<string>("Lang.Saved"),
+                Classes = { "align-center", "h2", "m-5" },
+            },
+            NotificationType.None
+        );
+
+        return response;
     }
 }

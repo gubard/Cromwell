@@ -8,6 +8,7 @@ using Gaia.Services;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
+using Turtle.Contract.Models;
 
 namespace Cromwell.Ui;
 
@@ -36,20 +37,21 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     public IEnumerable<CredentialNotify> SelectedCredentials => _selectedCredentials;
 
     [RelayCommand]
-    private async Task MultiDelete(CancellationToken ct)
+    private async Task MultiDeleteAsync(CancellationToken ct)
     {
-        await WrapCommandAsync(
-            async () =>
-            {
-                await UiCredentialService.PostAsync(
-                    new() { DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray() },
-                    ct
-                );
+        await WrapCommandAsync(() => MultiDeleteCore(ct).ConfigureAwait(false), ct);
+    }
 
-                DialogService.CloseMessageBox();
-            },
+    private async ValueTask<TurtlePostResponse> MultiDeleteCore(CancellationToken ct)
+    {
+        var response = await UiCredentialService.PostAsync(
+            new() { DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray() },
             ct
         );
+
+        DialogService.CloseMessageBox();
+
+        return response;
     }
 
     [RelayCommand]
@@ -113,30 +115,34 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task MultiEdit(CredentialParametersViewModel parameters, CancellationToken ct)
+    private async Task MultiEditAsync(
+        CredentialParametersViewModel parameters,
+        CancellationToken ct
+    )
     {
-        await WrapCommandAsync(
-            async () =>
-            {
-                parameters.StartExecute();
+        await WrapCommandAsync(() => MultiEditCore(parameters, ct).ConfigureAwait(false), ct);
+    }
 
-                if (parameters.HasErrors)
-                {
-                    return (IValidationErrors)EmptyValidationErrors.Instance;
-                }
+    private async ValueTask<IValidationErrors> MultiEditCore(
+        CredentialParametersViewModel parameters,
+        CancellationToken ct
+    )
+    {
+        if (parameters.HasErrors)
+        {
+            return new EmptyValidationErrors();
+        }
 
-                var editCredentials = parameters.CreateEditCredential();
-                editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
-                var response = await UiCredentialService.PostAsync(
-                    new() { EditCredentials = [editCredentials] },
-                    ct
-                );
+        var editCredentials = parameters.CreateEditCredential();
+        editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
 
-                DialogService.CloseMessageBox();
-
-                return response;
-            },
+        var response = await UiCredentialService.PostAsync(
+            new() { EditCredentials = [editCredentials] },
             ct
         );
+
+        DialogService.CloseMessageBox();
+
+        return response;
     }
 }
