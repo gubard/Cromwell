@@ -60,7 +60,7 @@ public interface ICromwellServiceProvider
             ),
             new EfCredentialService(
                 new FileInfo(
-                    $"{storageService.GetAppDirectory()}/Cromwell/{appState.User.ThrowIfNull().Id}.db"
+                    $"{storageService.GetAppDirectory()}/{appState.User.ThrowIfNull().Id}.db"
                 ).InitDbContext(migrator),
                 gaiaValues
             ),
