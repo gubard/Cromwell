@@ -10,7 +10,6 @@ using Inanna.Services;
 using Inanna.Ui;
 using Jab;
 using Nestor.Db.Services;
-using Nestor.Db.Sqlite.Helpers;
 using Turtle.Contract.Models;
 using Turtle.Contract.Services;
 using IServiceProvider = Gaia.Services.IServiceProvider;
@@ -23,7 +22,6 @@ namespace Cromwell.Services;
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
-[Transient(typeof(IUiCredentialService), Factory = nameof(GetUiCredentialService))]
 [Transient(typeof(INotificationService), Factory = nameof(GetNotificationService))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
 [Singleton(typeof(ICredentialCache), typeof(CredentialCache))]
@@ -35,41 +33,6 @@ namespace Cromwell.Services;
 [Singleton(typeof(StackViewModel))]
 public interface ICromwellServiceProvider
 {
-    public static IUiCredentialService GetUiCredentialService(
-        CredentialServiceOptions options,
-        ITryPolicyService tryPolicyService,
-        IFactory<Memory<HttpHeader>> headersFactory,
-        AppState appState,
-        ICredentialCache cache,
-        INavigator navigator,
-        IStorageService storageService,
-        GaiaValues gaiaValues,
-        IMigrator migrator
-    )
-    {
-        return new UiCredentialService(
-            new HttpCredentialService(
-                new() { BaseAddress = new(options.Url) },
-                new()
-                {
-                    TypeInfoResolver = TurtleJsonContext.Resolver,
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                },
-                tryPolicyService,
-                headersFactory
-            ),
-            new EfCredentialService(
-                new FileInfo(
-                    $"{storageService.GetAppDirectory()}/{appState.User.ThrowIfNull().Id}.db"
-                ).InitDbContext(migrator),
-                gaiaValues
-            ),
-            appState,
-            cache,
-            navigator
-        );
-    }
-
     public static INotificationService GetNotificationService()
     {
         return new NotificationService("Notifications", TimeSpan.FromSeconds(5));
