@@ -1,5 +1,6 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
@@ -49,7 +50,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             ct
         );
 
-        DialogService.CloseMessageBox();
+        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
     }
@@ -141,7 +142,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             ct
         );
 
-        DialogService.CloseMessageBox();
+        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
     }

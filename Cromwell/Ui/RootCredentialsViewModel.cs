@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
@@ -149,7 +150,7 @@ public sealed partial class RootCredentialsViewModel
             ct
         );
 
-        DialogService.CloseMessageBox();
+        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
     }
