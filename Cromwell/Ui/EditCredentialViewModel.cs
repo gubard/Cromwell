@@ -62,6 +62,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader
         }
 
         var response = await _uiCredentialService.PostAsync(
+            Guid.NewGuid(),
             new()
             {
                 EditCredentials =

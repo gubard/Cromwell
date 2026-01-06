@@ -112,7 +112,11 @@ public static class CromwellCommands
 
         DeleteCredentialCommand = UiHelper.CreateCommand<CredentialNotify, TurtlePostResponse>(
             (credential, ct) =>
-                uiCredentialService.PostAsync(new() { DeleteIds = [credential.Id] }, ct)
+                uiCredentialService.PostAsync(
+                    Guid.NewGuid(),
+                    new() { DeleteIds = [credential.Id] },
+                    ct
+                )
         );
     }
 

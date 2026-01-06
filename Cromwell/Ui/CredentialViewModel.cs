@@ -123,6 +123,7 @@ public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase,
         }
 
         var response = await UiCredentialService.PostAsync(
+            Guid.NewGuid(),
             new()
             {
                 CreateCredentials =

@@ -46,6 +46,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     private async ValueTask<TurtlePostResponse> MultiDeleteCore(CancellationToken ct)
     {
         var response = await UiCredentialService.PostAsync(
+            Guid.NewGuid(),
             new() { DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray() },
             ct
         );
@@ -138,6 +139,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
         editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
 
         var response = await UiCredentialService.PostAsync(
+            Guid.NewGuid(),
             new() { EditCredentials = [editCredentials] },
             ct
         );

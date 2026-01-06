@@ -126,6 +126,7 @@ public sealed partial class RootCredentialsViewModel
         }
 
         var response = await UiCredentialService.PostAsync(
+            Guid.NewGuid(),
             new()
             {
                 CreateCredentials =

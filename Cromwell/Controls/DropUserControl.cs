@@ -76,6 +76,7 @@ public class DropUserControl : UserControl
             case "DropRoot":
             {
                 _uiCredentialService.Post(
+                    Guid.NewGuid(),
                     new()
                     {
                         EditCredentials =
@@ -112,6 +113,7 @@ public class DropUserControl : UserControl
                 }
 
                 _uiCredentialService.Post(
+                    Guid.NewGuid(),
                     new()
                     {
                         EditCredentials =
@@ -148,6 +150,7 @@ public class DropUserControl : UserControl
                 }
 
                 _uiCredentialService.Post(
+                    Guid.NewGuid(),
                     new()
                     {
                         ChangeOrders =
@@ -184,6 +187,7 @@ public class DropUserControl : UserControl
                 }
 
                 _uiCredentialService.Post(
+                    Guid.NewGuid(),
                     new()
                     {
                         ChangeOrders =
