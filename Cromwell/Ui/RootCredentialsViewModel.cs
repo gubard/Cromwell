@@ -85,7 +85,7 @@ public sealed partial class RootCredentialsViewModel
         WrapCommand(() => UiCredentialService.Get(new() { IsGetRoots = true }));
     }
 
-    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         return RefreshAsync(ct);
     }

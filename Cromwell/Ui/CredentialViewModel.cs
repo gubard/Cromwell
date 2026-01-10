@@ -74,7 +74,7 @@ public sealed partial class CredentialViewModel
     public CredentialHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
-    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         return RefreshAsync(ct);
     }

@@ -18,9 +18,7 @@ public static class CromwellCommands
     {
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
         var uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
-        var appSettingService = DiHelper.ServiceProvider.GetService<
-            ISettingsService<CromwellSettings>
-        >();
+        var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
         var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
         var passwordGeneratorService =
             DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
@@ -31,10 +29,15 @@ public static class CromwellCommands
 
         async ValueTask GeneratePasswordAsync(CredentialNotify parameters, CancellationToken ct)
         {
-            var settings = await appSettingService.GetSettingsAsync(ct);
+            var settings = await objectStorage.LoadAsync<CromwellSettings>(
+                $"{typeof(CromwellSettings).FullName}",
+                ct
+            );
+
+            var generalKey = settings?.GeneralKey ?? Guid.NewGuid().ToString();
 
             var password = passwordGeneratorService.GeneratePassword(
-                $"{settings.GeneralKey}{parameters.Key}",
+                $"{generalKey}{parameters.Key}",
                 new(
                     $"{parameters.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{parameters.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{parameters.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{parameters.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{parameters.CustomAvailableCharacters}",
                     parameters.Length,
