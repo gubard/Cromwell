@@ -14,10 +14,9 @@ namespace Cromwell.Ui;
 public sealed partial class RootCredentialsViewModel
     : MultiCredentialsViewModelBase,
         IHeader,
-        IRefresh
+        IRefresh,
+        IInitUi
 {
-    private readonly ICredentialCache _credentialCache;
-
     public RootCredentialsViewModel(
         IUiCredentialService uiCredentialService,
         IDialogService dialogService,
@@ -73,11 +72,25 @@ public sealed partial class RootCredentialsViewModel
     public RootCredentialsHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
-    [RelayCommand]
-    private async Task InitializedAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
-        await RefreshAsync(ct);
+        return WrapCommandAsync(
+            () => UiCredentialService.GetAsync(new() { IsGetRoots = true }, ct),
+            ct
+        );
     }
+
+    public void Refresh()
+    {
+        WrapCommand(() => UiCredentialService.Get(new() { IsGetRoots = true }));
+    }
+
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    {
+        return RefreshAsync(ct);
+    }
+
+    private readonly ICredentialCache _credentialCache;
 
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
@@ -154,18 +167,5 @@ public sealed partial class RootCredentialsViewModel
         Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
-    }
-
-    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
-    {
-        return WrapCommandAsync(
-            () => UiCredentialService.GetAsync(new() { IsGetRoots = true }, ct),
-            ct
-        );
-    }
-
-    public void Refresh()
-    {
-        WrapCommand(() => UiCredentialService.Get(new() { IsGetRoots = true }));
     }
 }

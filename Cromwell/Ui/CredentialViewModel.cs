@@ -11,7 +11,11 @@ using Inanna.Services;
 
 namespace Cromwell.Ui;
 
-public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase, IHeader, IRefresh
+public sealed partial class CredentialViewModel
+    : MultiCredentialsViewModelBase,
+        IHeader,
+        IRefresh,
+        IInitUi
 {
     public CredentialViewModel(
         IUiCredentialService uiCredentialService,
@@ -70,10 +74,30 @@ public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase,
     public CredentialHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
-    [RelayCommand]
-    private async Task InitializedAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
-        await RefreshAsync(ct);
+        return RefreshAsync(ct);
+    }
+
+    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
+    {
+        return WrapCommandAsync(
+            () =>
+                UiCredentialService.GetAsync(
+                    new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] },
+                    ct
+                ),
+            ct
+        );
+    }
+
+    public void Refresh()
+    {
+        WrapCommand(() =>
+            UiCredentialService.Get(
+                new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] }
+            )
+        );
     }
 
     [RelayCommand]
@@ -152,26 +176,5 @@ public sealed partial class CredentialViewModel : MultiCredentialsViewModelBase,
         Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
 
         return response;
-    }
-
-    public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
-    {
-        return WrapCommandAsync(
-            () =>
-                UiCredentialService.GetAsync(
-                    new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] },
-                    ct
-                ),
-            ct
-        );
-    }
-
-    public void Refresh()
-    {
-        WrapCommand(() =>
-            UiCredentialService.Get(
-                new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] }
-            )
-        );
     }
 }
