@@ -8,13 +8,13 @@ namespace Cromwell.Services;
 
 public class HttpCredentialService(
     HttpClient httpClient,
-    JsonSerializerOptions jsonSerializerOptions,
+    JsonSerializerOptions options,
     ITryPolicyService tryPolicyService,
     IFactory<Memory<HttpHeader>> headersFactory
 )
     : HttpService<TurtleGetRequest, TurtlePostRequest, TurtleGetResponse, TurtlePostResponse>(
         httpClient,
-        jsonSerializerOptions,
+        options,
         tryPolicyService,
         headersFactory
     ),
