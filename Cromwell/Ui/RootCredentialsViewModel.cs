@@ -22,11 +22,11 @@ public sealed partial class RootCredentialsViewModel
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        ICredentialCache credentialCache
+        ICredentialMemoryCache credentialMemoryCache
     )
         : base(uiCredentialService, dialogService, stringFormater, appResourceService)
     {
-        _credentialCache = credentialCache;
+        _credentialMemoryCache = credentialMemoryCache;
 
         Header = new([
             new(
@@ -68,7 +68,7 @@ public sealed partial class RootCredentialsViewModel
         };
     }
 
-    public IEnumerable<CredentialNotify> Credentials => _credentialCache.Roots;
+    public IEnumerable<CredentialNotify> Credentials => _credentialMemoryCache.Roots;
     public RootCredentialsHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
@@ -90,7 +90,7 @@ public sealed partial class RootCredentialsViewModel
         return RefreshAsync(ct);
     }
 
-    private readonly ICredentialCache _credentialCache;
+    private readonly ICredentialMemoryCache _credentialMemoryCache;
 
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)

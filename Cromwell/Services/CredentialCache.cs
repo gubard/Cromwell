@@ -6,12 +6,16 @@ using Turtle.Contract.Models;
 
 namespace Cromwell.Services;
 
-public interface ICredentialCache : ICache<TurtleGetResponse>, ICache<TurtlePostRequest>
+public interface ICredentialMemoryCache
+    : IMemoryCache<TurtleGetResponse>,
+        IMemoryCache<TurtlePostRequest>
 {
     IEnumerable<CredentialNotify> Roots { get; }
 }
 
-public class CredentialCache : Cache<TurtleGetResponse, CredentialNotify>, ICredentialCache
+public class CredentialMemoryCache
+    : MemoryCache<TurtleGetResponse, CredentialNotify>,
+        ICredentialMemoryCache
 {
     private readonly AvaloniaList<CredentialNotify> _roots = [];
 
