@@ -80,11 +80,6 @@ public sealed partial class RootCredentialsViewModel
         );
     }
 
-    public void Refresh()
-    {
-        WrapCommand(() => UiCredentialService.Get(new() { IsGetRoots = true }));
-    }
-
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
         return RefreshAsync(ct);

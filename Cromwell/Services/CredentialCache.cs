@@ -38,7 +38,7 @@ public class CredentialMemoryCache
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    public override void Update(TurtleGetResponse source)
+    private void Update(TurtleGetResponse source)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
@@ -83,7 +83,7 @@ public class CredentialMemoryCache
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    public override void Update(TurtlePostRequest source)
+    private void Update(TurtlePostRequest source)
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {

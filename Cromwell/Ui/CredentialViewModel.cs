@@ -91,15 +91,6 @@ public sealed partial class CredentialViewModel
         );
     }
 
-    public void Refresh()
-    {
-        WrapCommand(() =>
-            UiCredentialService.Get(
-                new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] }
-            )
-        );
-    }
-
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
