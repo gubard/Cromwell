@@ -1,221 +1,256 @@
-﻿using Avalonia.Collections;
+﻿using System.Runtime.CompilerServices;
+using Avalonia.Collections;
+using Avalonia.Threading;
 using Cromwell.Models;
+using Gaia.Helpers;
 using Gaia.Services;
 using Inanna.Helpers;
+using Inanna.Services;
 using Turtle.Contract.Models;
+using Turtle.Contract.Services;
 
 namespace Cromwell.Services;
 
-public interface ICredentialMemoryCache
-    : IMemoryCache<TurtleGetResponse>,
-        IMemoryCache<TurtlePostRequest>
+public interface ICredentialMemoryCache : IMemoryCache<TurtlePostRequest, TurtleGetResponse>
+{
+    IEnumerable<CredentialNotify> Roots { get; }
+}
+
+public interface ICredentialUiCache
+    : IUiCache<TurtlePostRequest, TurtleGetResponse, ICredentialMemoryCache>
 {
     IEnumerable<CredentialNotify> Roots { get; }
 }
 
 public class CredentialMemoryCache
-    : MemoryCache<TurtleGetResponse, CredentialNotify>,
+    : MemoryCache<CredentialNotify, TurtlePostRequest, TurtleGetResponse>,
         ICredentialMemoryCache
 {
-    private readonly AvaloniaList<CredentialNotify> _roots = [];
-
     public IEnumerable<CredentialNotify> Roots => _roots;
+
+    public override ConfiguredValueTaskAwaitable UpdateAsync(
+        TurtleGetResponse source,
+        CancellationToken ct
+    )
+    {
+        Update(source);
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
 
     public override void Update(TurtleGetResponse source)
     {
-        var updatedIds = new HashSet<Guid>();
-
-        if (source.Roots is not null)
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
-            _roots.UpdateOrder(
-                source
-                    .Roots.OrderBy(x => x.OrderIndex)
-                    .Select(x => UpdateCredential(x, updatedIds))
-                    .ToArray()
-            );
-        }
+            var updatedIds = new HashSet<Guid>();
 
-        foreach (var (id, items) in source.Children)
-        {
-            var item = GetItem(id);
-            item.Children.UpdateOrder(
-                items
-                    .OrderBy(x => x.OrderIndex)
-                    .Select(x => UpdateCredential(x, updatedIds))
-                    .ToArray()
-            );
-        }
+            if (source.Roots is not null)
+            {
+                _roots.UpdateOrder(
+                    source
+                        .Roots.OrderBy(x => x.OrderIndex)
+                        .Select(x => UpdateCredential(x, updatedIds))
+                        .ToArray()
+                );
+            }
 
-        foreach (var (id, items) in source.Parents)
-        {
-            var item = GetItem(id);
-            item.UpdateParents(items.Select(x => UpdateCredential(x, updatedIds)));
-        }
+            foreach (var (id, items) in source.Children)
+            {
+                var item = GetItem(id);
+                item.Children.UpdateOrder(
+                    items
+                        .OrderBy(x => x.OrderIndex)
+                        .Select(x => UpdateCredential(x, updatedIds))
+                        .ToArray()
+                );
+            }
+
+            foreach (var (id, items) in source.Parents)
+            {
+                var item = GetItem(id);
+                item.UpdateParents(items.Select(x => UpdateCredential(x, updatedIds)));
+            }
+        });
     }
 
-    public void Update(TurtlePostRequest source)
+    public override ConfiguredValueTaskAwaitable UpdateAsync(
+        TurtlePostRequest source,
+        CancellationToken ct
+    )
     {
-        foreach (var create in source.CreateCredentials)
-        {
-            var item = GetItem(create.Id);
-            item.Name = create.Name;
-            item.Login = create.Login;
-            item.Key = create.Key;
-            item.IsAvailableUpperLatin = create.IsAvailableUpperLatin;
-            item.IsAvailableLowerLatin = create.IsAvailableLowerLatin;
-            item.IsAvailableNumber = create.IsAvailableNumber;
-            item.IsAvailableSpecialSymbols = create.IsAvailableSpecialSymbols;
-            item.Length = create.Length;
-            item.Regex = create.Regex;
-            item.Type = create.Type;
+        Update(source);
 
-            item.Parent = create.ParentId.HasValue ? GetItem(create.ParentId.Value) : null;
-
-            if (item.Parent is not null)
-            {
-                item.Parent.Children.Add(item);
-            }
-            else
-            {
-                _roots.Add(item);
-            }
-        }
-
-        foreach (var edit in source.EditCredentials)
-        {
-            var items = edit.Ids.Select(GetItem).ToArray();
-
-            if (edit.IsEditName)
-            {
-                foreach (var item in items)
-                {
-                    item.Name = edit.Name;
-                }
-            }
-
-            if (edit.IsEditLogin)
-            {
-                foreach (var item in items)
-                {
-                    item.Login = edit.Login;
-                }
-            }
-
-            if (edit.IsEditKey)
-            {
-                foreach (var item in items)
-                {
-                    item.Key = edit.Key;
-                }
-            }
-
-            if (edit.IsEditIsAvailableUpperLatin)
-            {
-                foreach (var item in items)
-                {
-                    item.IsAvailableUpperLatin = edit.IsAvailableUpperLatin;
-                }
-            }
-
-            if (edit.IsEditIsAvailableLowerLatin)
-            {
-                foreach (var item in items)
-                {
-                    item.IsAvailableLowerLatin = edit.IsAvailableLowerLatin;
-                }
-            }
-
-            if (edit.IsEditIsAvailableNumber)
-            {
-                foreach (var item in items)
-                {
-                    item.IsAvailableNumber = edit.IsAvailableNumber;
-                }
-            }
-
-            if (edit.IsEditIsAvailableSpecialSymbols)
-            {
-                foreach (var item in items)
-                {
-                    item.IsAvailableSpecialSymbols = edit.IsAvailableSpecialSymbols;
-                }
-            }
-
-            if (edit.IsEditCustomAvailableCharacters)
-            {
-                foreach (var item in items)
-                {
-                    item.CustomAvailableCharacters = edit.CustomAvailableCharacters;
-                }
-            }
-
-            if (edit.IsEditLength)
-            {
-                foreach (var item in items)
-                {
-                    item.Length = edit.Length;
-                }
-            }
-
-            if (edit.IsEditRegex)
-            {
-                foreach (var item in items)
-                {
-                    item.Regex = edit.Regex;
-                }
-            }
-
-            if (edit.IsEditType)
-            {
-                foreach (var item in items)
-                {
-                    item.Type = edit.Type;
-                }
-            }
-
-            if (edit.IsEditParentId)
-            {
-                foreach (var item in items)
-                {
-                    ChangeParent(item, edit.ParentId);
-                }
-            }
-        }
-
-        foreach (var changeOrder in source.ChangeOrders)
-        {
-            var item = GetItem(changeOrder.StartId);
-            var siblings = item.Parent is not null ? item.Children : _roots;
-            var index = siblings.IndexOf(item);
-
-            if (index == -1)
-            {
-                continue;
-            }
-
-            var insertItems = changeOrder.InsertIds.Select(GetItem);
-
-            foreach (var insertItem in insertItems)
-            {
-                siblings.Insert(index, insertItem);
-            }
-        }
-
-        foreach (var deleteId in source.DeleteIds)
-        {
-            var deleteItem = GetItem(deleteId);
-            Items.Remove(deleteId);
-
-            if (deleteItem.Parent is not null)
-            {
-                deleteItem.Parent.Children.Remove(deleteItem);
-            }
-            else
-            {
-                _roots.Remove(deleteItem);
-            }
-        }
+        return TaskHelper.ConfiguredCompletedTask;
     }
+
+    public override void Update(TurtlePostRequest source)
+    {
+        Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            foreach (var create in source.CreateCredentials)
+            {
+                var item = GetItem(create.Id);
+                item.Name = create.Name;
+                item.Login = create.Login;
+                item.Key = create.Key;
+                item.IsAvailableUpperLatin = create.IsAvailableUpperLatin;
+                item.IsAvailableLowerLatin = create.IsAvailableLowerLatin;
+                item.IsAvailableNumber = create.IsAvailableNumber;
+                item.IsAvailableSpecialSymbols = create.IsAvailableSpecialSymbols;
+                item.Length = create.Length;
+                item.Regex = create.Regex;
+                item.Type = create.Type;
+
+                item.Parent = create.ParentId.HasValue ? GetItem(create.ParentId.Value) : null;
+
+                if (item.Parent is not null)
+                {
+                    item.Parent.Children.Add(item);
+                }
+                else
+                {
+                    _roots.Add(item);
+                }
+            }
+
+            foreach (var edit in source.EditCredentials)
+            {
+                var items = edit.Ids.Select(GetItem).ToArray();
+
+                if (edit.IsEditName)
+                {
+                    foreach (var item in items)
+                    {
+                        item.Name = edit.Name;
+                    }
+                }
+
+                if (edit.IsEditLogin)
+                {
+                    foreach (var item in items)
+                    {
+                        item.Login = edit.Login;
+                    }
+                }
+
+                if (edit.IsEditKey)
+                {
+                    foreach (var item in items)
+                    {
+                        item.Key = edit.Key;
+                    }
+                }
+
+                if (edit.IsEditIsAvailableUpperLatin)
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsAvailableUpperLatin = edit.IsAvailableUpperLatin;
+                    }
+                }
+
+                if (edit.IsEditIsAvailableLowerLatin)
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsAvailableLowerLatin = edit.IsAvailableLowerLatin;
+                    }
+                }
+
+                if (edit.IsEditIsAvailableNumber)
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsAvailableNumber = edit.IsAvailableNumber;
+                    }
+                }
+
+                if (edit.IsEditIsAvailableSpecialSymbols)
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsAvailableSpecialSymbols = edit.IsAvailableSpecialSymbols;
+                    }
+                }
+
+                if (edit.IsEditCustomAvailableCharacters)
+                {
+                    foreach (var item in items)
+                    {
+                        item.CustomAvailableCharacters = edit.CustomAvailableCharacters;
+                    }
+                }
+
+                if (edit.IsEditLength)
+                {
+                    foreach (var item in items)
+                    {
+                        item.Length = edit.Length;
+                    }
+                }
+
+                if (edit.IsEditRegex)
+                {
+                    foreach (var item in items)
+                    {
+                        item.Regex = edit.Regex;
+                    }
+                }
+
+                if (edit.IsEditType)
+                {
+                    foreach (var item in items)
+                    {
+                        item.Type = edit.Type;
+                    }
+                }
+
+                if (edit.IsEditParentId)
+                {
+                    foreach (var item in items)
+                    {
+                        ChangeParent(item, edit.ParentId);
+                    }
+                }
+            }
+
+            foreach (var changeOrder in source.ChangeOrders)
+            {
+                var item = GetItem(changeOrder.StartId);
+                var siblings = item.Parent is not null ? item.Children : _roots;
+                var index = siblings.IndexOf(item);
+
+                if (index == -1)
+                {
+                    continue;
+                }
+
+                var insertItems = changeOrder.InsertIds.Select(GetItem);
+
+                foreach (var insertItem in insertItems)
+                {
+                    siblings.Insert(index, insertItem);
+                }
+            }
+
+            foreach (var deleteId in source.DeleteIds)
+            {
+                var deleteItem = GetItem(deleteId);
+                Items.Remove(deleteId);
+
+                if (deleteItem.Parent is not null)
+                {
+                    deleteItem.Parent.Children.Remove(deleteItem);
+                }
+                else
+                {
+                    _roots.Remove(deleteItem);
+                }
+            }
+        });
+    }
+
+    private readonly AvaloniaList<CredentialNotify> _roots = [];
 
     private CredentialNotify UpdateCredential(Credential credential, HashSet<Guid> updatedIds)
     {
@@ -269,4 +304,14 @@ public class CredentialMemoryCache
             _roots.Add(item);
         }
     }
+}
+
+public sealed class CredentialUiCache
+    : UiCache<TurtlePostRequest, TurtleGetResponse, ICredentialDbCache, ICredentialMemoryCache>,
+        ICredentialUiCache
+{
+    public CredentialUiCache(ICredentialDbCache dbCache, ICredentialMemoryCache memoryCache)
+        : base(dbCache, memoryCache) { }
+
+    public IEnumerable<CredentialNotify> Roots => MemoryCache.Roots;
 }

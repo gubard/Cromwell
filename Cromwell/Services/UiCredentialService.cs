@@ -12,7 +12,7 @@ public sealed class UiCredentialService(
     IHttpCredentialService httpService,
     IEfCredentialService efService,
     AppState appState,
-    ICredentialMemoryCache memoryCache,
+    ICredentialUiCache uiCache,
     INavigator navigator,
     string serviceName
 )
@@ -23,6 +23,6 @@ public sealed class UiCredentialService(
         TurtlePostResponse,
         IHttpCredentialService,
         IEfCredentialService,
-        ICredentialMemoryCache
-    >(httpService, efService, appState, memoryCache, navigator, serviceName),
+        ICredentialUiCache
+    >(httpService, efService, appState, uiCache, navigator, serviceName),
         IUiCredentialService;

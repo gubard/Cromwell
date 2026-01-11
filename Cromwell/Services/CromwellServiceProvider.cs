@@ -5,6 +5,7 @@ using Gaia.Services;
 using Inanna.Services;
 using Inanna.Ui;
 using Jab;
+using Turtle.Contract.Services;
 using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Services;
@@ -17,13 +18,13 @@ namespace Cromwell.Services;
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(INotificationService), Factory = nameof(GetNotificationService))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
-[Singleton(typeof(ICredentialMemoryCache), typeof(CredentialMemoryCache))]
 [Singleton(typeof(IAppResourceService), typeof(AppResourceService))]
 [Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
 [Singleton(typeof(IServiceProvider), Factory = nameof(GetServiceProvider))]
 [Singleton(typeof(INavigator), typeof(Navigator))]
 [Singleton(typeof(StackViewModel))]
+[Singleton(typeof(ICredentialMemoryCache), typeof(CredentialMemoryCache))]
 public interface ICromwellServiceProvider
 {
     public static INotificationService GetNotificationService()
