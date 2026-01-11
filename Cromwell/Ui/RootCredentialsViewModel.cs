@@ -96,10 +96,12 @@ public sealed partial class RootCredentialsViewModel
             () =>
                 DialogService.ShowMessageBoxAsync(
                     new(
-                        StringFormater.Format(
-                            AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                            AppResourceService.GetResource<string>("Lang.Credential")
-                        ),
+                        StringFormater
+                            .Format(
+                                AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                                AppResourceService.GetResource<string>("Lang.Credential")
+                            )
+                            .ToDialogHeader(),
                         credential,
                         new DialogButton(
                             AppResourceService.GetResource<string>("Lang.Create"),

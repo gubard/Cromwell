@@ -59,7 +59,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     [RelayCommand]
     private async Task ShowMultiDelete(CancellationToken ct)
     {
-        var header = AppResourceService.GetResource<string>("Lang.Delete");
+        var header = AppResourceService.GetResource<string>("Lang.Delete").ToDialogHeader();
 
         var button = new DialogButton(
             AppResourceService.GetResource<string>("Lang.Delete"),
@@ -94,10 +94,12 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     {
         var credential = new CredentialParametersViewModel(ValidationMode.ValidateOnlyEdited, true);
 
-        var header = StringFormater.Format(
-            AppResourceService.GetResource<string>("Lang.EditItem"),
-            SelectedCredentials.Select(x => x.Name).JoinString(", ")
-        );
+        var header = StringFormater
+            .Format(
+                AppResourceService.GetResource<string>("Lang.EditItem"),
+                SelectedCredentials.Select(x => x.Name).JoinString(", ")
+            )
+            .ToDialogHeader();
 
         var button = new DialogButton(
             AppResourceService.GetResource<string>("Lang.Edit"),
