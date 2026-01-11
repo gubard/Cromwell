@@ -17,7 +17,7 @@
                             <ip:PackIconMaterialDesign Kind="Reorder"
                                                        Classes="s-20 align-center"
                                                        Background="Transparent"
-                                                       h:InputElementAssist.IsDragHandle="True"
+                                                       h:InputElementAssist.IsDragCredentialNotifyHandle="True"
                                                        IsVisible="{OnPlatform  Default=True, Android=False, iOS=False}" />
                             <TextBlock Grid.Column="1" Classes="align-left-center text-wrap" Text="{Binding Name}" />
 

@@ -8,25 +8,25 @@ namespace Cromwell.Helpers;
 
 public static class InputElementAssist
 {
-    public static readonly AttachedProperty<bool> IsDragHandleProperty =
+    public static readonly AttachedProperty<bool> IsDragCredentialNotifyHandler =
         AvaloniaProperty.RegisterAttached<InputElement, bool>(
-            "IsDragHandle",
+            nameof(IsDragCredentialNotifyHandler),
             typeof(InputElementAssist)
         );
 
-    public static void SetIsDragHandle(InputElement element, bool value)
+    public static void SetIsDragCredentialNotifyHandle(InputElement element, bool value)
     {
-        element.SetValue(IsDragHandleProperty, value);
+        element.SetValue(IsDragCredentialNotifyHandler, value);
     }
 
-    public static bool GetIsDragHandle(InputElement element)
+    public static bool GetIsDragCredentialNotifyHandle(InputElement element)
     {
-        return element.GetValue(IsDragHandleProperty);
+        return element.GetValue(IsDragCredentialNotifyHandler);
     }
 
     static InputElementAssist()
     {
-        IsDragHandleProperty.Changed.AddClassHandler<Control, bool>(
+        IsDragCredentialNotifyHandler.Changed.AddClassHandler<Control, bool>(
             (_, e) =>
             {
                 if (e.Sender is not InputElement element)
