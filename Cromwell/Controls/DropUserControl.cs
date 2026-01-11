@@ -10,6 +10,13 @@ namespace Cromwell.Controls;
 
 public class DropUserControl : UserControl
 {
+    public DropUserControl()
+    {
+        _uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
+        AddHandler(DragDrop.DropEvent, Drop);
+        AddHandler(DragDrop.DragOverEvent, DragOver);
+    }
+
     private readonly ReadOnlyMemory<string> _dropTags = new[]
     {
         "DropRoot",
@@ -19,13 +26,6 @@ public class DropUserControl : UserControl
     };
 
     private readonly IUiCredentialService _uiCredentialService;
-
-    public DropUserControl()
-    {
-        _uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
-        AddHandler(DragDrop.DropEvent, Drop);
-        AddHandler(DragDrop.DragOverEvent, DragOver);
-    }
 
     private void DragOver(object? sender, DragEventArgs e)
     {
