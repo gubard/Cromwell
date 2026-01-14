@@ -6,7 +6,7 @@ using Turtle.Contract.Services;
 
 namespace Cromwell.Services;
 
-public class HttpCredentialService(
+public sealed class HttpCredentialService(
     HttpClient httpClient,
     JsonSerializerOptions options,
     ITryPolicyService tryPolicyService,
@@ -18,4 +18,10 @@ public class HttpCredentialService(
         tryPolicyService,
         headersFactory
     ),
-        IHttpCredentialService;
+        IHttpCredentialService
+{
+    protected override TurtleGetRequest CreateHealthCheckGetRequest()
+    {
+        return new();
+    }
+}
