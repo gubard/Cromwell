@@ -33,13 +33,15 @@ public sealed partial class CredentialViewModel
                 new(
                     ShowMultiEditCommand,
                     null,
-                    new PackIconMaterialDesign { Kind = PackIconMaterialDesignKind.Edit },
+                    appResourceService.GetResource<string>("Lang.Edit"),
+                    PackIconMaterialDesignKind.Edit,
                     isEnable: false
                 ),
                 new(
                     ShowMultiDeleteCommand,
                     null,
-                    new PackIconMaterialDesign { Kind = PackIconMaterialDesignKind.Delete },
+                    appResourceService.GetResource<string>("Lang.Delete"),
+                    PackIconMaterialDesignKind.Delete,
                     ButtonType.Danger,
                     false
                 ),
