@@ -165,7 +165,7 @@ public sealed partial class RootCredentialsViewModel
             ct
         );
 
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
+        DialogService.DispatchCloseMessageBox();
 
         return response;
     }

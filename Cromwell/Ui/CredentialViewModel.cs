@@ -170,7 +170,7 @@ public sealed partial class CredentialViewModel
             ct
         );
 
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
+        DialogService.DispatchCloseMessageBox();
 
         return response;
     }

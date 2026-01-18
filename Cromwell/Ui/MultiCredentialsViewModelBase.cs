@@ -51,7 +51,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             ct
         );
 
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
+        DialogService.DispatchCloseMessageBox();
 
         return response;
     }
@@ -150,7 +150,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             ct
         );
 
-        Dispatcher.UIThread.Post(() => DialogService.CloseMessageBox());
+        DialogService.DispatchCloseMessageBox();
 
         return response;
     }
