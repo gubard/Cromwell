@@ -1,6 +1,5 @@
 ﻿using Avalonia.Collections;
 using Avalonia.Controls;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
@@ -59,9 +58,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     [RelayCommand]
     private async Task ShowMultiDelete(CancellationToken ct)
     {
-        var header = Dispatcher.UIThread.Invoke(() =>
-            AppResourceService.GetResource<string>("Lang.Delete").ToDialogHeader()
-        );
+        var header = AppResourceService.GetResource<string>("Lang.Delete").DispatchToDialogHeader();
 
         var button = new DialogButton(
             AppResourceService.GetResource<string>("Lang.Delete"),
@@ -96,14 +93,12 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     {
         var credential = new CredentialParametersViewModel(ValidationMode.ValidateOnlyEdited, true);
 
-        var header = Dispatcher.UIThread.Invoke(() =>
-            StringFormater
-                .Format(
-                    AppResourceService.GetResource<string>("Lang.EditItem"),
-                    SelectedCredentials.Select(x => x.Name).JoinString(", ")
-                )
-                .ToDialogHeader()
-        );
+        var header = StringFormater
+            .Format(
+                AppResourceService.GetResource<string>("Lang.EditItem"),
+                SelectedCredentials.Select(x => x.Name).JoinString(", ")
+            )
+            .DispatchToDialogHeader();
 
         var button = new DialogButton(
             AppResourceService.GetResource<string>("Lang.Edit"),

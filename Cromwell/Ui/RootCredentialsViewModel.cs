@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using Avalonia.Threading;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
@@ -98,14 +97,12 @@ public sealed partial class RootCredentialsViewModel
             () =>
                 DialogService.ShowMessageBoxAsync(
                     new(
-                        Dispatcher.UIThread.Invoke(() =>
-                            StringFormater
-                                .Format(
-                                    AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
-                                    AppResourceService.GetResource<string>("Lang.Credential")
-                                )
-                                .ToDialogHeader()
-                        ),
+                        StringFormater
+                            .Format(
+                                AppResourceService.GetResource<string>("Lang.CreatingNewItem"),
+                                AppResourceService.GetResource<string>("Lang.Credential")
+                            )
+                            .DispatchToDialogHeader(),
                         credential,
                         new DialogButton(
                             AppResourceService.GetResource<string>("Lang.Create"),
