@@ -1,14 +1,17 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
+using Gaia.Helpers;
 using Gaia.Services;
 using Inanna.Models;
 using Inanna.Services;
 
 namespace Cromwell.Ui;
 
-public partial class EditCredentialViewModel : ViewModelBase, IHeader
+public partial class EditCredentialViewModel : ViewModelBase, IHeader, IInitUi, ISaveUi
 {
     private readonly IUiCredentialService _uiCredentialService;
     private readonly INotificationService _notificationService;
@@ -30,7 +33,6 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader
         _notificationService = notificationService;
         _appResourceService = appResourceService;
         _stringFormater = stringFormater;
-        CredentialParameters.PropertyChanged += (_, e) => OnPropertyChanged(nameof(CanSave));
     }
 
     public CredentialParametersViewModel CredentialParameters { get; }
@@ -45,6 +47,25 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader
             ),
             Classes = { "h2", "align-left-center" },
         };
+
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    {
+        CredentialParameters.PropertyChanged += CredentialParametersPropertyChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    {
+        CredentialParameters.PropertyChanged -= CredentialParametersPropertyChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    private void CredentialParametersPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        OnPropertyChanged(nameof(CanSave));
+    }
 
     [RelayCommand]
     private async Task SaveAsync(CancellationToken ct)

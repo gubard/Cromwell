@@ -1,7 +1,9 @@
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
+using Gaia.Helpers;
 using Gaia.Services;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
@@ -14,7 +16,8 @@ public sealed partial class CredentialViewModel
     : MultiCredentialsViewModelBase,
         IHeader,
         IRefresh,
-        IInitUi
+        IInitUi,
+        ISaveUi
 {
     public CredentialViewModel(
         IUiCredentialService uiCredentialService,
@@ -46,29 +49,6 @@ public sealed partial class CredentialViewModel
                 ),
             ]
         );
-
-        _selectedCredentials.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName != nameof(_selectedCredentials.Count))
-            {
-                return;
-            }
-
-            if (_selectedCredentials.Count == 0)
-            {
-                foreach (var headerCommand in Header.Commands)
-                {
-                    headerCommand.IsEnable = false;
-                }
-            }
-            else
-            {
-                foreach (var headerCommand in Header.Commands)
-                {
-                    headerCommand.IsEnable = true;
-                }
-            }
-        };
     }
 
     public CredentialNotify Credential { get; }
@@ -77,6 +57,8 @@ public sealed partial class CredentialViewModel
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
+        _selectedCredentials.PropertyChanged += SelectedCredentialsPropertyChanged;
+
         return RefreshAsync(ct);
     }
 
@@ -90,6 +72,29 @@ public sealed partial class CredentialViewModel
                 ),
             ct
         );
+    }
+
+    private void SelectedCredentialsPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(_selectedCredentials.Count))
+        {
+            return;
+        }
+
+        if (_selectedCredentials.Count == 0)
+        {
+            foreach (var headerCommand in Header.Commands)
+            {
+                headerCommand.IsEnable = false;
+            }
+        }
+        else
+        {
+            foreach (var headerCommand in Header.Commands)
+            {
+                headerCommand.IsEnable = true;
+            }
+        }
     }
 
     [RelayCommand]
@@ -167,8 +172,15 @@ public sealed partial class CredentialViewModel
             ct
         );
 
-        DialogService.DispatchCloseMessageBox();
+        await DialogService.CloseMessageBoxAsync(ct);
 
         return response;
+    }
+
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    {
+        _selectedCredentials.PropertyChanged -= SelectedCredentialsPropertyChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
     }
 }

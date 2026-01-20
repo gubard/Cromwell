@@ -50,7 +50,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             ct
         );
 
-        DialogService.DispatchCloseMessageBox();
+        await DialogService.CloseMessageBoxAsync(ct);
 
         return response;
     }
@@ -145,7 +145,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             ct
         );
 
-        DialogService.DispatchCloseMessageBox();
+        await DialogService.CloseMessageBoxAsync(ct);
 
         return response;
     }

@@ -1,7 +1,9 @@
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
+using Gaia.Helpers;
 using Gaia.Services;
 using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
@@ -14,7 +16,8 @@ public sealed partial class RootCredentialsViewModel
     : MultiCredentialsViewModelBase,
         IHeader,
         IRefresh,
-        IInitUi
+        IInitUi,
+        ISaveUi
 {
     public RootCredentialsViewModel(
         IUiCredentialService uiCredentialService,
@@ -44,29 +47,6 @@ public sealed partial class RootCredentialsViewModel
                 false
             ),
         ]);
-
-        _selectedCredentials.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName != nameof(_selectedCredentials.Count))
-            {
-                return;
-            }
-
-            if (_selectedCredentials.Count == 0)
-            {
-                foreach (var headerCommand in Header.Commands)
-                {
-                    headerCommand.IsEnable = false;
-                }
-            }
-            else
-            {
-                foreach (var headerCommand in Header.Commands)
-                {
-                    headerCommand.IsEnable = true;
-                }
-            }
-        };
     }
 
     public IEnumerable<CredentialNotify> Credentials => _credentialMemoryCache.Roots;
@@ -81,12 +61,44 @@ public sealed partial class RootCredentialsViewModel
         );
     }
 
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    {
+        _selectedCredentials.PropertyChanged -= SelectedCredentialsPropertyChanged;
+
+        return TaskHelper.ConfiguredCompletedTask;
+    }
+
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
+        _selectedCredentials.PropertyChanged += SelectedCredentialsPropertyChanged;
+
         return RefreshAsync(ct);
     }
 
     private readonly ICredentialMemoryCache _credentialMemoryCache;
+
+    private void SelectedCredentialsPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(_selectedCredentials.Count))
+        {
+            return;
+        }
+
+        if (_selectedCredentials.Count == 0)
+        {
+            foreach (var headerCommand in Header.Commands)
+            {
+                headerCommand.IsEnable = false;
+            }
+        }
+        else
+        {
+            foreach (var headerCommand in Header.Commands)
+            {
+                headerCommand.IsEnable = true;
+            }
+        }
+    }
 
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
@@ -162,7 +174,7 @@ public sealed partial class RootCredentialsViewModel
             ct
         );
 
-        DialogService.DispatchCloseMessageBox();
+        await DialogService.CloseMessageBoxAsync(ct);
 
         return response;
     }
