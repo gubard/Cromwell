@@ -14,7 +14,8 @@ public sealed class UiCredentialService(
     AppState appState,
     ICredentialUiCache uiCache,
     INavigator navigator,
-    string serviceName
+    string serviceName,
+    IResponseHandler responseHandler
 )
     : UiService<
         TurtleGetRequest,
@@ -24,5 +25,5 @@ public sealed class UiCredentialService(
         IHttpCredentialService,
         IEfCredentialService,
         ICredentialUiCache
-    >(httpService, efService, appState, uiCache, navigator, serviceName),
+    >(httpService, efService, appState, uiCache, navigator, serviceName, responseHandler),
         IUiCredentialService;
