@@ -34,10 +34,8 @@ public static class CromwellCommands
                 ct
             );
 
-            var generalKey = settings?.GeneralKey ?? Guid.NewGuid().ToString();
-
             var password = passwordGeneratorService.GeneratePassword(
-                $"{generalKey}{parameters.Key}",
+                $"{settings.GeneralKey}{parameters.Key}",
                 new(
                     $"{parameters.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{parameters.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{parameters.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{parameters.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{parameters.CustomAvailableCharacters}",
                     parameters.Length,
