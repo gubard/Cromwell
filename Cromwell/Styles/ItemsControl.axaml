@@ -51,17 +51,17 @@
                             <Grid Classes="for-drop" ColumnDefinitions="*,*,*">
                                 <Panel Tag="DropUp">
                                     <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Up}" />
+                                    <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Up}" />
                                 </Panel>
 
                                 <Panel Grid.Column="1" Tag="DropParent">
                                     <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Parent}" />
+                                    <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Parent}" />
                                 </Panel>
 
                                 <Panel Grid.Column="2" Tag="DropDown">
                                     <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Down}" />
+                                    <TextBlock Classes="align-center m-10" Text="{StaticResource Lang.Down}" />
                                 </Panel>
                             </Grid>
                         </Panel>
