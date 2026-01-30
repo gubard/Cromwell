@@ -203,66 +203,86 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
         SetValidation(
             nameof(Login),
             () =>
-                ValidationMode switch
+                Type switch
                 {
-                    ValidationMode.ValidateAll => ValidateLogin(),
-                    ValidationMode.ValidateOnlyEdited => IsEditLogin ? ValidateLogin() : [],
-                    _ => throw new ArgumentOutOfRangeException(
-                        nameof(ValidationMode),
-                        ValidationMode,
-                        null
-                    ),
+                    CredentialType.Value => ValidationMode switch
+                    {
+                        ValidationMode.ValidateAll => ValidateLogin(),
+                        ValidationMode.ValidateOnlyEdited => IsEditLogin ? ValidateLogin() : [],
+                        _ => throw new ArgumentOutOfRangeException(
+                            nameof(ValidationMode),
+                            ValidationMode,
+                            null
+                        ),
+                    },
+                    CredentialType.Group => [],
+                    _ => throw new ArgumentOutOfRangeException(),
                 }
         );
 
         SetValidation(
             nameof(Key),
             () =>
-                ValidationMode switch
+                Type switch
                 {
-                    ValidationMode.ValidateAll => ValidateKey(),
-                    ValidationMode.ValidateOnlyEdited => IsEditKey ? ValidateKey() : [],
-                    _ => throw new ArgumentOutOfRangeException(
-                        nameof(ValidationMode),
-                        ValidationMode,
-                        null
-                    ),
+                    CredentialType.Value => ValidationMode switch
+                    {
+                        ValidationMode.ValidateAll => ValidateKey(),
+                        ValidationMode.ValidateOnlyEdited => IsEditKey ? ValidateKey() : [],
+                        _ => throw new ArgumentOutOfRangeException(
+                            nameof(ValidationMode),
+                            ValidationMode,
+                            null
+                        ),
+                    },
+                    CredentialType.Group => [],
+                    _ => throw new ArgumentOutOfRangeException(),
                 }
         );
 
         SetValidation(
             nameof(Length),
             () =>
-                ValidationMode switch
+                Type switch
                 {
-                    ValidationMode.ValidateAll => ValidateLength(),
-                    ValidationMode.ValidateOnlyEdited => IsEditLength ? ValidateLength() : [],
-                    _ => throw new ArgumentOutOfRangeException(
-                        nameof(ValidationMode),
-                        ValidationMode,
-                        null
-                    ),
+                    CredentialType.Value => ValidationMode switch
+                    {
+                        ValidationMode.ValidateAll => ValidateLength(),
+                        ValidationMode.ValidateOnlyEdited => IsEditLength ? ValidateLength() : [],
+                        _ => throw new ArgumentOutOfRangeException(
+                            nameof(ValidationMode),
+                            ValidationMode,
+                            null
+                        ),
+                    },
+                    CredentialType.Group => [],
+                    _ => throw new ArgumentOutOfRangeException(),
                 }
         );
 
         SetValidation(
             nameof(CustomAvailableCharacters),
             () =>
-                ValidationMode switch
+                Type switch
                 {
-                    ValidationMode.ValidateAll => ValidateAvailableCharacters(),
-                    ValidationMode.ValidateOnlyEdited => IsEditCustomAvailableCharacters
-                    || IsEditIsAvailableLowerLatin
-                    || IsEditIsAvailableNumber
-                    || IsEditIsAvailableSpecialSymbols
-                    || IsEditIsAvailableUpperLatin
-                        ? ValidateAvailableCharacters()
-                        : [],
-                    _ => throw new ArgumentOutOfRangeException(
-                        nameof(ValidationMode),
-                        ValidationMode,
-                        null
-                    ),
+                    CredentialType.Value => ValidationMode switch
+                    {
+                        ValidationMode.ValidateAll => ValidateAvailableCharacters(),
+                        ValidationMode.ValidateOnlyEdited => IsEditCustomAvailableCharacters
+                        || IsEditIsAvailableLowerLatin
+                        || IsEditIsAvailableNumber
+                        || IsEditIsAvailableSpecialSymbols
+                        || IsEditIsAvailableUpperLatin
+                            ? ValidateAvailableCharacters()
+                            : [],
+                        _ => throw new ArgumentOutOfRangeException(
+                            nameof(ValidationMode),
+                            ValidationMode,
+                            null
+                        ),
+                    },
+                    CredentialType.Group => [],
+                    _ => throw new ArgumentOutOfRangeException(),
                 }
         );
     }
