@@ -12,7 +12,7 @@ public class DropUserControl : UserControl
 {
     public DropUserControl()
     {
-        _uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
+        _credentialUiService = DiHelper.ServiceProvider.GetService<ICredentialUiService>();
         AddHandler(DragDrop.DropEvent, Drop);
         AddHandler(DragDrop.DragOverEvent, DragOver);
     }
@@ -25,7 +25,7 @@ public class DropUserControl : UserControl
         "DropParent",
     };
 
-    private readonly IUiCredentialService _uiCredentialService;
+    private readonly ICredentialUiService _credentialUiService;
 
     private void DragOver(object? sender, DragEventArgs e)
     {
@@ -75,7 +75,7 @@ public class DropUserControl : UserControl
         {
             case "DropRoot":
             {
-                _uiCredentialService.PostAsync(
+                _credentialUiService.PostAsync(
                     Guid.NewGuid(),
                     new()
                     {
@@ -113,7 +113,7 @@ public class DropUserControl : UserControl
                     return;
                 }
 
-                _uiCredentialService.PostAsync(
+                _credentialUiService.PostAsync(
                     Guid.NewGuid(),
                     new()
                     {
@@ -151,7 +151,7 @@ public class DropUserControl : UserControl
                     return;
                 }
 
-                _uiCredentialService.PostAsync(
+                _credentialUiService.PostAsync(
                     Guid.NewGuid(),
                     new()
                     {
@@ -189,7 +189,7 @@ public class DropUserControl : UserControl
                     return;
                 }
 
-                _uiCredentialService.PostAsync(
+                _credentialUiService.PostAsync(
                     Guid.NewGuid(),
                     new()
                     {

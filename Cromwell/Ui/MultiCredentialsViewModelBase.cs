@@ -15,20 +15,20 @@ namespace Cromwell.Ui;
 public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
 {
     protected readonly AvaloniaList<CredentialNotify> _selectedCredentials;
-    protected readonly IUiCredentialService UiCredentialService;
+    protected readonly ICredentialUiService CredentialUiService;
     protected readonly IDialogService DialogService;
     protected readonly IStringFormater StringFormater;
     protected readonly IAppResourceService AppResourceService;
 
     protected MultiCredentialsViewModelBase(
-        IUiCredentialService uiCredentialService,
+        ICredentialUiService credentialUiService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService
     )
     {
         _selectedCredentials = new();
-        UiCredentialService = uiCredentialService;
+        CredentialUiService = credentialUiService;
         DialogService = dialogService;
         StringFormater = stringFormater;
         AppResourceService = appResourceService;
@@ -44,7 +44,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
 
     private async ValueTask<TurtlePostResponse> MultiDeleteCore(CancellationToken ct)
     {
-        var response = await UiCredentialService.PostAsync(
+        var response = await CredentialUiService.PostAsync(
             Guid.NewGuid(),
             new() { DeleteIds = SelectedCredentials.Select(x => x.Id).ToArray() },
             ct
@@ -139,7 +139,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
         var editCredentials = parameters.CreateEditCredential();
         editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
 
-        var response = await UiCredentialService.PostAsync(
+        var response = await CredentialUiService.PostAsync(
             Guid.NewGuid(),
             new() { EditCredentials = [editCredentials] },
             ct

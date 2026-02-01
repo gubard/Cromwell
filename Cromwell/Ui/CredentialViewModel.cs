@@ -20,13 +20,13 @@ public sealed partial class CredentialViewModel
         ISaveUi
 {
     public CredentialViewModel(
-        IUiCredentialService uiCredentialService,
+        ICredentialUiService credentialUiService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
         CredentialNotify credential
     )
-        : base(uiCredentialService, dialogService, stringFormater, appResourceService)
+        : base(credentialUiService, dialogService, stringFormater, appResourceService)
     {
         Credential = credential;
         Header = new(
@@ -66,7 +66,7 @@ public sealed partial class CredentialViewModel
     {
         return WrapCommandAsync(
             () =>
-                UiCredentialService.GetAsync(
+                CredentialUiService.GetAsync(
                     new() { GetChildrenIds = [Credential.Id], GetParentsIds = [Credential.Id] },
                     ct
                 ),
@@ -145,7 +145,7 @@ public sealed partial class CredentialViewModel
             return new EmptyValidationErrors();
         }
 
-        var response = await UiCredentialService.PostAsync(
+        var response = await CredentialUiService.PostAsync(
             Guid.NewGuid(),
             new()
             {

@@ -17,7 +17,7 @@ public static class CromwellCommands
     static CromwellCommands()
     {
         var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
-        var uiCredentialService = DiHelper.ServiceProvider.GetService<IUiCredentialService>();
+        var uiCredentialService = DiHelper.ServiceProvider.GetService<ICredentialUiService>();
         var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
         var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
         var passwordGeneratorService =

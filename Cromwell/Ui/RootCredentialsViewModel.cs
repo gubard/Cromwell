@@ -20,13 +20,13 @@ public sealed partial class RootCredentialsViewModel
         ISaveUi
 {
     public RootCredentialsViewModel(
-        IUiCredentialService uiCredentialService,
+        ICredentialUiService credentialUiService,
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
         ICredentialMemoryCache credentialMemoryCache
     )
-        : base(uiCredentialService, dialogService, stringFormater, appResourceService)
+        : base(credentialUiService, dialogService, stringFormater, appResourceService)
     {
         _credentialMemoryCache = credentialMemoryCache;
 
@@ -56,7 +56,7 @@ public sealed partial class RootCredentialsViewModel
     public ConfiguredValueTaskAwaitable RefreshAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
-            () => UiCredentialService.GetAsync(new() { IsGetRoots = true }, ct),
+            () => CredentialUiService.GetAsync(new() { IsGetRoots = true }, ct),
             ct
         );
     }
@@ -148,7 +148,7 @@ public sealed partial class RootCredentialsViewModel
             return new EmptyValidationErrors();
         }
 
-        var response = await UiCredentialService.PostAsync(
+        var response = await CredentialUiService.PostAsync(
             Guid.NewGuid(),
             new()
             {

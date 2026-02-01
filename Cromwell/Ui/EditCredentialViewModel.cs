@@ -13,7 +13,7 @@ namespace Cromwell.Ui;
 
 public partial class EditCredentialViewModel : ViewModelBase, IHeader, IInitUi, ISaveUi
 {
-    private readonly IUiCredentialService _uiCredentialService;
+    private readonly ICredentialUiService _credentialUiService;
     private readonly INotificationService _notificationService;
     private readonly IAppResourceService _appResourceService;
     private readonly CredentialNotify _credential;
@@ -21,7 +21,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader, IInitUi, 
 
     public EditCredentialViewModel(
         CredentialNotify credential,
-        IUiCredentialService uiCredentialService,
+        ICredentialUiService credentialUiService,
         INotificationService notificationService,
         IAppResourceService appResourceService,
         IStringFormater stringFormater
@@ -29,7 +29,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader, IInitUi, 
     {
         _credential = credential;
         CredentialParameters = new(credential, ValidationMode.ValidateAll, true);
-        _uiCredentialService = uiCredentialService;
+        _credentialUiService = credentialUiService;
         _notificationService = notificationService;
         _appResourceService = appResourceService;
         _stringFormater = stringFormater;
@@ -82,7 +82,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader, IInitUi, 
             return new EmptyValidationErrors();
         }
 
-        var response = await _uiCredentialService.PostAsync(
+        var response = await _credentialUiService.PostAsync(
             Guid.NewGuid(),
             new()
             {

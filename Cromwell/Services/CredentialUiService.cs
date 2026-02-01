@@ -5,12 +5,12 @@ using Turtle.Contract.Services;
 
 namespace Cromwell.Services;
 
-public interface IUiCredentialService
+public interface ICredentialUiService
     : IUiService<TurtleGetRequest, TurtlePostRequest, TurtleGetResponse, TurtlePostResponse>;
 
-public sealed class UiCredentialService(
-    IHttpCredentialService httpService,
-    IEfCredentialService efService,
+public sealed class CredentialUiService(
+    ICredentialHttpService credentialHttpService,
+    ICredentialDbService dbService,
     AppState appState,
     ICredentialUiCache uiCache,
     INavigator navigator,
@@ -22,8 +22,8 @@ public sealed class UiCredentialService(
         TurtlePostRequest,
         TurtleGetResponse,
         TurtlePostResponse,
-        IHttpCredentialService,
-        IEfCredentialService,
+        ICredentialHttpService,
+        ICredentialDbService,
         ICredentialUiCache
-    >(httpService, efService, appState, uiCache, navigator, serviceName, responseHandler),
-        IUiCredentialService;
+    >(credentialHttpService, dbService, appState, uiCache, navigator, serviceName, responseHandler),
+        ICredentialUiService;
