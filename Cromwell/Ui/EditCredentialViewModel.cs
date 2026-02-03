@@ -79,7 +79,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader, IInitUi, 
 
         if (CredentialParameters.HasErrors)
         {
-            return new EmptyValidationErrors();
+            return new DefaultValidationErrors();
         }
 
         var response = await _credentialUiService.PostAsync(

@@ -145,7 +145,7 @@ public sealed partial class RootCredentialsViewModel
 
         if (parameters.HasErrors)
         {
-            return new EmptyValidationErrors();
+            return new DefaultValidationErrors();
         }
 
         var response = await CredentialUiService.PostAsync(

@@ -133,7 +133,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     {
         if (parameters.HasErrors)
         {
-            return new EmptyValidationErrors();
+            return new DefaultValidationErrors();
         }
 
         var editCredentials = parameters.CreateEditCredential();

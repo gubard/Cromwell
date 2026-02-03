@@ -142,7 +142,7 @@ public sealed partial class CredentialViewModel
 
         if (parameters.HasErrors)
         {
-            return new EmptyValidationErrors();
+            return new DefaultValidationErrors();
         }
 
         var response = await CredentialUiService.PostAsync(
