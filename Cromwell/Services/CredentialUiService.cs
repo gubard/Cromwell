@@ -11,7 +11,6 @@ public interface ICredentialUiService
 public sealed class CredentialUiService(
     ICredentialHttpService credentialHttpService,
     ICredentialDbService dbService,
-    AppState appState,
     ICredentialUiCache uiCache,
     INavigator navigator,
     string serviceName,
@@ -25,5 +24,5 @@ public sealed class CredentialUiService(
         ICredentialHttpService,
         ICredentialDbService,
         ICredentialUiCache
-    >(credentialHttpService, dbService, appState, uiCache, navigator, serviceName, responseHandler),
+    >(credentialHttpService, dbService, uiCache, navigator, serviceName, responseHandler),
         ICredentialUiService;
