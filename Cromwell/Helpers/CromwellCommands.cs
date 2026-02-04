@@ -44,14 +44,12 @@ public static class CromwellCommands
             await clipboardService.SetTextAsync(password, ct);
 
             notificationService.ShowNotification(
-                new TextBlock
-                {
-                    Text = stringFormater.Format(
+                stringFormater
+                    .Format(
                         appResourceService.GetResource<string>("Lang.Copied"),
                         appResourceService.GetResource<string>("Lang.Password")
-                    ),
-                    Classes = { "align-center", "m-5", "h2" },
-                },
+                    )
+                    .DispatchToNotification(),
                 NotificationType.Success
             );
         }
@@ -65,14 +63,12 @@ public static class CromwellCommands
             await clipboardService.SetTextAsync(parameters.Login, ct);
 
             notificationService.ShowNotification(
-                new TextBlock
-                {
-                    Text = stringFormater.Format(
+                stringFormater
+                    .Format(
                         appResourceService.GetResource<string>("Lang.Copied"),
                         appResourceService.GetResource<string>("Lang.Login")
-                    ),
-                    Classes = { "align-center", "m-5", "h2" },
-                },
+                    )
+                    .DispatchToNotification(),
                 NotificationType.Success
             );
         }

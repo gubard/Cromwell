@@ -6,6 +6,7 @@ using Cromwell.Models;
 using Cromwell.Services;
 using Gaia.Helpers;
 using Gaia.Services;
+using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 
@@ -124,11 +125,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader, IInitUi, 
         );
 
         _notificationService.ShowNotification(
-            new TextBlock
-            {
-                Text = _appResourceService.GetResource<string>("Lang.Saved"),
-                Classes = { "align-center", "h2", "m-5" },
-            },
+            _appResourceService.GetResource<string>("Lang.Saved").DispatchToNotification(),
             NotificationType.None
         );
 
