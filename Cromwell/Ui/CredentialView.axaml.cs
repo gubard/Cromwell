@@ -2,7 +2,7 @@ using Cromwell.Controls;
 
 namespace Cromwell.Ui;
 
-public partial class CredentialView : DropUserControl
+public partial class CredentialView : CredentialDropUserControl
 {
     public CredentialView()
     {

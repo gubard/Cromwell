@@ -100,7 +100,6 @@ public class CredentialMemoryCache
                 item.Length = create.Length;
                 item.Regex = create.Regex;
                 item.Type = create.Type;
-
                 item.Parent = create.ParentId.HasValue ? GetItem(create.ParentId.Value) : null;
 
                 if (item.Parent is not null)
@@ -113,7 +112,7 @@ public class CredentialMemoryCache
                 }
             }
 
-            foreach (var edit in source.EditCredentials)
+            foreach (var edit in source.Edits)
             {
                 var items = edit.Ids.Select(GetItem).ToArray();
 

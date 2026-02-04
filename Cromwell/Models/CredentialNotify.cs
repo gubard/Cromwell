@@ -8,7 +8,10 @@ using Turtle.Contract.Models;
 
 namespace Cromwell.Models;
 
-public partial class CredentialNotify : ObservableObject, IStaticFactory<Guid, CredentialNotify>
+public partial class CredentialNotify
+    : ObservableObject,
+        IStaticFactory<Guid, CredentialNotify>,
+        IIsDrag
 {
     private readonly AvaloniaList<object> _parents = [];
 

@@ -141,7 +141,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
 
         var response = await CredentialUiService.PostAsync(
             Guid.NewGuid(),
-            new() { EditCredentials = [editCredentials] },
+            new() { Edits = [editCredentials] },
             ct
         );
 

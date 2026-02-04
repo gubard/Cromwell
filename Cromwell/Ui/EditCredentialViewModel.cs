@@ -87,7 +87,7 @@ public partial class EditCredentialViewModel : ViewModelBase, IHeader, IInitUi, 
             Guid.NewGuid(),
             new()
             {
-                EditCredentials =
+                Edits =
                 [
                     new()
                     {

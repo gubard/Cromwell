@@ -3,7 +3,8 @@
         xmlns:h="clr-namespace:Cromwell.Helpers"
         xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:m="clr-namespace:Turtle.Contract.Models;assembly=Turtle.Contract"
-        xmlns:cm="clr-namespace:Cromwell.Models">
+        xmlns:cm="clr-namespace:Cromwell.Models"
+        xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna">
     <Style Selector="ItemsControl.credential-view">
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="cm:CredentialNotify">
@@ -16,7 +17,7 @@
                             <ip:PackIconMaterialDesign Kind="Reorder"
                                                        Classes="s-20 align-center"
                                                        Background="Transparent"
-                                                       h:InputElementAssist.IsDragCredentialNotifyHandle="True"
+                                                       ih:InputElementAssist.IsDragHandle="True"
                                                        IsVisible="{OnPlatform  Default=True, Android=False, iOS=False}" />
                             <TextBlock Grid.Column="1" Classes="align-left-center text-wrap" Text="{Binding Name}" />
 
