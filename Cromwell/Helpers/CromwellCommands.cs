@@ -2,7 +2,6 @@ using System.Windows.Input;
 using Avalonia.Controls;
 using Cromwell.Models;
 using Cromwell.Services;
-using Cromwell.Ui;
 using Gaia.Helpers;
 using Gaia.Services;
 using Inanna.Helpers;
@@ -16,14 +15,14 @@ public static class CromwellCommands
 {
     static CromwellCommands()
     {
-        var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
-        var uiCredentialService = DiHelper.ServiceProvider.GetService<ICredentialUiService>();
+        var credentialUiService = DiHelper.ServiceProvider.GetService<ICredentialUiService>();
         var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
         var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
         var clipboardService = DiHelper.ServiceProvider.GetService<IClipboardService>();
         var notificationService = DiHelper.ServiceProvider.GetService<INotificationService>();
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
+        var factory = DiHelper.ServiceProvider.GetService<ICromwellViewModelFactory>();
 
         var passwordGeneratorService =
             DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
@@ -83,36 +82,16 @@ public static class CromwellCommands
         );
 
         OpenCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(
-            (parameters, ct) =>
-                navigator.NavigateToAsync(
-                    new CredentialViewModel(
-                        uiCredentialService,
-                        dialogService,
-                        stringFormater,
-                        appResourceService,
-                        parameters
-                    ),
-                    ct
-                )
+            (credential, ct) => navigator.NavigateToAsync(factory.CreateCredential(credential), ct)
         );
 
         EditCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(
-            (credential, ct) =>
-                navigator.NavigateToAsync(
-                    new EditCredentialViewModel(
-                        credential,
-                        uiCredentialService,
-                        notificationService,
-                        appResourceService,
-                        stringFormater
-                    ),
-                    ct
-                )
+            (credential, ct) => navigator.NavigateToAsync(factory.EditCredential(credential), ct)
         );
 
         DeleteCredentialCommand = UiHelper.CreateCommand<CredentialNotify, TurtlePostResponse>(
             (credential, ct) =>
-                uiCredentialService.PostAsync(
+                credentialUiService.PostAsync(
                     Guid.NewGuid(),
                     new() { DeleteIds = [credential.Id] },
                     ct

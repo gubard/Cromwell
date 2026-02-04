@@ -17,6 +17,7 @@ namespace Cromwell.Services;
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
 [Transient(typeof(INotificationService), Factory = nameof(GetNotificationService))]
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
+[Transient(typeof(ICromwellViewModelFactory), typeof(CromwellViewModelFactory))]
 [Singleton(typeof(IAppResourceService), typeof(AppResourceService))]
 [Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
