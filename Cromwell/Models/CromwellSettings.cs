@@ -1,9 +1,11 @@
-﻿namespace Cromwell.Models;
+﻿using Gaia.Services;
 
-public sealed class CromwellSettings
+namespace Cromwell.Models;
+
+public sealed class CromwellSettings : ObjectStorageValue<CromwellSettings>
 {
-    private static readonly string DefaultGeneralKey = Guid.NewGuid().ToString().ToUpper();
-
     public string GeneralKey { get; set; } = DefaultGeneralKey;
     public ThemeVariantType Theme { get; set; }
+
+    private static readonly string DefaultGeneralKey = Guid.NewGuid().ToString().ToUpper();
 }

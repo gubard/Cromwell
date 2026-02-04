@@ -20,26 +20,25 @@ public static class CromwellCommands
         var uiCredentialService = DiHelper.ServiceProvider.GetService<ICredentialUiService>();
         var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
         var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
-        var passwordGeneratorService =
-            DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
         var clipboardService = DiHelper.ServiceProvider.GetService<IClipboardService>();
         var notificationService = DiHelper.ServiceProvider.GetService<INotificationService>();
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
 
-        async ValueTask GeneratePasswordAsync(CredentialNotify parameters, CancellationToken ct)
+        var passwordGeneratorService =
+            DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
+
+        async ValueTask GeneratePasswordAsync(CredentialNotify credential, CancellationToken ct)
         {
-            var settings = await objectStorage.LoadAsync<CromwellSettings>(
-                $"{typeof(CromwellSettings).FullName}",
-                ct
-            );
+            var settings = await objectStorage.LoadAsync<CromwellSettings>(ct);
+            var key = $"{settings.GeneralKey}{credential.Key}";
 
             var password = passwordGeneratorService.GeneratePassword(
-                $"{settings.GeneralKey}{parameters.Key}",
+                key,
                 new(
-                    $"{parameters.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{parameters.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{parameters.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{parameters.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{parameters.CustomAvailableCharacters}",
-                    parameters.Length,
-                    parameters.Regex
+                    $"{credential.IsAvailableNumber.IfTrueElseEmpty(StringHelper.Number)}{credential.IsAvailableLowerLatin.IfTrueElseEmpty(StringHelper.LowerLatin)}{credential.IsAvailableUpperLatin.IfTrueElseEmpty(StringHelper.UpperLatin)}{credential.IsAvailableSpecialSymbols.IfTrueElseEmpty(StringHelper.SpecialSymbols)}{credential.CustomAvailableCharacters}",
+                    credential.Length,
+                    credential.Regex
                 )
             );
 
