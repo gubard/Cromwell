@@ -14,7 +14,7 @@ namespace Cromwell.Ui;
 
 public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
 {
-    protected readonly AvaloniaList<CredentialNotify> _selectedCredentials;
+    protected readonly AvaloniaList<CredentialNotify> Selected;
     protected readonly ICredentialUiService CredentialUiService;
     protected readonly IDialogService DialogService;
     protected readonly IStringFormater StringFormater;
@@ -27,14 +27,14 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
         IAppResourceService appResourceService
     )
     {
-        _selectedCredentials = new();
+        Selected = new();
         CredentialUiService = credentialUiService;
         DialogService = dialogService;
         StringFormater = stringFormater;
         AppResourceService = appResourceService;
     }
 
-    public IEnumerable<CredentialNotify> SelectedCredentials => _selectedCredentials;
+    public IEnumerable<CredentialNotify> SelectedCredentials => Selected;
 
     [RelayCommand]
     private async Task MultiDeleteAsync(CancellationToken ct)
@@ -136,8 +136,8 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
             return new DefaultValidationErrors();
         }
 
-        var editCredentials = parameters.CreateEditCredential();
-        editCredentials.Ids = SelectedCredentials.Select(x => x.Id).ToArray();
+        var ids = SelectedCredentials.Select(x => x.Id).ToArray();
+        var editCredentials = parameters.CreateEditCredential(ids);
 
         var response = await CredentialUiService.PostAsync(
             Guid.NewGuid(),

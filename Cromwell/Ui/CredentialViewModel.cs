@@ -57,7 +57,7 @@ public sealed partial class CredentialViewModel
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
-        _selectedCredentials.PropertyChanged += SelectedCredentialsPropertyChanged;
+        Selected.PropertyChanged += SelectedCredentialsPropertyChanged;
 
         return RefreshAsync(ct);
     }
@@ -76,12 +76,12 @@ public sealed partial class CredentialViewModel
 
     private void SelectedCredentialsPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName != nameof(_selectedCredentials.Count))
+        if (e.PropertyName != nameof(Selected.Count))
         {
             return;
         }
 
-        if (_selectedCredentials.Count == 0)
+        if (Selected.Count == 0)
         {
             foreach (var headerCommand in Header.Commands)
             {
@@ -179,7 +179,7 @@ public sealed partial class CredentialViewModel
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        _selectedCredentials.PropertyChanged -= SelectedCredentialsPropertyChanged;
+        Selected.PropertyChanged -= SelectedCredentialsPropertyChanged;
 
         return TaskHelper.ConfiguredCompletedTask;
     }

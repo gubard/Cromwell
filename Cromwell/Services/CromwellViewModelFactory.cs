@@ -1,6 +1,7 @@
 using Cromwell.Models;
 using Cromwell.Ui;
 using Gaia.Services;
+using Inanna.Models;
 using Inanna.Services;
 
 namespace Cromwell.Services;
@@ -8,7 +9,7 @@ namespace Cromwell.Services;
 public interface ICromwellViewModelFactory
 {
     CredentialViewModel CreateCredential(CredentialNotify credential);
-    EditCredentialViewModel EditCredential(CredentialNotify credential);
+    CredentialParametersViewModel CreateCredentialParameters(CredentialNotify credential);
 }
 
 public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
@@ -17,15 +18,13 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         ICredentialUiService credentialUiService,
         IDialogService dialogService,
         IStringFormater stringFormater,
-        IAppResourceService appResourceService,
-        INotificationService notificationService
+        IAppResourceService appResourceService
     )
     {
         _credentialUiService = credentialUiService;
         _dialogService = dialogService;
         _stringFormater = stringFormater;
         _appResourceService = appResourceService;
-        _notificationService = notificationService;
     }
 
     public CredentialViewModel CreateCredential(CredentialNotify credential)
@@ -39,20 +38,13 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         );
     }
 
-    public EditCredentialViewModel EditCredential(CredentialNotify credential)
+    public CredentialParametersViewModel CreateCredentialParameters(CredentialNotify credential)
     {
-        return new(
-            credential,
-            _credentialUiService,
-            _notificationService,
-            _appResourceService,
-            _stringFormater
-        );
+        return new(credential, ValidationMode.ValidateAll, false);
     }
 
     private readonly ICredentialUiService _credentialUiService;
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;
     private readonly IAppResourceService _appResourceService;
-    private readonly INotificationService _notificationService;
 }

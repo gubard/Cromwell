@@ -6,6 +6,7 @@ using Gaia.Services;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
+using Inanna.Ui;
 using Turtle.Contract.Models;
 
 namespace Cromwell.Helpers;
@@ -22,6 +23,7 @@ public static class CromwellCommands
         var stringFormater = DiHelper.ServiceProvider.GetService<IStringFormater>();
         var navigator = DiHelper.ServiceProvider.GetService<INavigator>();
         var factory = DiHelper.ServiceProvider.GetService<ICromwellViewModelFactory>();
+        var dialogService = DiHelper.ServiceProvider.GetService<IDialogService>();
 
         var passwordGeneratorService =
             DiHelper.ServiceProvider.GetService<IPasswordGeneratorService>();
@@ -80,8 +82,43 @@ public static class CromwellCommands
             (credential, ct) => navigator.NavigateToAsync(factory.CreateCredential(credential), ct)
         );
 
-        EditCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(
-            (credential, ct) => navigator.NavigateToAsync(factory.EditCredential(credential), ct)
+        ShowEditCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(
+            (credential, ct) =>
+            {
+                var parameters = factory.CreateCredentialParameters(credential);
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        stringFormater
+                            .Format(
+                                appResourceService.GetResource<string>("Lang.EditItem"),
+                                credential.Name
+                            )
+                            .DispatchToDialogHeader(),
+                        parameters,
+                        new(
+                            appResourceService.GetResource<string>("Lang.Edit"),
+                            UiHelper.CreateCommand(async c =>
+                            {
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                return await credentialUiService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new()
+                                    {
+                                        Edits = [parameters.CreateEditCredential(credential.Id)],
+                                    },
+                                    c
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
         );
 
         DeleteCredentialCommand = UiHelper.CreateCommand<CredentialNotify, TurtlePostResponse>(
@@ -97,6 +134,6 @@ public static class CromwellCommands
     public static readonly ICommand GeneratePasswordCommand;
     public static readonly ICommand LoginToClipboardCommand;
     public static readonly ICommand OpenCredentialCommand;
-    public static readonly ICommand EditCredentialCommand;
+    public static readonly ICommand ShowEditCredentialCommand;
     public static readonly ICommand DeleteCredentialCommand;
 }

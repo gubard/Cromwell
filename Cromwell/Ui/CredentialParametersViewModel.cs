@@ -116,10 +116,16 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
     [ObservableProperty]
     public partial CredentialType Type { get; set; }
 
-    public EditCredential CreateEditCredential()
+    public EditCredential CreateEditCredential(Guid id)
+    {
+        return CreateEditCredential([id]);
+    }
+
+    public EditCredential CreateEditCredential(Guid[] ids)
     {
         return new()
         {
+            Ids = ids,
             CustomAvailableCharacters = CustomAvailableCharacters,
             IsAvailableLowerLatin = IsAvailableLowerLatin,
             IsAvailableNumber = IsAvailableNumber,
