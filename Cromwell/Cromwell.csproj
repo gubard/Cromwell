@@ -18,19 +18,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
+    <ProjectReference Include="..\..\Turtle\Turtle.Contract\Turtle.Contract.csproj" />
     <ProjectReference
       Include="..\..\Inanna\Inanna.SourceGenerator\Inanna.SourceGenerator.csproj"
       ReferenceOutputAssembly="false"
       OutputItemType="Analyzer"
     />
-    <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
-    <ProjectReference Include="..\..\Nestor\Nestor.Db\Nestor.Db.csproj" />
-    <ProjectReference
-      Include="..\..\Nestor\Nestor.SourceGenerator\Nestor.SourceGenerator.csproj"
-      ReferenceOutputAssembly="false"
-      OutputItemType="Analyzer"
-    />
-    <ProjectReference Include="..\..\Turtle\Turtle.Contract\Turtle.Contract.csproj" />
   </ItemGroup>
 
   <ItemGroup>
