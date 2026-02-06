@@ -24,11 +24,11 @@ public sealed partial class RootCredentialsViewModel
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        ICredentialMemoryCache credentialMemoryCache
+        ICredentialUiCache credentialUiCache
     )
         : base(credentialUiService, dialogService, stringFormater, appResourceService)
     {
-        _credentialMemoryCache = credentialMemoryCache;
+        _credentialUiCache = credentialUiCache;
 
         Header = new([
             new(
@@ -49,7 +49,7 @@ public sealed partial class RootCredentialsViewModel
         ]);
     }
 
-    public IEnumerable<CredentialNotify> Credentials => _credentialMemoryCache.Roots;
+    public IEnumerable<CredentialNotify> Credentials => _credentialUiCache.Roots;
     public RootCredentialsHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
@@ -75,7 +75,7 @@ public sealed partial class RootCredentialsViewModel
         return RefreshAsync(ct);
     }
 
-    private readonly ICredentialMemoryCache _credentialMemoryCache;
+    private readonly ICredentialUiCache _credentialUiCache;
 
     private void SelectedCredentialsPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {

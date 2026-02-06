@@ -24,4 +24,15 @@ public sealed class CredentialUiService(
         ICredentialDbService,
         ICredentialUiCache
     >(credentialHttpService, dbService, uiCache, navigator, serviceName, responseHandler),
-        ICredentialUiService;
+        ICredentialUiService
+{
+    protected override TurtleGetRequest CreateGetRequestRefresh()
+    {
+        return new()
+        {
+            IsGetBookmarks = true,
+            IsGetRoots = true,
+            IsGetSelectors = true,
+        };
+    }
+}
