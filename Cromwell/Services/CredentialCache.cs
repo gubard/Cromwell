@@ -14,12 +14,14 @@ namespace Cromwell.Services;
 public interface ICredentialMemoryCache : IMemoryCache<TurtlePostRequest, TurtleGetResponse>
 {
     IEnumerable<CredentialNotify> Roots { get; }
+    IAvaloniaReadOnlyList<CredentialNotify> Bookmarks { get; }
 }
 
 public interface ICredentialUiCache
     : IUiCache<TurtlePostRequest, TurtleGetResponse, ICredentialMemoryCache>
 {
     IEnumerable<CredentialNotify> Roots { get; }
+    IAvaloniaReadOnlyList<CredentialNotify> Bookmarks { get; }
 }
 
 public class CredentialMemoryCache
@@ -27,6 +29,7 @@ public class CredentialMemoryCache
         ICredentialMemoryCache
 {
     public IEnumerable<CredentialNotify> Roots => _roots;
+    public IAvaloniaReadOnlyList<CredentialNotify> Bookmarks => _bookmarks;
 
     public override ConfiguredValueTaskAwaitable UpdateAsync(
         TurtleGetResponse source,
@@ -43,6 +46,16 @@ public class CredentialMemoryCache
         Dispatcher.UIThread.InvokeAsync(() =>
         {
             var updatedIds = new HashSet<Guid>();
+
+            if (source.Bookmarks is not null)
+            {
+                _bookmarks.UpdateOrder(
+                    source
+                        .Bookmarks.OrderBy(x => x.Name)
+                        .Select(x => UpdateCredential(x, updatedIds))
+                        .ToArray()
+                );
+            }
 
             if (source.Roots is not null)
             {
@@ -124,6 +137,7 @@ public class CredentialMemoryCache
                 item.Length = create.Length;
                 item.Regex = create.Regex;
                 item.Type = create.Type;
+                item.IsBookmark = create.IsBookmark;
                 item.Parent = create.ParentId.HasValue ? GetItem(create.ParentId.Value) : null;
 
                 if (item.Parent is not null)
@@ -161,6 +175,14 @@ public class CredentialMemoryCache
                     foreach (var item in items)
                     {
                         item.Key = edit.Key;
+                    }
+                }
+
+                if (edit.IsEditIsBookmark)
+                {
+                    foreach (var item in items)
+                    {
+                        item.IsBookmark = edit.IsBookmark;
                     }
                 }
 
@@ -274,6 +296,7 @@ public class CredentialMemoryCache
     }
 
     private readonly AvaloniaList<CredentialNotify> _roots = [];
+    private readonly AvaloniaList<CredentialNotify> _bookmarks = [];
 
     private CredentialNotify UpdateCredential(Credential credential, HashSet<Guid> updatedIds)
     {
@@ -288,6 +311,7 @@ public class CredentialMemoryCache
         item.Name = credential.Name;
         item.Login = credential.Login;
         item.Key = credential.Key;
+        item.IsBookmark = credential.IsBookmark;
         item.IsAvailableUpperLatin = credential.IsAvailableUpperLatin;
         item.IsAvailableLowerLatin = credential.IsAvailableLowerLatin;
         item.IsAvailableNumber = credential.IsAvailableNumber;
@@ -338,4 +362,5 @@ public sealed class CredentialUiCache
         : base(dbCache, memoryCache) { }
 
     public IEnumerable<CredentialNotify> Roots => MemoryCache.Roots;
+    public IAvaloniaReadOnlyList<CredentialNotify> Bookmarks => MemoryCache.Bookmarks;
 }

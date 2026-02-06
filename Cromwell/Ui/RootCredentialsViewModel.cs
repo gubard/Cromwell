@@ -148,34 +148,14 @@ public sealed partial class RootCredentialsViewModel
             return new DefaultValidationErrors();
         }
 
-        var response = await CredentialUiService.PostAsync(
-            Guid.NewGuid(),
-            new()
-            {
-                CreateCredentials =
-                [
-                    new()
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = parameters.Name,
-                        Login = parameters.Login,
-                        Key = parameters.Key,
-                        IsAvailableUpperLatin = parameters.IsAvailableUpperLatin,
-                        IsAvailableLowerLatin = parameters.IsAvailableLowerLatin,
-                        IsAvailableNumber = parameters.IsAvailableNumber,
-                        IsAvailableSpecialSymbols = parameters.IsAvailableSpecialSymbols,
-                        CustomAvailableCharacters = parameters.CustomAvailableCharacters,
-                        Length = parameters.Length,
-                        Regex = parameters.Regex,
-                        Type = parameters.Type,
-                    },
-                ],
-            },
-            ct
-        );
-
+        var credential = parameters.CreateCredential(Guid.NewGuid(), null);
         await DialogService.CloseMessageBoxAsync(ct);
 
-        return response;
+        return await CredentialUiService.PostAsync(
+            Guid.NewGuid(),
+            new() { CreateCredentials = [credential] },
+            ct
+        );
+        ;
     }
 }

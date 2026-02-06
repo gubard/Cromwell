@@ -54,6 +54,9 @@ public partial class CredentialNotify
     public partial CredentialType Type { get; set; }
 
     [ObservableProperty]
+    public partial bool IsBookmark { get; set; }
+
+    [ObservableProperty]
     public partial CredentialNotify? Parent { get; set; }
 
     public static CredentialNotify Create(Guid input)

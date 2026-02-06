@@ -31,6 +31,7 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
         Length = item.Length;
         Regex = item.Regex;
         Type = item.Type;
+        IsBookmark = item.IsBookmark;
         ResetEdit();
     }
 
@@ -116,6 +117,33 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
     [ObservableProperty]
     public partial CredentialType Type { get; set; }
 
+    [ObservableProperty]
+    public partial bool IsEditIsBookmark { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsBookmark { get; set; }
+
+    public Credential CreateCredential(Guid id, Guid? parentId)
+    {
+        return new()
+        {
+            Id = id,
+            Name = Name,
+            Login = Login,
+            Key = Key,
+            IsAvailableUpperLatin = IsAvailableUpperLatin,
+            IsAvailableLowerLatin = IsAvailableLowerLatin,
+            IsAvailableNumber = IsAvailableNumber,
+            IsAvailableSpecialSymbols = IsAvailableSpecialSymbols,
+            CustomAvailableCharacters = CustomAvailableCharacters,
+            Length = Length,
+            Regex = Regex,
+            Type = Type,
+            IsBookmark = IsBookmark,
+            ParentId = parentId,
+        };
+    }
+
     public EditCredential CreateEditCredential(Guid id)
     {
         return CreateEditCredential([id]);
@@ -148,6 +176,8 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
             Name = Name,
             Regex = Regex,
             Type = Type,
+            IsBookmark = IsBookmark,
+            IsEditIsBookmark = IsEditIsBookmark,
         };
     }
 

@@ -145,36 +145,15 @@ public sealed partial class CredentialViewModel
             return new DefaultValidationErrors();
         }
 
-        var response = await CredentialUiService.PostAsync(
-            Guid.NewGuid(),
-            new()
-            {
-                CreateCredentials =
-                [
-                    new()
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = parameters.Name,
-                        Login = parameters.Login,
-                        Key = parameters.Key,
-                        IsAvailableUpperLatin = parameters.IsAvailableUpperLatin,
-                        IsAvailableLowerLatin = parameters.IsAvailableLowerLatin,
-                        IsAvailableNumber = parameters.IsAvailableNumber,
-                        IsAvailableSpecialSymbols = parameters.IsAvailableSpecialSymbols,
-                        CustomAvailableCharacters = parameters.CustomAvailableCharacters,
-                        Length = parameters.Length,
-                        Regex = parameters.Regex,
-                        Type = parameters.Type,
-                        ParentId = Credential.Id,
-                    },
-                ],
-            },
-            ct
-        );
-
+        var credential = parameters.CreateCredential(Guid.NewGuid(), Credential.Id);
         await DialogService.CloseMessageBoxAsync(ct);
 
-        return response;
+        return await CredentialUiService.PostAsync(
+            Guid.NewGuid(),
+            new() { CreateCredentials = [credential] },
+            ct
+        );
+        ;
     }
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
