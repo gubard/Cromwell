@@ -57,6 +57,7 @@ public class CredentialMemoryCache
             foreach (var (id, items) in source.Children)
             {
                 var item = GetItem(id);
+
                 item.Children.UpdateOrder(
                     items
                         .OrderBy(x => x.OrderIndex)
@@ -70,6 +71,16 @@ public class CredentialMemoryCache
                 var item = GetItem(id);
                 item.UpdateParents(items.Select(x => UpdateCredential(x, updatedIds)));
             }
+
+            if (source.Selectors is not null)
+            {
+                _roots.UpdateOrder(
+                    source
+                        .Selectors.OrderBy(x => x.Item.OrderIndex)
+                        .Select(x => UpdateToDoSelector(x, updatedIds))
+                        .ToArray()
+                );
+            }
         });
     }
 
@@ -81,6 +92,19 @@ public class CredentialMemoryCache
         Update(source);
 
         return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    private CredentialNotify UpdateToDoSelector(CredentialSelector toDo, HashSet<Guid> updatedIds)
+    {
+        var item = UpdateCredential(toDo.Item, updatedIds);
+
+        item.Children.UpdateOrder(
+            toDo.Children.OrderBy(x => x.Item.OrderIndex)
+                .Select(x => UpdateToDoSelector(x, updatedIds))
+                .ToArray()
+        );
+
+        return item;
     }
 
     private void Update(TurtlePostRequest source)
@@ -272,6 +296,7 @@ public class CredentialMemoryCache
         item.Regex = credential.Regex;
         item.Type = credential.Type;
         item.Parent = credential.ParentId.HasValue ? GetItem(credential.ParentId.Value) : null;
+        updatedIds.Add(credential.Id);
 
         return item;
     }

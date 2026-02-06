@@ -13,13 +13,6 @@ public partial class CredentialNotify
         IStaticFactory<Guid, CredentialNotify>,
         IIsDrag
 {
-    private readonly AvaloniaList<object> _parents = [];
-
-    private CredentialNotify(Guid id)
-    {
-        Id = id;
-    }
-
     public Guid Id { get; }
     public AvaloniaList<CredentialNotify> Children { get; } = new();
     public IEnumerable<object> Parents => _parents;
@@ -72,5 +65,15 @@ public partial class CredentialNotify
     {
         var allParents = HomeMark.Instance.Cast<object>().ToEnumerable().Concat(parents).ToArray();
         _parents.UpdateOrder(allParents);
+    }
+
+    [ObservableProperty]
+    private bool _isHideOnTree;
+
+    private readonly AvaloniaList<object> _parents = [];
+
+    private CredentialNotify(Guid id)
+    {
+        Id = id;
     }
 }

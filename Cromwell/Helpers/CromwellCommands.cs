@@ -6,8 +6,6 @@ using Gaia.Services;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
-using Inanna.Ui;
-using Turtle.Contract.Models;
 
 namespace Cromwell.Helpers;
 
@@ -121,11 +119,34 @@ public static class CromwellCommands
             }
         );
 
-        DeleteCredentialCommand = UiHelper.CreateCommand<CredentialNotify, TurtlePostResponse>(
+        ShowDeleteCredentialCommand = UiHelper.CreateCommand<CredentialNotify>(
             (credential, ct) =>
-                credentialUiService.PostAsync(
-                    Guid.NewGuid(),
-                    new() { DeleteIds = [credential.Id] },
+                dialogService.ShowMessageBoxAsync(
+                    new(
+                        appResourceService
+                            .GetResource<string>("Lang.Delete")
+                            .DispatchToDialogHeader(),
+                        stringFormater.Format(
+                            appResourceService.GetResource<string>("Lang.DeleteAsk"),
+                            credential.Name
+                        ),
+                        new(
+                            appResourceService.GetResource<string>("Lang.Delete"),
+                            UiHelper.CreateCommand(async c =>
+                            {
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                return await credentialUiService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new() { DeleteIds = [credential.Id] },
+                                    ct
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
                     ct
                 )
         );
@@ -135,5 +156,5 @@ public static class CromwellCommands
     public static readonly ICommand LoginToClipboardCommand;
     public static readonly ICommand OpenCredentialCommand;
     public static readonly ICommand ShowEditCredentialCommand;
-    public static readonly ICommand DeleteCredentialCommand;
+    public static readonly ICommand ShowDeleteCredentialCommand;
 }

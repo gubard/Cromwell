@@ -30,7 +30,7 @@
                                             CommandParameter="{Binding}" />
                                     <Button Classes="align-center danger"
                                             Content="{ip:MaterialDesign Delete}"
-                                            Command="{x:Static h:CromwellCommands.DeleteCredentialCommand}"
+                                            Command="{x:Static h:CromwellCommands.ShowDeleteCredentialCommand}"
                                             CommandParameter="{Binding}" />
                                 </StackPanel>
 
