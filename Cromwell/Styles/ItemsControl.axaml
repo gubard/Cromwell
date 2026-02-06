@@ -4,7 +4,8 @@
         xmlns:ip="https://github.com/MahApps/IconPacks.Avalonia"
         xmlns:m="clr-namespace:Turtle.Contract.Models;assembly=Turtle.Contract"
         xmlns:cm="clr-namespace:Cromwell.Models"
-        xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna">
+        xmlns:ih="clr-namespace:Inanna.Helpers;assembly=Inanna"
+        xmlns:s="clr-namespace:Inanna.Services;assembly=Inanna">
     <Style Selector="ItemsControl.credential-view">
         <Setter Property="ItemTemplate">
             <DataTemplate DataType="cm:CredentialNotify">
@@ -35,7 +36,7 @@
 
                                 <StackPanel Grid.Row="1"
                                             Classes="horizontal"
-                                            IsVisible="{Binding Type, Converter={StaticResource IsValueConverter}, ConverterParameter={x:Static m:CredentialType.Value}}">
+                                            IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:CredentialType.Value}}">
                                     <Button Classes="align-center"
                                             Content="{ip:MaterialDesign Login}"
                                             Command="{x:Static h:CromwellCommands.LoginToClipboardCommand}"
