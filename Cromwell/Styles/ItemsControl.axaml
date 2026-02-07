@@ -23,19 +23,7 @@
                             <TextBlock Grid.Column="1" Classes="align-left-center text-wrap" Text="{Binding Name}" />
 
                             <Grid Grid.Column="2" RowDefinitions="Auto,Auto">
-                                <StackPanel Classes="horizontal">
-                                    <Button Classes="align-center"
-                                            Content="{ip:MaterialDesign Edit}"
-                                            Command="{x:Static h:CromwellCommands.ShowEditCredentialCommand}"
-                                            CommandParameter="{Binding}" />
-                                    <Button Classes="align-center danger"
-                                            Content="{ip:MaterialDesign Delete}"
-                                            Command="{x:Static h:CromwellCommands.ShowDeleteCredentialCommand}"
-                                            CommandParameter="{Binding}" />
-                                </StackPanel>
-
-                                <StackPanel Grid.Row="1"
-                                            Classes="horizontal"
+                                <StackPanel Classes="horizontal"
                                             IsVisible="{Binding Type, Converter={x:Static s:IsValueConverter.Instance}, ConverterParameter={x:Static m:CredentialType.Value}}">
                                     <Button Classes="align-center"
                                             Content="{ip:MaterialDesign Login}"
@@ -45,6 +33,29 @@
                                             Content="{ip:MaterialDesign Password}"
                                             Command="{x:Static h:CromwellCommands.GeneratePasswordCommand}"
                                             CommandParameter="{Binding}" />
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" Classes="horizontal">
+                                    <Button Classes="align-center danger"
+                                            Content="{ip:MaterialDesign Delete}"
+                                            Command="{x:Static h:CromwellCommands.ShowDeleteCredentialCommand}"
+                                            CommandParameter="{Binding}" />
+
+                                    <Button
+                                        Content="{ip:MaterialDesign MoreHoriz}">
+                                        <Button.Flyout>
+                                            <MenuFlyout>
+                                                <MenuItem Icon="{ip:MaterialDesign Edit}"
+                                                          Command="{x:Static h:CromwellCommands.ShowEditCredentialCommand}"
+                                                          CommandParameter="{Binding}"
+                                                          Header="{StaticResource Lang.Edit}" />
+                                                <MenuItem Icon="{ip:MaterialDesign AccountTree}"
+                                                          Header="{StaticResource Lang.ChangeParent}"
+                                                          Command="{x:Static h:CromwellCommands.ShowChangeParentCommand}"
+                                                          CommandParameter="{Binding}" />
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                    </Button>
                                 </StackPanel>
                             </Grid>
                         </Grid>

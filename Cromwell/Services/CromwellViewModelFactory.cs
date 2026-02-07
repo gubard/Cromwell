@@ -10,6 +10,8 @@ public interface ICromwellViewModelFactory
 {
     CredentialViewModel CreateCredential(CredentialNotify credential);
     CredentialParametersViewModel CreateCredentialParameters(CredentialNotify credential);
+    CredentialTreeViewModel CreateCredentialTree();
+    ChangeParentCredentialViewModel ChangeParentCredential();
 }
 
 public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
@@ -18,13 +20,15 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         ICredentialUiService credentialUiService,
         IDialogService dialogService,
         IStringFormater stringFormater,
-        IAppResourceService appResourceService
+        IAppResourceService appResourceService,
+        ICredentialUiCache credentialUiCache
     )
     {
         _credentialUiService = credentialUiService;
         _dialogService = dialogService;
         _stringFormater = stringFormater;
         _appResourceService = appResourceService;
+        _credentialUiCache = credentialUiCache;
     }
 
     public CredentialViewModel CreateCredential(CredentialNotify credential)
@@ -43,6 +47,17 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         return new(credential, ValidationMode.ValidateAll, false);
     }
 
+    public CredentialTreeViewModel CreateCredentialTree()
+    {
+        return new(_credentialUiCache, _credentialUiService);
+    }
+
+    public ChangeParentCredentialViewModel ChangeParentCredential()
+    {
+        return new(this);
+    }
+
+    private readonly ICredentialUiCache _credentialUiCache;
     private readonly ICredentialUiService _credentialUiService;
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;

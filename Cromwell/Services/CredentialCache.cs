@@ -15,6 +15,8 @@ public interface ICredentialMemoryCache : IMemoryCache<TurtlePostRequest, Turtle
 {
     IEnumerable<CredentialNotify> Roots { get; }
     IAvaloniaReadOnlyList<CredentialNotify> Bookmarks { get; }
+
+    void ResetItems();
 }
 
 public interface ICredentialUiCache
@@ -22,6 +24,8 @@ public interface ICredentialUiCache
 {
     IEnumerable<CredentialNotify> Roots { get; }
     IAvaloniaReadOnlyList<CredentialNotify> Bookmarks { get; }
+
+    void ResetItems();
 }
 
 public sealed class CredentialMemoryCache
@@ -30,6 +34,14 @@ public sealed class CredentialMemoryCache
 {
     public IEnumerable<CredentialNotify> Roots => _roots;
     public IAvaloniaReadOnlyList<CredentialNotify> Bookmarks => _bookmarks;
+
+    public void ResetItems()
+    {
+        foreach (var item in Items.Values)
+        {
+            item.IsHideOnTree = false;
+        }
+    }
 
     public override ConfiguredValueTaskAwaitable UpdateAsync(
         TurtleGetResponse source,
@@ -363,4 +375,9 @@ public sealed class CredentialUiCache
 
     public IEnumerable<CredentialNotify> Roots => MemoryCache.Roots;
     public IAvaloniaReadOnlyList<CredentialNotify> Bookmarks => MemoryCache.Bookmarks;
+
+    public void ResetItems()
+    {
+        MemoryCache.ResetItems();
+    }
 }

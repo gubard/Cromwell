@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Avalonia.Threading;
 using Cromwell.Models;
 using Cromwell.Services;
 using Gaia.Helpers;
@@ -13,6 +14,7 @@ public static class CromwellCommands
 {
     static CromwellCommands()
     {
+        var credentialUiCache = DiHelper.ServiceProvider.GetService<ICredentialUiCache>();
         var credentialUiService = DiHelper.ServiceProvider.GetService<ICredentialUiService>();
         var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
         var appResourceService = DiHelper.ServiceProvider.GetService<IAppResourceService>();
@@ -150,6 +152,63 @@ public static class CromwellCommands
                     ct
                 )
         );
+
+        ShowChangeParentCommand = UiHelper.CreateCommand<CredentialNotify>(
+            (item, ct) =>
+            {
+                var viewModel = factory.ChangeParentCredential();
+
+                Dispatcher.UIThread.Post(() =>
+                {
+                    credentialUiCache.ResetItems();
+                    item.IsHideOnTree = true;
+                });
+
+                return dialogService.ShowMessageBoxAsync(
+                    new(
+                        stringFormater
+                            .Format(
+                                appResourceService.GetResource<string>("Lang.ChangeParentItem"),
+                                item.Name
+                            )
+                            .DispatchToDialogHeader(),
+                        viewModel,
+                        new(
+                            appResourceService.GetResource<string>("Lang.ChangeParent"),
+                            UiHelper.CreateCommand(async c =>
+                            {
+                                var parentId = viewModel.IsRoot
+                                    ? null
+                                    : viewModel.Tree.Selected?.Id;
+
+                                await dialogService.CloseMessageBoxAsync(c);
+
+                                return await credentialUiService.PostAsync(
+                                    Guid.NewGuid(),
+                                    new()
+                                    {
+                                        Edits =
+                                        [
+                                            new()
+                                            {
+                                                Ids = [item.Id],
+                                                ParentId = parentId,
+                                                IsEditParentId = true,
+                                            },
+                                        ],
+                                    },
+                                    c
+                                );
+                            }),
+                            null,
+                            DialogButtonType.Primary
+                        ),
+                        UiHelper.CancelButton
+                    ),
+                    ct
+                );
+            }
+        );
     }
 
     public static readonly ICommand GeneratePasswordCommand;
@@ -157,4 +216,5 @@ public static class CromwellCommands
     public static readonly ICommand OpenCredentialCommand;
     public static readonly ICommand ShowEditCredentialCommand;
     public static readonly ICommand ShowDeleteCredentialCommand;
+    public static readonly ICommand ShowChangeParentCommand;
 }
