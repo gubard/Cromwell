@@ -8,7 +8,7 @@ using Turtle.Contract.Models;
 
 namespace Cromwell.Models;
 
-public partial class CredentialNotify
+public sealed partial class CredentialNotify
     : ObservableObject,
         IStaticFactory<Guid, CredentialNotify>,
         IIsDrag
@@ -28,6 +28,9 @@ public partial class CredentialNotify
 
     [ObservableProperty]
     public partial string Key { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    public partial string Link { get; set; } = string.Empty;
 
     [ObservableProperty]
     public partial bool IsAvailableUpperLatin { get; set; }

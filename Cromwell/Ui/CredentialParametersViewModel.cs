@@ -10,7 +10,7 @@ using Turtle.Contract.Models;
 namespace Cromwell.Ui;
 
 [EditNotify]
-public partial class CredentialParametersViewModel : ParametersViewModelBase
+public sealed partial class CredentialParametersViewModel : ParametersViewModelBase
 {
     public CredentialParametersViewModel(
         CredentialNotify item,
@@ -32,6 +32,7 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
         Regex = item.Regex;
         Type = item.Type;
         IsBookmark = item.IsBookmark;
+        Link = item.Link;
         ResetEdit();
     }
 
@@ -45,6 +46,7 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
         Key = string.Empty;
         CustomAvailableCharacters = string.Empty;
         Regex = string.Empty;
+        Link = string.Empty;
         IsAvailableNumber = true;
         IsAvailableLowerLatin = true;
         IsAvailableUpperLatin = true;
@@ -123,6 +125,12 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
     [ObservableProperty]
     public partial bool IsBookmark { get; set; }
 
+    [ObservableProperty]
+    public partial bool IsEditLink { get; set; }
+
+    [ObservableProperty]
+    public partial string Link { get; set; }
+
     public Credential CreateCredential(Guid id, Guid? parentId)
     {
         return new()
@@ -140,6 +148,7 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
             Regex = Regex,
             Type = Type,
             IsBookmark = IsBookmark,
+            Link = Link,
             ParentId = parentId,
         };
     }
@@ -178,6 +187,8 @@ public partial class CredentialParametersViewModel : ParametersViewModelBase
             Type = Type,
             IsBookmark = IsBookmark,
             IsEditIsBookmark = IsEditIsBookmark,
+            IsEditLink = IsEditLink,
+            Link = Link,
         };
     }
 

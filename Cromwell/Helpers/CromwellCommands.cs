@@ -14,6 +14,7 @@ public static class CromwellCommands
 {
     static CromwellCommands()
     {
+        var openerLink = DiHelper.ServiceProvider.GetService<IOpenerLink>();
         var credentialUiCache = DiHelper.ServiceProvider.GetService<ICredentialUiCache>();
         var credentialUiService = DiHelper.ServiceProvider.GetService<ICredentialUiService>();
         var objectStorage = DiHelper.ServiceProvider.GetService<IObjectStorage>();
@@ -209,8 +210,13 @@ public static class CromwellCommands
                 );
             }
         );
+
+        OpenLinkCommand = UiHelper.CreateCommand<CredentialNotify>(
+            (item, ct) => openerLink.OpenLinkAsync(item.Link.ToUri(), ct)
+        );
     }
 
+    public static readonly ICommand OpenLinkCommand;
     public static readonly ICommand GeneratePasswordCommand;
     public static readonly ICommand LoginToClipboardCommand;
     public static readonly ICommand OpenCredentialCommand;

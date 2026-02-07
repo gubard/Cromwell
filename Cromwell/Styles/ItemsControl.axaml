@@ -53,6 +53,11 @@
                                                           Header="{StaticResource Lang.ChangeParent}"
                                                           Command="{x:Static h:CromwellCommands.ShowChangeParentCommand}"
                                                           CommandParameter="{Binding}" />
+                                                <MenuItem Icon="{ip:MaterialDesign Link}"
+                                                          Header="{StaticResource Lang.OpenLink}"
+                                                          Command="{x:Static h:CromwellCommands.OpenLinkCommand}"
+                                                          CommandParameter="{Binding}"
+                                                          IsVisible="{Binding Link, Converter={x:Static s:IsNotNullOrWhiteSpaceConverter.Instance}}" />
                                             </MenuFlyout>
                                         </Button.Flyout>
                                     </Button>

@@ -142,6 +142,7 @@ public sealed class CredentialMemoryCache
                 item.Name = create.Name;
                 item.Login = create.Login;
                 item.Key = create.Key;
+                item.Link = create.Link;
                 item.IsAvailableUpperLatin = create.IsAvailableUpperLatin;
                 item.IsAvailableLowerLatin = create.IsAvailableLowerLatin;
                 item.IsAvailableNumber = create.IsAvailableNumber;
@@ -171,6 +172,14 @@ public sealed class CredentialMemoryCache
                     foreach (var item in items)
                     {
                         item.Name = edit.Name;
+                    }
+                }
+
+                if (edit.IsEditLink)
+                {
+                    foreach (var item in items)
+                    {
+                        item.Link = edit.Link;
                     }
                 }
 
@@ -323,6 +332,7 @@ public sealed class CredentialMemoryCache
         item.Name = credential.Name;
         item.Login = credential.Login;
         item.Key = credential.Key;
+        item.Link = credential.Link;
         item.IsBookmark = credential.IsBookmark;
         item.IsAvailableUpperLatin = credential.IsAvailableUpperLatin;
         item.IsAvailableLowerLatin = credential.IsAvailableLowerLatin;
