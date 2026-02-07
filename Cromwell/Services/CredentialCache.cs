@@ -24,7 +24,7 @@ public interface ICredentialUiCache
     IAvaloniaReadOnlyList<CredentialNotify> Bookmarks { get; }
 }
 
-public class CredentialMemoryCache
+public sealed class CredentialMemoryCache
     : MemoryCache<CredentialNotify, TurtlePostRequest, TurtleGetResponse>,
         ICredentialMemoryCache
 {
