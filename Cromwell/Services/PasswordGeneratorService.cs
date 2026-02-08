@@ -29,9 +29,11 @@ public class PasswordGeneratorService : IPasswordGeneratorService
         using var sha = SHA512.Create();
         var hash = new ReadOnlySpan<byte>(sha.ComputeHash(bytes));
         var resultBytes = new byte[passwordOptions.Length].AsSpan();
+
         var availableBytes = SearchValues.Create(
             Encoding.ASCII.GetBytes(passwordOptions.AvailableCharacters)
         );
+
         GeneratePassword(resultBytes, hash, availableBytes, sha);
         var tryCount = 0;
 
