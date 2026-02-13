@@ -1,3 +1,4 @@
+using Avalonia.Collections;
 using Cromwell.Models;
 using Cromwell.Ui;
 using Gaia.Services;
@@ -11,7 +12,16 @@ public interface ICromwellViewModelFactory
     CredentialViewModel CreateCredential(CredentialNotify credential);
     CredentialParametersViewModel CreateCredentialParameters(CredentialNotify credential);
     CredentialTreeViewModel CreateCredentialTree();
-    ChangeParentCredentialViewModel ChangeParentCredential();
+    ChangeParentCredentialViewModel CreateChangeParentCredential();
+
+    CredentialHeaderViewModel CreateCredentialHeader(
+        CredentialNotify credential,
+        IAvaloniaReadOnlyList<InannaCommand> multiCommands
+    );
+
+    RootCredentialsHeaderViewModel CreateRootCredentialsHeader(
+        IAvaloniaReadOnlyList<InannaCommand> commands
+    );
 }
 
 public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
@@ -21,7 +31,8 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        ICredentialUiCache credentialUiCache
+        ICredentialUiCache credentialUiCache,
+        IInannaViewModelFactory inannaViewModelFactor
     )
     {
         _credentialUiService = credentialUiService;
@@ -29,6 +40,7 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         _stringFormater = stringFormater;
         _appResourceService = appResourceService;
         _credentialUiCache = credentialUiCache;
+        _inannaViewModelFactor = inannaViewModelFactor;
     }
 
     public CredentialViewModel CreateCredential(CredentialNotify credential)
@@ -38,7 +50,8 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
             _dialogService,
             _stringFormater,
             _appResourceService,
-            credential
+            credential,
+            this
         );
     }
 
@@ -52,9 +65,24 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         return new(_credentialUiCache, _credentialUiService);
     }
 
-    public ChangeParentCredentialViewModel ChangeParentCredential()
+    public ChangeParentCredentialViewModel CreateChangeParentCredential()
     {
         return new(this);
+    }
+
+    public CredentialHeaderViewModel CreateCredentialHeader(
+        CredentialNotify credential,
+        IAvaloniaReadOnlyList<InannaCommand> multiCommands
+    )
+    {
+        return new(credential, multiCommands, _inannaViewModelFactor);
+    }
+
+    public RootCredentialsHeaderViewModel CreateRootCredentialsHeader(
+        IAvaloniaReadOnlyList<InannaCommand> commands
+    )
+    {
+        return new(commands, _inannaViewModelFactor);
     }
 
     private readonly ICredentialUiCache _credentialUiCache;
@@ -62,4 +90,5 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
     private readonly IDialogService _dialogService;
     private readonly IStringFormater _stringFormater;
     private readonly IAppResourceService _appResourceService;
+    private readonly IInannaViewModelFactory _inannaViewModelFactor;
 }

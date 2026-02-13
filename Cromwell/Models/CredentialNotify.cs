@@ -18,9 +18,9 @@ public sealed partial class CredentialNotify
         IIsDrag
 {
     public Guid Id { get; }
-    public AvaloniaList<CredentialNotify> Children { get; } = new();
+    public IAvaloniaReadOnlyList<CredentialNotify> Children => _children;
     public IEnumerable<object> Parents => _parents;
-    public IEnumerable<InannaCommand> Commands => _commands;
+    public IAvaloniaReadOnlyList<InannaCommand> Commands => _commands;
 
     [ObservableProperty]
     public partial bool IsDrag { get; set; }
@@ -76,6 +76,21 @@ public sealed partial class CredentialNotify
     {
         var allParents = HomeMark.Instance.Cast<object>().ToEnumerable().Concat(parents).ToArray();
         _parents.UpdateOrder(allParents);
+    }
+
+    public void UpdateChildren(CredentialNotify[] children)
+    {
+        _children.UpdateOrder(children);
+    }
+
+    public void AddChild(CredentialNotify child)
+    {
+        _children.Add(child);
+    }
+
+    public void RemoveChild(CredentialNotify child)
+    {
+        _children.Remove(child);
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -167,6 +182,7 @@ public sealed partial class CredentialNotify
     private readonly AvaloniaList<object> _parents = [];
     private readonly AvaloniaList<InannaCommand> _commands;
     private readonly IAppResourceService _appResourceService;
+    private readonly AvaloniaList<CredentialNotify> _children = [];
 
     private CredentialNotify(Guid id, IAppResourceService appResourceService)
     {

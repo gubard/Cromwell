@@ -1,20 +1,23 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Inanna.Models;
+using Inanna.Services;
+using Inanna.Ui;
 
 namespace Cromwell.Ui;
 
 public partial class RootCredentialsHeaderViewModel : ViewModelBase
 {
-    private readonly AvaloniaList<InannaCommand> _commands;
+    public RootCredentialsHeaderViewModel(
+        IAvaloniaReadOnlyList<InannaCommand> commands,
+        IInannaViewModelFactory factory
+    )
+    {
+        AdaptiveButtons = factory.CreateAdaptiveButtons(commands);
+    }
+
+    public AdaptiveButtonsViewModel AdaptiveButtons { get; }
 
     [ObservableProperty]
     private bool _isMulti;
-
-    public RootCredentialsHeaderViewModel(IEnumerable<InannaCommand> commands)
-    {
-        _commands = new(commands);
-    }
-
-    public IEnumerable<InannaCommand> Commands => _commands;
 }

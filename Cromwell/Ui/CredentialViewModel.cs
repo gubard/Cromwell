@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Helpers;
 using Cromwell.Models;
@@ -25,15 +26,17 @@ public sealed partial class CredentialViewModel
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        CredentialNotify credential
+        CredentialNotify credential,
+        ICromwellViewModelFactory factory
     )
         : base(credentialUiService, dialogService, stringFormater, appResourceService)
     {
         Credential = credential;
 
-        Header = new(
+        Header = factory.CreateCredentialHeader(
             credential,
-            [
+            new AvaloniaList<InannaCommand>
+            {
                 new(
                     ShowMultiEditCommand,
                     null,
@@ -47,8 +50,7 @@ public sealed partial class CredentialViewModel
                     PackIconMaterialDesignKind.Delete,
                     ButtonType.Danger
                 ),
-            ],
-            credential.Commands
+            }
         );
     }
 
@@ -84,14 +86,14 @@ public sealed partial class CredentialViewModel
 
         if (Selected.Count == 0)
         {
-            foreach (var headerCommand in Header.MultiCommands)
+            foreach (var headerCommand in Header.MultiAdaptiveButtons.Commands)
             {
                 headerCommand.IsEnable = false;
             }
         }
         else
         {
-            foreach (var headerCommand in Header.MultiCommands)
+            foreach (var headerCommand in Header.MultiAdaptiveButtons.Commands)
             {
                 headerCommand.IsEnable = true;
             }

@@ -157,7 +157,7 @@ public static class CromwellCommands
         ShowChangeParentCommand = UiHelper.CreateCommand<CredentialNotify>(
             (item, ct) =>
             {
-                var viewModel = factory.ChangeParentCredential();
+                var viewModel = factory.CreateChangeParentCredential();
 
                 Dispatcher.UIThread.Post(() =>
                 {

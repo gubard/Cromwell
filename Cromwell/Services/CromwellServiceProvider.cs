@@ -11,7 +11,6 @@ namespace Cromwell.Services;
 
 [ServiceProviderModule]
 [Transient(typeof(RootCredentialsViewModel))]
-[Transient(typeof(RootCredentialsHeaderViewModel))]
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]

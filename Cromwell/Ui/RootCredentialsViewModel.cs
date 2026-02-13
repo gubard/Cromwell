@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Input;
 using Cromwell.Models;
 using Cromwell.Services;
@@ -24,29 +25,33 @@ public sealed partial class RootCredentialsViewModel
         IDialogService dialogService,
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
-        ICredentialUiCache credentialUiCache
+        ICredentialUiCache credentialUiCache,
+        ICromwellViewModelFactory factory
     )
         : base(credentialUiService, dialogService, stringFormater, appResourceService)
     {
         _credentialUiCache = credentialUiCache;
 
-        Header = new([
-            new(
-                ShowMultiEditCommand,
-                null,
-                appResourceService.GetResource<string>("Lang.Edit"),
-                PackIconMaterialDesignKind.Edit,
-                isEnable: false
-            ),
-            new(
-                ShowMultiDeleteCommand,
-                null,
-                appResourceService.GetResource<string>("Lang.Delete"),
-                PackIconMaterialDesignKind.Delete,
-                ButtonType.Danger,
-                false
-            ),
-        ]);
+        Header = factory.CreateRootCredentialsHeader(
+            new AvaloniaList<InannaCommand>
+            {
+                new(
+                    ShowMultiEditCommand,
+                    null,
+                    appResourceService.GetResource<string>("Lang.Edit"),
+                    PackIconMaterialDesignKind.Edit,
+                    isEnable: false
+                ),
+                new(
+                    ShowMultiDeleteCommand,
+                    null,
+                    appResourceService.GetResource<string>("Lang.Delete"),
+                    PackIconMaterialDesignKind.Delete,
+                    ButtonType.Danger,
+                    false
+                ),
+            }
+        );
     }
 
     public IEnumerable<CredentialNotify> Credentials => _credentialUiCache.Roots;
@@ -86,14 +91,14 @@ public sealed partial class RootCredentialsViewModel
 
         if (Selected.Count == 0)
         {
-            foreach (var headerCommand in Header.Commands)
+            foreach (var headerCommand in Header.AdaptiveButtons.Commands)
             {
                 headerCommand.IsEnable = false;
             }
         }
         else
         {
-            foreach (var headerCommand in Header.Commands)
+            foreach (var headerCommand in Header.AdaptiveButtons.Commands)
             {
                 headerCommand.IsEnable = true;
             }

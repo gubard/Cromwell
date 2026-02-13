@@ -83,7 +83,7 @@ public sealed class CredentialMemoryCache
             {
                 var item = GetItem(id);
 
-                item.Children.UpdateOrder(
+                item.UpdateChildren(
                     items
                         .OrderBy(x => x.OrderIndex)
                         .Select(x => UpdateCredential(x, updatedIds))
@@ -123,7 +123,7 @@ public sealed class CredentialMemoryCache
     {
         var item = UpdateCredential(toDo.Item, updatedIds);
 
-        item.Children.UpdateOrder(
+        item.UpdateChildren(
             toDo.Children.OrderBy(x => x.Item.OrderIndex)
                 .Select(x => UpdateToDoSelector(x, updatedIds))
                 .ToArray()
@@ -155,7 +155,7 @@ public sealed class CredentialMemoryCache
 
                 if (item.Parent is not null)
                 {
-                    item.Parent.Children.Add(item);
+                    item.Parent.AddChild(item);
                 }
                 else
                 {
@@ -283,7 +283,11 @@ public sealed class CredentialMemoryCache
             foreach (var changeOrder in source.ChangeOrders)
             {
                 var item = GetItem(changeOrder.StartId);
-                var siblings = item.Parent is not null ? item.Children : _roots;
+
+                var siblings = item.Parent is not null
+                    ? (AvaloniaList<CredentialNotify>)item.Children
+                    : _roots;
+
                 var index = siblings.IndexOf(item);
 
                 if (index == -1)
@@ -306,7 +310,7 @@ public sealed class CredentialMemoryCache
 
                 if (deleteItem.Parent is not null)
                 {
-                    deleteItem.Parent.Children.Remove(deleteItem);
+                    deleteItem.Parent.RemoveChild(deleteItem);
                 }
                 else
                 {
@@ -356,7 +360,7 @@ public sealed class CredentialMemoryCache
 
         if (item.Parent is not null)
         {
-            item.Parent.Children.Remove(item);
+            item.Parent.RemoveChild(item);
         }
         else
         {
@@ -367,7 +371,7 @@ public sealed class CredentialMemoryCache
 
         if (item.Parent is not null)
         {
-            item.Parent.Children.Add(item);
+            item.Parent.AddChild(item);
         }
         else
         {
