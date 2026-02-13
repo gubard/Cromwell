@@ -1,9 +1,13 @@
-﻿using Avalonia.Collections;
+﻿using System.ComponentModel;
+using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Cromwell.Helpers;
 using Gaia.Helpers;
 using Gaia.Services;
+using IconPacks.Avalonia.MaterialDesign;
 using Inanna.Helpers;
 using Inanna.Models;
+using Inanna.Services;
 using Turtle.Contract.Models;
 
 namespace Cromwell.Models;
@@ -16,6 +20,7 @@ public sealed partial class CredentialNotify
     public Guid Id { get; }
     public AvaloniaList<CredentialNotify> Children { get; } = new();
     public IEnumerable<object> Parents => _parents;
+    public IEnumerable<InannaCommand> Commands => _commands;
 
     [ObservableProperty]
     public partial bool IsDrag { get; set; }
@@ -64,7 +69,7 @@ public sealed partial class CredentialNotify
 
     public static CredentialNotify Create(Guid input)
     {
-        return new(input);
+        return new(input, DiHelper.ServiceProvider.GetService<IAppResourceService>());
     }
 
     public void UpdateParents(IEnumerable<CredentialNotify> parents)
@@ -73,13 +78,139 @@ public sealed partial class CredentialNotify
         _parents.UpdateOrder(allParents);
     }
 
+    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+
+        if (e.PropertyName == nameof(Type))
+        {
+            _commands.Clear();
+
+            if (Type == CredentialType.Value)
+            {
+                _commands.AddRange([
+                    new(
+                        CromwellCommands.ShowDeleteCredentialCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.Delete"),
+                        PackIconMaterialDesignKind.Delete,
+                        ButtonType.Danger
+                    ),
+                    new(
+                        CromwellCommands.ShowEditCredentialCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.Edit"),
+                        PackIconMaterialDesignKind.Edit
+                    ),
+                    new(
+                        CromwellCommands.ShowChangeParentCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.ChangeParent"),
+                        PackIconMaterialDesignKind.AccountTree
+                    ),
+                    new(
+                        CromwellCommands.OpenLinkCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.OpenLink"),
+                        PackIconMaterialDesignKind.Link
+                    ),
+                    new(
+                        CromwellCommands.LoginToClipboardCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.Login"),
+                        PackIconMaterialDesignKind.Login
+                    ),
+                    new(
+                        CromwellCommands.GeneratePasswordCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.Password"),
+                        PackIconMaterialDesignKind.Password
+                    ),
+                ]);
+            }
+            else
+            {
+                _commands.AddRange([
+                    new(
+                        CromwellCommands.ShowDeleteCredentialCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.Delete"),
+                        PackIconMaterialDesignKind.Delete,
+                        ButtonType.Danger
+                    ),
+                    new(
+                        CromwellCommands.ShowEditCredentialCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.Edit"),
+                        PackIconMaterialDesignKind.Edit
+                    ),
+                    new(
+                        CromwellCommands.ShowChangeParentCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.ChangeParent"),
+                        PackIconMaterialDesignKind.AccountTree
+                    ),
+                    new(
+                        CromwellCommands.OpenLinkCommand,
+                        this,
+                        _appResourceService.GetResource<string>("Lang.OpenLink"),
+                        PackIconMaterialDesignKind.Link
+                    ),
+                ]);
+            }
+        }
+    }
+
     [ObservableProperty]
     private bool _isHideOnTree;
 
     private readonly AvaloniaList<object> _parents = [];
+    private readonly AvaloniaList<InannaCommand> _commands;
+    private readonly IAppResourceService _appResourceService;
 
-    private CredentialNotify(Guid id)
+    private CredentialNotify(Guid id, IAppResourceService appResourceService)
     {
         Id = id;
+        _appResourceService = appResourceService;
+
+        _commands =
+        [
+            new(
+                CromwellCommands.ShowDeleteCredentialCommand,
+                this,
+                appResourceService.GetResource<string>("Lang.Delete"),
+                PackIconMaterialDesignKind.Delete
+            ),
+            new(
+                CromwellCommands.ShowEditCredentialCommand,
+                this,
+                appResourceService.GetResource<string>("Lang.Edit"),
+                PackIconMaterialDesignKind.Edit
+            ),
+            new(
+                CromwellCommands.ShowChangeParentCommand,
+                this,
+                appResourceService.GetResource<string>("Lang.ChangeParent"),
+                PackIconMaterialDesignKind.AccountTree
+            ),
+            new(
+                CromwellCommands.OpenLinkCommand,
+                this,
+                appResourceService.GetResource<string>("Lang.OpenLink"),
+                PackIconMaterialDesignKind.Link
+            ),
+            new(
+                CromwellCommands.LoginToClipboardCommand,
+                this,
+                appResourceService.GetResource<string>("Lang.Login"),
+                PackIconMaterialDesignKind.Login
+            ),
+            new(
+                CromwellCommands.GeneratePasswordCommand,
+                this,
+                appResourceService.GetResource<string>("Lang.Password"),
+                PackIconMaterialDesignKind.Password
+            ),
+        ];
     }
 }

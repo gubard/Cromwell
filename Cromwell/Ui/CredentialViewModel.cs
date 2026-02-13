@@ -38,56 +38,17 @@ public sealed partial class CredentialViewModel
                     ShowMultiEditCommand,
                     null,
                     appResourceService.GetResource<string>("Lang.Edit"),
-                    PackIconMaterialDesignKind.Edit,
-                    isEnable: false
+                    PackIconMaterialDesignKind.Edit
                 ),
                 new(
                     ShowMultiDeleteCommand,
                     null,
                     appResourceService.GetResource<string>("Lang.Delete"),
                     PackIconMaterialDesignKind.Delete,
-                    ButtonType.Danger,
-                    false
+                    ButtonType.Danger
                 ),
             ],
-            [
-                new(
-                    CromwellCommands.ShowDeleteCredentialCommand,
-                    credential,
-                    appResourceService.GetResource<string>("Lang.Delete"),
-                    PackIconMaterialDesignKind.Delete
-                ),
-                new(
-                    CromwellCommands.ShowEditCredentialCommand,
-                    credential,
-                    appResourceService.GetResource<string>("Lang.Edit"),
-                    PackIconMaterialDesignKind.Edit
-                ),
-                new(
-                    CromwellCommands.ShowChangeParentCommand,
-                    credential,
-                    appResourceService.GetResource<string>("Lang.ChangeParent"),
-                    PackIconMaterialDesignKind.AccountTree
-                ),
-                new(
-                    CromwellCommands.OpenLinkCommand,
-                    credential,
-                    appResourceService.GetResource<string>("Lang.OpenLink"),
-                    PackIconMaterialDesignKind.Link
-                ),
-                new(
-                    CromwellCommands.LoginToClipboardCommand,
-                    credential,
-                    appResourceService.GetResource<string>("Lang.Login"),
-                    PackIconMaterialDesignKind.Login
-                ),
-                new(
-                    CromwellCommands.GeneratePasswordCommand,
-                    credential,
-                    appResourceService.GetResource<string>("Lang.Password"),
-                    PackIconMaterialDesignKind.Password
-                ),
-            ]
+            credential.Commands
         );
     }
 
