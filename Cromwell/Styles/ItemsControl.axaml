@@ -66,22 +66,28 @@
                         </Grid>
 
                         <Panel IsVisible="{Binding !IsDrag}">
-                            <Grid Classes="for-drop" ColumnDefinitions="*,*,*">
-                                <Panel Tag="DropUp">
-                                    <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Up}" />
-                                </Panel>
+                            <Border Classes="for-drop">
+                                <Grid RowDefinitions="Auto,*">
+                                    <TextBlock Classes="align-center text-wrap" Text="{Binding Name}" />
 
-                                <Panel Grid.Column="1" Tag="DropParent">
-                                    <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Parent}" />
-                                </Panel>
+                                    <Grid Grid.Row="1" ColumnDefinitions="*,*,*">
+                                        <Panel Tag="DropUp">
+                                            <Rectangle Classes="drop-aria" />
+                                            <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Up}" />
+                                        </Panel>
 
-                                <Panel Grid.Column="2" Tag="DropDown">
-                                    <Rectangle Classes="drop-aria" />
-                                    <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Down}" />
-                                </Panel>
-                            </Grid>
+                                        <Panel Grid.Column="1" Tag="DropParent">
+                                            <Rectangle Classes="drop-aria" />
+                                            <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Parent}" />
+                                        </Panel>
+
+                                        <Panel Grid.Column="2" Tag="DropDown">
+                                            <Rectangle Classes="drop-aria" />
+                                            <TextBlock Classes="align-center m-10" Text="{DynamicResource Lang.Down}" />
+                                        </Panel>
+                                    </Grid>
+                                </Grid>
+                            </Border>
                         </Panel>
                     </Panel>
                 </Button>
