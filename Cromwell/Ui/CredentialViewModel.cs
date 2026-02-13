@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.Input;
+using Cromwell.Helpers;
 using Cromwell.Models;
 using Cromwell.Services;
 using Gaia.Helpers;
@@ -29,6 +30,7 @@ public sealed partial class CredentialViewModel
         : base(credentialUiService, dialogService, stringFormater, appResourceService)
     {
         Credential = credential;
+
         Header = new(
             credential,
             [
@@ -46,6 +48,44 @@ public sealed partial class CredentialViewModel
                     PackIconMaterialDesignKind.Delete,
                     ButtonType.Danger,
                     false
+                ),
+            ],
+            [
+                new(
+                    CromwellCommands.ShowDeleteCredentialCommand,
+                    credential,
+                    appResourceService.GetResource<string>("Lang.Delete"),
+                    PackIconMaterialDesignKind.Delete
+                ),
+                new(
+                    CromwellCommands.ShowEditCredentialCommand,
+                    credential,
+                    appResourceService.GetResource<string>("Lang.Edit"),
+                    PackIconMaterialDesignKind.Edit
+                ),
+                new(
+                    CromwellCommands.ShowChangeParentCommand,
+                    credential,
+                    appResourceService.GetResource<string>("Lang.ChangeParent"),
+                    PackIconMaterialDesignKind.AccountTree
+                ),
+                new(
+                    CromwellCommands.OpenLinkCommand,
+                    credential,
+                    appResourceService.GetResource<string>("Lang.OpenLink"),
+                    PackIconMaterialDesignKind.Link
+                ),
+                new(
+                    CromwellCommands.LoginToClipboardCommand,
+                    credential,
+                    appResourceService.GetResource<string>("Lang.Login"),
+                    PackIconMaterialDesignKind.Login
+                ),
+                new(
+                    CromwellCommands.GeneratePasswordCommand,
+                    credential,
+                    appResourceService.GetResource<string>("Lang.Password"),
+                    PackIconMaterialDesignKind.Password
                 ),
             ]
         );
@@ -83,14 +123,14 @@ public sealed partial class CredentialViewModel
 
         if (Selected.Count == 0)
         {
-            foreach (var headerCommand in Header.Commands)
+            foreach (var headerCommand in Header.MultiCommands)
             {
                 headerCommand.IsEnable = false;
             }
         }
         else
         {
-            foreach (var headerCommand in Header.Commands)
+            foreach (var headerCommand in Header.MultiCommands)
             {
                 headerCommand.IsEnable = true;
             }

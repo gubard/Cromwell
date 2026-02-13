@@ -7,20 +7,24 @@ namespace Cromwell.Ui;
 
 public sealed partial class CredentialHeaderViewModel : ViewModelBase
 {
-    private readonly AvaloniaList<InannaCommand> _commands;
-
-    [ObservableProperty]
-    private bool _isMulti;
-
     public CredentialHeaderViewModel(
         CredentialNotify credential,
-        IEnumerable<InannaCommand> commands
+        IEnumerable<InannaCommand> multiCommands,
+        AvaloniaList<InannaCommand> commands
     )
     {
         Credential = credential;
-        _commands = new(commands);
+        _commands = commands;
+        _multiCommands = new(multiCommands);
     }
 
     public CredentialNotify Credential { get; }
+    public IEnumerable<InannaCommand> MultiCommands => _multiCommands;
     public IEnumerable<InannaCommand> Commands => _commands;
+
+    private readonly AvaloniaList<InannaCommand> _commands;
+    private readonly AvaloniaList<InannaCommand> _multiCommands;
+
+    [ObservableProperty]
+    private bool _isMulti;
 }
