@@ -13,7 +13,7 @@ public interface IPasswordGeneratorService
     string GeneratePassword(string key, GeneratePasswordOptions passwordOptions);
 }
 
-public class PasswordGeneratorService : IPasswordGeneratorService
+public sealed class PasswordGeneratorService : IPasswordGeneratorService
 {
     private const byte TryCount = 3;
     private readonly ITransformer<string, byte[]> _transformer;

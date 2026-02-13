@@ -2,7 +2,7 @@
 
 namespace Cromwell.Ui;
 
-public partial class RootCredentialsHeaderView : UserControl
+public sealed partial class RootCredentialsHeaderView : UserControl
 {
     public RootCredentialsHeaderView()
     {

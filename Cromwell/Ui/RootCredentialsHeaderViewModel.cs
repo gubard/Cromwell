@@ -6,7 +6,7 @@ using Inanna.Ui;
 
 namespace Cromwell.Ui;
 
-public partial class RootCredentialsHeaderViewModel : ViewModelBase
+public sealed partial class RootCredentialsHeaderViewModel : ViewModelBase
 {
     public RootCredentialsHeaderViewModel(
         IAvaloniaReadOnlyList<InannaCommand> commands,
