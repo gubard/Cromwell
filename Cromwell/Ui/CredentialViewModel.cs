@@ -17,7 +17,7 @@ public sealed partial class CredentialViewModel
     : MultiCredentialsViewModelBase,
         IHeader,
         IRefresh,
-        IInitUi,
+        IInit,
         ISaveUi
 {
     public CredentialViewModel(
@@ -57,7 +57,7 @@ public sealed partial class CredentialViewModel
     public CredentialHeaderViewModel Header { get; }
     object IHeader.Header => Header;
 
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
         Selected.PropertyChanged += SelectedCredentialsPropertyChanged;
 

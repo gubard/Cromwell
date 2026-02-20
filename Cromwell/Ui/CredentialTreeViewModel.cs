@@ -7,7 +7,7 @@ using Inanna.Services;
 
 namespace Cromwell.Ui;
 
-public sealed partial class CredentialTreeViewModel : ViewModelBase, IInitUi
+public sealed partial class CredentialTreeViewModel : ViewModelBase, IInit
 {
     public CredentialTreeViewModel(
         ICredentialUiCache credentialUiCache,
@@ -21,7 +21,7 @@ public sealed partial class CredentialTreeViewModel : ViewModelBase, IInitUi
 
     public IEnumerable<CredentialNotify> Roots { get; }
 
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
             () => _credentialUiService.GetAsync(new() { IsGetSelectors = true }, ct),

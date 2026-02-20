@@ -17,7 +17,7 @@ public sealed partial class RootCredentialsViewModel
     : MultiCredentialsViewModelBase,
         IHeader,
         IRefresh,
-        IInitUi,
+        IInit,
         ISaveUi
 {
     public RootCredentialsViewModel(
@@ -73,7 +73,7 @@ public sealed partial class RootCredentialsViewModel
         return TaskHelper.ConfiguredCompletedTask;
     }
 
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
         Selected.PropertyChanged += SelectedCredentialsPropertyChanged;
 
