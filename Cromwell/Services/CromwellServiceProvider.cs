@@ -18,7 +18,6 @@ namespace Cromwell.Services;
 [Singleton(typeof(IDialogService), Factory = nameof(GetDialogService))]
 [Transient(typeof(ICromwellViewModelFactory), typeof(CromwellViewModelFactory))]
 [Singleton(typeof(IAppResourceService), typeof(AppResourceService))]
-[Singleton(typeof(IDragAndDropService), typeof(DragAndDropService))]
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
 [Singleton(typeof(IServiceProvider), Factory = nameof(GetServiceProvider))]
 [Singleton(typeof(INavigator), typeof(Navigator))]
