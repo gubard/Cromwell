@@ -12,8 +12,7 @@ public sealed class CredentialUiService(
     ICredentialDbService dbService,
     ICredentialUiCache uiCache,
     INavigator navigator,
-    string serviceName,
-    IResponseHandler responseHandler
+    string serviceName
 )
     : UiService<
         TurtleGetRequest,
@@ -23,7 +22,7 @@ public sealed class CredentialUiService(
         ICredentialHttpService,
         ICredentialDbService,
         ICredentialUiCache
-    >(credentialHttpService, dbService, uiCache, navigator, serviceName, responseHandler),
+    >(credentialHttpService, dbService, uiCache, navigator, serviceName),
         ICredentialUiService
 {
     protected override TurtleGetRequest CreateGetRequestRefresh()
