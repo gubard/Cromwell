@@ -18,7 +18,7 @@ public sealed partial class RootCredentialsViewModel
         IHeader,
         IRefresh,
         IInit,
-        ISaveUi
+        ISave
 {
     public RootCredentialsViewModel(
         ICredentialUiService credentialUiService,
@@ -66,7 +66,7 @@ public sealed partial class RootCredentialsViewModel
         );
     }
 
-    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
     {
         Selected.PropertyChanged -= SelectedCredentialsPropertyChanged;
 
