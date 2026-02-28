@@ -14,10 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.12" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
     <ProjectReference Include="..\..\Turtle\Turtle.Contract\Turtle.Contract.csproj" />
     <ProjectReference
@@ -25,12 +21,5 @@
       ReferenceOutputAssembly="false"
       OutputItemType="Analyzer"
     />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Ui\CredentialParametersView.axaml.cs">
-      <DependentUpon>EditCredentialView.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
 </Project>
