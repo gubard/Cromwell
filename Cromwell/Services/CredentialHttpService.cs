@@ -7,13 +7,13 @@ using Turtle.Contract.Services;
 namespace Cromwell.Services;
 
 public sealed class CredentialHttpService(
-    HttpClient httpClient,
+    IFactory<HttpClient> httpClientFactory,
     JsonSerializerOptions options,
     ITryPolicyService tryPolicyService,
     IFactory<Memory<HttpHeader>> headersFactory
 )
     : HttpService<TurtleGetRequest, TurtlePostRequest, TurtleGetResponse, TurtlePostResponse>(
-        httpClient,
+        httpClientFactory,
         options,
         tryPolicyService,
         headersFactory
