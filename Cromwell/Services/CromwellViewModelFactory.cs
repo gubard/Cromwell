@@ -32,7 +32,8 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
         ICredentialUiCache credentialUiCache,
-        IInannaViewModelFactory inannaViewModelFactor
+        IInannaViewModelFactory inannaViewModelFactor,
+        InannaCommands inannaCommands
     )
     {
         _credentialUiService = credentialUiService;
@@ -41,6 +42,7 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         _appResourceService = appResourceService;
         _credentialUiCache = credentialUiCache;
         _inannaViewModelFactor = inannaViewModelFactor;
+        _inannaCommands = inannaCommands;
     }
 
     public CredentialViewModel CreateCredential(CredentialNotify credential)
@@ -51,7 +53,8 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
             _stringFormater,
             _appResourceService,
             credential,
-            this
+            this,
+            _inannaCommands
         );
     }
 
@@ -91,4 +94,5 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
     private readonly IStringFormater _stringFormater;
     private readonly IAppResourceService _appResourceService;
     private readonly IInannaViewModelFactory _inannaViewModelFactor;
+    private readonly InannaCommands _inannaCommands;
 }

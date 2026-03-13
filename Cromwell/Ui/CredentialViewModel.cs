@@ -26,11 +26,13 @@ public sealed partial class CredentialViewModel
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
         CredentialNotify credential,
-        ICromwellViewModelFactory factory
+        ICromwellViewModelFactory factory,
+        InannaCommands inannaCommands
     )
         : base(credentialUiService, dialogService, stringFormater, appResourceService)
     {
         Credential = credential;
+        InannaCommands = inannaCommands;
 
         Header = factory.CreateCredentialHeader(
             credential,
@@ -55,6 +57,7 @@ public sealed partial class CredentialViewModel
 
     public CredentialNotify Credential { get; }
     public CredentialHeaderViewModel Header { get; }
+    public InannaCommands InannaCommands { get; }
     object IHeader.Header => Header;
 
     public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)

@@ -8,4 +8,7 @@ public sealed partial class CredentialView : CredentialDropUserControl
     {
         InitializeComponent();
     }
+
+    public CredentialViewModel ViewModel =>
+        DataContext as CredentialViewModel ?? throw new InvalidOperationException();
 }
