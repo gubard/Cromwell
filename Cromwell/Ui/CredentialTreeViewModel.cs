@@ -11,8 +11,10 @@ public sealed partial class CredentialTreeViewModel : ViewModelBase, IInit
 {
     public CredentialTreeViewModel(
         ICredentialUiCache credentialUiCache,
-        ICredentialUiService credentialUiService
+        ICredentialUiService credentialUiService,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
+        : base(safeExecuteWrapper)
     {
         _credentialUiService = credentialUiService;
         Roots = credentialUiCache.Roots;

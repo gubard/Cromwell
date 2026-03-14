@@ -18,7 +18,8 @@ public sealed partial class CredentialViewModel
         IHeader,
         IRefresh,
         IInit,
-        ISave
+        ISave,
+        ICredentialListViewModel
 {
     public CredentialViewModel(
         ICredentialUiService credentialUiService,
@@ -27,12 +28,23 @@ public sealed partial class CredentialViewModel
         IAppResourceService appResourceService,
         CredentialNotify credential,
         ICromwellViewModelFactory factory,
-        InannaCommands inannaCommands
+        InannaCommands inannaCommands,
+        CromwellCommands cromwellCommands,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
-        : base(credentialUiService, dialogService, stringFormater, appResourceService)
+        : base(
+            credentialUiService,
+            dialogService,
+            stringFormater,
+            appResourceService,
+            safeExecuteWrapper,
+            factory
+        )
     {
+        _dialogService = dialogService;
         Credential = credential;
         InannaCommands = inannaCommands;
+        CromwellCommands = cromwellCommands;
 
         Header = factory.CreateCredentialHeader(
             credential,
@@ -58,6 +70,7 @@ public sealed partial class CredentialViewModel
     public CredentialNotify Credential { get; }
     public CredentialHeaderViewModel Header { get; }
     public InannaCommands InannaCommands { get; }
+    public CromwellCommands CromwellCommands { get; }
     object IHeader.Header => Header;
 
     public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
@@ -78,6 +91,8 @@ public sealed partial class CredentialViewModel
             ct
         );
     }
+
+    private readonly IDialogService _dialogService;
 
     private void SelectedCredentialsPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -105,7 +120,7 @@ public sealed partial class CredentialViewModel
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = new CredentialParametersViewModel(ValidationMode.ValidateAll, false);
+        var credential = Factory.CreateCredentialParameters(ValidationMode.ValidateAll, false);
 
         await WrapCommandAsync(
             () =>
@@ -118,13 +133,14 @@ public sealed partial class CredentialViewModel
                             )
                             .DispatchToDialogHeader(),
                         credential,
+                        SafeExecuteWrapper,
                         new DialogButton(
                             AppResourceService.GetResource<string>("Lang.Create"),
                             CreateCommand,
                             credential,
                             DialogButtonType.Primary
                         ),
-                        UiHelper.CancelButton
+                        _dialogService.CancelButton
                     ),
                     ct
                 ),
@@ -158,7 +174,6 @@ public sealed partial class CredentialViewModel
             new() { CreateCredentials = [credential] },
             ct
         );
-        ;
     }
 
     public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)

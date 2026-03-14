@@ -10,8 +10,10 @@ public sealed partial class RootCredentialsHeaderViewModel : ViewModelBase
 {
     public RootCredentialsHeaderViewModel(
         IAvaloniaReadOnlyList<InannaCommand> commands,
-        IInannaViewModelFactory factory
+        IInannaViewModelFactory factory,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
+        : base(safeExecuteWrapper)
     {
         AdaptiveButtons = factory.CreateAdaptiveButtons(commands);
     }

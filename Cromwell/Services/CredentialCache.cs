@@ -8,6 +8,7 @@ using Inanna.Helpers;
 using Inanna.Services;
 using Turtle.Contract.Models;
 using Turtle.Contract.Services;
+using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Services;
 
@@ -32,6 +33,9 @@ public sealed class CredentialMemoryCache
     : MemoryCache<CredentialNotify, TurtlePostRequest, TurtleGetResponse>,
         ICredentialMemoryCache
 {
+    public CredentialMemoryCache(IServiceProvider serviceProvider)
+        : base(serviceProvider) { }
+
     public IEnumerable<CredentialNotify> Roots => _roots;
     public IAvaloniaReadOnlyList<CredentialNotify> Bookmarks => _bookmarks;
 

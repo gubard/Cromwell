@@ -18,7 +18,8 @@ public sealed partial class RootCredentialsViewModel
         IHeader,
         IRefresh,
         IInit,
-        ISave
+        ISave,
+        ICredentialListViewModel
 {
     public RootCredentialsViewModel(
         ICredentialUiService credentialUiService,
@@ -26,11 +27,21 @@ public sealed partial class RootCredentialsViewModel
         IStringFormater stringFormater,
         IAppResourceService appResourceService,
         ICredentialUiCache credentialUiCache,
-        ICromwellViewModelFactory factory
+        ICromwellViewModelFactory factory,
+        ISafeExecuteWrapper safeExecuteWrapper,
+        CromwellCommands cromwellCommands
     )
-        : base(credentialUiService, dialogService, stringFormater, appResourceService)
+        : base(
+            credentialUiService,
+            dialogService,
+            stringFormater,
+            appResourceService,
+            safeExecuteWrapper,
+            factory
+        )
     {
         _credentialUiCache = credentialUiCache;
+        CromwellCommands = cromwellCommands;
 
         Header = factory.CreateRootCredentialsHeader(
             new AvaloniaList<InannaCommand>
@@ -54,6 +65,7 @@ public sealed partial class RootCredentialsViewModel
         );
     }
 
+    public CromwellCommands CromwellCommands { get; }
     public IEnumerable<CredentialNotify> Credentials => _credentialUiCache.Roots;
     public RootCredentialsHeaderViewModel Header { get; }
     object IHeader.Header => Header;
@@ -108,7 +120,7 @@ public sealed partial class RootCredentialsViewModel
     [RelayCommand]
     private async Task ShowCreateViewAsync(CancellationToken ct)
     {
-        var credential = new CredentialParametersViewModel(ValidationMode.ValidateAll, false);
+        var credential = Factory.CreateCredentialParameters(ValidationMode.ValidateAll, false);
 
         await WrapCommandAsync(
             () =>
@@ -121,13 +133,14 @@ public sealed partial class RootCredentialsViewModel
                             )
                             .DispatchToDialogHeader(),
                         credential,
+                        SafeExecuteWrapper,
                         new DialogButton(
                             AppResourceService.GetResource<string>("Lang.Create"),
                             CreateCommand,
                             credential,
                             DialogButtonType.Primary
                         ),
-                        UiHelper.CancelButton
+                        DialogService.CancelButton
                     ),
                     ct
                 ),

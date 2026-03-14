@@ -4,6 +4,7 @@ using Gaia.Helpers;
 using Gaia.Models;
 using Inanna.Generator;
 using Inanna.Models;
+using Inanna.Services;
 using Inanna.Ui;
 using Turtle.Contract.Models;
 
@@ -15,9 +16,10 @@ public sealed partial class CredentialParametersViewModel : ParametersViewModelB
     public CredentialParametersViewModel(
         CredentialNotify item,
         ValidationMode validationMode,
-        bool isShowEdit
+        bool isShowEdit,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
-        : base(validationMode, isShowEdit)
+        : base(validationMode, isShowEdit, safeExecuteWrapper)
     {
         InitValidation();
         Name = item.Name;
@@ -36,8 +38,12 @@ public sealed partial class CredentialParametersViewModel : ParametersViewModelB
         ResetEdit();
     }
 
-    public CredentialParametersViewModel(ValidationMode validationMode, bool isShowEdit)
-        : base(validationMode, isShowEdit)
+    public CredentialParametersViewModel(
+        ValidationMode validationMode,
+        bool isShowEdit,
+        ISafeExecuteWrapper safeExecuteWrapper
+    )
+        : base(validationMode, isShowEdit, safeExecuteWrapper)
     {
         InitValidation();
         Length = 512;

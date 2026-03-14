@@ -12,8 +12,10 @@ public sealed partial class CredentialHeaderViewModel : ViewModelBase
     public CredentialHeaderViewModel(
         CredentialNotify credential,
         IAvaloniaReadOnlyList<InannaCommand> multiCommands,
-        IInannaViewModelFactory factory
+        IInannaViewModelFactory factory,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
+        : base(safeExecuteWrapper)
     {
         Credential = credential;
         AdaptiveButtons = factory.CreateAdaptiveButtons(credential.Commands);

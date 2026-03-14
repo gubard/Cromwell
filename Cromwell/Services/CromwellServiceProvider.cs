@@ -1,16 +1,13 @@
 using Avalonia;
-using Cromwell.Ui;
 using Gaia.Helpers;
 using Gaia.Services;
 using Inanna.Services;
-using Inanna.Ui;
 using Jab;
 using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Services;
 
 [ServiceProviderModule]
-[Transient(typeof(RootCredentialsViewModel))]
 [Transient(typeof(ITransformer<string, byte[]>), typeof(StringToUtf8))]
 [Transient(typeof(IPasswordGeneratorService), typeof(PasswordGeneratorService))]
 [Transient(typeof(IClipboardService), typeof(AvaloniaClipboardService))]
@@ -21,18 +18,22 @@ namespace Cromwell.Services;
 [Singleton(typeof(Application), Factory = nameof(GetApplication))]
 [Singleton(typeof(IServiceProvider), Factory = nameof(GetServiceProvider))]
 [Singleton(typeof(INavigator), typeof(Navigator))]
-[Singleton(typeof(StackViewModel))]
+[Singleton(typeof(CromwellCommands))]
 [Singleton(typeof(ICredentialMemoryCache), typeof(CredentialMemoryCache))]
 public interface ICromwellServiceProvider
 {
-    public static INotificationService GetNotificationService()
+    public static INotificationService GetNotificationService(ICommandFactory commandFactory)
     {
-        return new NotificationService("Notifications", TimeSpan.FromSeconds(5));
+        return new NotificationService("Notifications", TimeSpan.FromSeconds(5), commandFactory);
     }
 
-    public static IDialogService GetDialogService()
+    public static IDialogService GetDialogService(
+        IAppResourceService appResourceService,
+        ICommandFactory commandFactory,
+        IInannaViewModelFactory factory
+    )
     {
-        return new DialogService("MessageBox");
+        return new DialogService("MessageBox", appResourceService, commandFactory, factory);
     }
 
     public static IServiceProvider GetServiceProvider()

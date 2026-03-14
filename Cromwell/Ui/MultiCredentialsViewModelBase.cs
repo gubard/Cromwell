@@ -14,27 +14,32 @@ namespace Cromwell.Ui;
 
 public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
 {
+    public IEnumerable<CredentialNotify> SelectedCredentials => Selected;
+
     protected readonly AvaloniaList<CredentialNotify> Selected;
     protected readonly ICredentialUiService CredentialUiService;
     protected readonly IDialogService DialogService;
     protected readonly IStringFormater StringFormater;
     protected readonly IAppResourceService AppResourceService;
+    protected readonly ICromwellViewModelFactory Factory;
 
     protected MultiCredentialsViewModelBase(
         ICredentialUiService credentialUiService,
         IDialogService dialogService,
         IStringFormater stringFormater,
-        IAppResourceService appResourceService
+        IAppResourceService appResourceService,
+        ISafeExecuteWrapper safeExecuteWrapper,
+        ICromwellViewModelFactory factory
     )
+        : base(safeExecuteWrapper)
     {
         Selected = new();
         CredentialUiService = credentialUiService;
         DialogService = dialogService;
         StringFormater = stringFormater;
         AppResourceService = appResourceService;
+        Factory = factory;
     }
-
-    public IEnumerable<CredentialNotify> SelectedCredentials => Selected;
 
     [RelayCommand]
     private async Task MultiDeleteAsync(CancellationToken ct)
@@ -79,8 +84,9 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
                                 SelectedCredentials.Select(x => x.Name).JoinString(", ")
                             ),
                         },
+                        SafeExecuteWrapper,
                         button,
-                        UiHelper.CancelButton
+                        DialogService.CancelButton
                     ),
                     ct
                 ),
@@ -91,7 +97,10 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
     [RelayCommand]
     private async Task ShowMultiEdit(CancellationToken ct)
     {
-        var credential = new CredentialParametersViewModel(ValidationMode.ValidateOnlyEdited, true);
+        var credential = Factory.CreateCredentialParameters(
+            ValidationMode.ValidateOnlyEdited,
+            true
+        );
 
         var header = StringFormater
             .Format(
@@ -110,7 +119,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
         await WrapCommandAsync(
             () =>
                 DialogService.ShowMessageBoxAsync(
-                    new(header, credential, button, UiHelper.CancelButton),
+                    new(header, credential, SafeExecuteWrapper, button, DialogService.CancelButton),
                     ct
                 ),
             ct

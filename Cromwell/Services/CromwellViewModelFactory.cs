@@ -4,6 +4,7 @@ using Cromwell.Ui;
 using Gaia.Services;
 using Inanna.Models;
 using Inanna.Services;
+using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Services;
 
@@ -13,6 +14,17 @@ public interface ICromwellViewModelFactory
     CredentialParametersViewModel CreateCredentialParameters(CredentialNotify credential);
     CredentialTreeViewModel CreateCredentialTree();
     ChangeParentCredentialViewModel CreateChangeParentCredential();
+    RootCredentialsViewModel CreateRootCredentials();
+
+    CredentialParametersViewModel CreateCredentialParameters(
+        CredentialNotify item,
+        ValidationMode validationMode,
+        bool isShowEdit
+    );
+    CredentialParametersViewModel CreateCredentialParameters(
+        ValidationMode validationMode,
+        bool isShowEdit
+    );
 
     CredentialHeaderViewModel CreateCredentialHeader(
         CredentialNotify credential,
@@ -26,51 +38,84 @@ public interface ICromwellViewModelFactory
 
 public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
 {
-    public CromwellViewModelFactory(
-        ICredentialUiService credentialUiService,
-        IDialogService dialogService,
-        IStringFormater stringFormater,
-        IAppResourceService appResourceService,
-        ICredentialUiCache credentialUiCache,
-        IInannaViewModelFactory inannaViewModelFactor,
-        InannaCommands inannaCommands
-    )
+    public CromwellViewModelFactory(IServiceProvider serviceProvider)
     {
-        _credentialUiService = credentialUiService;
-        _dialogService = dialogService;
-        _stringFormater = stringFormater;
-        _appResourceService = appResourceService;
-        _credentialUiCache = credentialUiCache;
-        _inannaViewModelFactor = inannaViewModelFactor;
-        _inannaCommands = inannaCommands;
+        _serviceProvider = serviceProvider;
     }
 
     public CredentialViewModel CreateCredential(CredentialNotify credential)
     {
         return new(
-            _credentialUiService,
-            _dialogService,
-            _stringFormater,
-            _appResourceService,
+            _serviceProvider.GetService<ICredentialUiService>(),
+            _serviceProvider.GetService<IDialogService>(),
+            _serviceProvider.GetService<IStringFormater>(),
+            _serviceProvider.GetService<IAppResourceService>(),
             credential,
             this,
-            _inannaCommands
+            _serviceProvider.GetService<InannaCommands>(),
+            _serviceProvider.GetService<CromwellCommands>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
         );
     }
 
     public CredentialParametersViewModel CreateCredentialParameters(CredentialNotify credential)
     {
-        return new(credential, ValidationMode.ValidateAll, false);
+        return new(
+            credential,
+            ValidationMode.ValidateAll,
+            false,
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
     }
 
     public CredentialTreeViewModel CreateCredentialTree()
     {
-        return new(_credentialUiCache, _credentialUiService);
+        return new(
+            _serviceProvider.GetService<ICredentialUiCache>(),
+            _serviceProvider.GetService<ICredentialUiService>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
     }
 
     public ChangeParentCredentialViewModel CreateChangeParentCredential()
     {
-        return new(this);
+        return new(this, _serviceProvider.GetService<ISafeExecuteWrapper>());
+    }
+
+    public RootCredentialsViewModel CreateRootCredentials()
+    {
+        return new(
+            _serviceProvider.GetService<ICredentialUiService>(),
+            _serviceProvider.GetService<IDialogService>(),
+            _serviceProvider.GetService<IStringFormater>(),
+            _serviceProvider.GetService<IAppResourceService>(),
+            _serviceProvider.GetService<ICredentialUiCache>(),
+            this,
+            _serviceProvider.GetService<ISafeExecuteWrapper>(),
+            _serviceProvider.GetService<CromwellCommands>()
+        );
+    }
+
+    public CredentialParametersViewModel CreateCredentialParameters(
+        CredentialNotify item,
+        ValidationMode validationMode,
+        bool isShowEdit
+    )
+    {
+        return new(
+            item,
+            validationMode,
+            isShowEdit,
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
+    }
+
+    public CredentialParametersViewModel CreateCredentialParameters(
+        ValidationMode validationMode,
+        bool isShowEdit
+    )
+    {
+        return new(validationMode, isShowEdit, _serviceProvider.GetService<ISafeExecuteWrapper>());
     }
 
     public CredentialHeaderViewModel CreateCredentialHeader(
@@ -78,21 +123,24 @@ public sealed class CromwellViewModelFactory : ICromwellViewModelFactory
         IAvaloniaReadOnlyList<InannaCommand> multiCommands
     )
     {
-        return new(credential, multiCommands, _inannaViewModelFactor);
+        return new(
+            credential,
+            multiCommands,
+            _serviceProvider.GetService<IInannaViewModelFactory>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
     }
 
     public RootCredentialsHeaderViewModel CreateRootCredentialsHeader(
         IAvaloniaReadOnlyList<InannaCommand> commands
     )
     {
-        return new(commands, _inannaViewModelFactor);
+        return new(
+            commands,
+            _serviceProvider.GetService<IInannaViewModelFactory>(),
+            _serviceProvider.GetService<ISafeExecuteWrapper>()
+        );
     }
 
-    private readonly ICredentialUiCache _credentialUiCache;
-    private readonly ICredentialUiService _credentialUiService;
-    private readonly IDialogService _dialogService;
-    private readonly IStringFormater _stringFormater;
-    private readonly IAppResourceService _appResourceService;
-    private readonly IInannaViewModelFactory _inannaViewModelFactor;
-    private readonly InannaCommands _inannaCommands;
+    private readonly IServiceProvider _serviceProvider;
 }

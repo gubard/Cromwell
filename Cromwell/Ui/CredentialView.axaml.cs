@@ -1,8 +1,9 @@
 using Cromwell.Controls;
+using Cromwell.Models;
 
 namespace Cromwell.Ui;
 
-public sealed partial class CredentialView : CredentialDropUserControl
+public sealed partial class CredentialView : CredentialDropUserControl, ICredentialListView
 {
     public CredentialView()
     {
@@ -11,4 +12,7 @@ public sealed partial class CredentialView : CredentialDropUserControl
 
     public CredentialViewModel ViewModel =>
         DataContext as CredentialViewModel ?? throw new InvalidOperationException();
+
+    public ICredentialListViewModel CredentialListViewModel =>
+        DataContext as ICredentialListViewModel ?? throw new InvalidOperationException();
 }

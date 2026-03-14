@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Cromwell.Helpers;
+using Cromwell.Services;
 using Gaia.Helpers;
 using Gaia.Services;
 using IconPacks.Avalonia.MaterialDesign;
@@ -9,12 +9,13 @@ using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
 using Turtle.Contract.Models;
+using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Cromwell.Models;
 
 public sealed partial class CredentialNotify
     : ObservableObject,
-        IStaticFactory<Guid, CredentialNotify>,
+        IStaticServiceFactory<Guid, CredentialNotify>,
         IIsDrag
 {
     public Guid Id { get; }
@@ -67,9 +68,13 @@ public sealed partial class CredentialNotify
     [ObservableProperty]
     public partial CredentialNotify? Parent { get; set; }
 
-    public static CredentialNotify Create(Guid input)
+    public static CredentialNotify Create(Guid input, IServiceProvider serviceProvider)
     {
-        return new(input, DiHelper.ServiceProvider.GetService<IAppResourceService>());
+        return new(
+            input,
+            serviceProvider.GetService<IAppResourceService>(),
+            serviceProvider.GetService<CromwellCommands>()
+        );
     }
 
     public void UpdateParents(IEnumerable<CredentialNotify> parents)
@@ -105,38 +110,38 @@ public sealed partial class CredentialNotify
             {
                 _commands.AddRange([
                     new(
-                        CromwellCommands.ShowDeleteCredentialCommand,
+                        _cromwellCommands.ShowDeleteCredentialCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.Delete"),
                         PackIconMaterialDesignKind.Delete,
                         ButtonType.Danger
                     ),
                     new(
-                        CromwellCommands.ShowEditCredentialCommand,
+                        _cromwellCommands.ShowEditCredentialCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.Edit"),
                         PackIconMaterialDesignKind.Edit
                     ),
                     new(
-                        CromwellCommands.ShowChangeParentCommand,
+                        _cromwellCommands.ShowChangeParentCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.ChangeParent"),
                         PackIconMaterialDesignKind.AccountTree
                     ),
                     new(
-                        CromwellCommands.OpenLinkCommand,
+                        _cromwellCommands.OpenLinkCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.OpenLink"),
                         PackIconMaterialDesignKind.Link
                     ),
                     new(
-                        CromwellCommands.LoginToClipboardCommand,
+                        _cromwellCommands.LoginToClipboardCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.Login"),
                         PackIconMaterialDesignKind.Login
                     ),
                     new(
-                        CromwellCommands.GeneratePasswordCommand,
+                        _cromwellCommands.GeneratePasswordCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.Password"),
                         PackIconMaterialDesignKind.Password
@@ -147,26 +152,26 @@ public sealed partial class CredentialNotify
             {
                 _commands.AddRange([
                     new(
-                        CromwellCommands.ShowDeleteCredentialCommand,
+                        _cromwellCommands.ShowDeleteCredentialCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.Delete"),
                         PackIconMaterialDesignKind.Delete,
                         ButtonType.Danger
                     ),
                     new(
-                        CromwellCommands.ShowEditCredentialCommand,
+                        _cromwellCommands.ShowEditCredentialCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.Edit"),
                         PackIconMaterialDesignKind.Edit
                     ),
                     new(
-                        CromwellCommands.ShowChangeParentCommand,
+                        _cromwellCommands.ShowChangeParentCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.ChangeParent"),
                         PackIconMaterialDesignKind.AccountTree
                     ),
                     new(
-                        CromwellCommands.OpenLinkCommand,
+                        _cromwellCommands.OpenLinkCommand,
                         this,
                         _appResourceService.GetResource<string>("Lang.OpenLink"),
                         PackIconMaterialDesignKind.Link
@@ -183,46 +188,52 @@ public sealed partial class CredentialNotify
     private readonly AvaloniaList<InannaCommand> _commands;
     private readonly IAppResourceService _appResourceService;
     private readonly AvaloniaList<CredentialNotify> _children = [];
+    private readonly CromwellCommands _cromwellCommands;
 
-    private CredentialNotify(Guid id, IAppResourceService appResourceService)
+    private CredentialNotify(
+        Guid id,
+        IAppResourceService appResourceService,
+        CromwellCommands cromwellCommands
+    )
     {
         Id = id;
         _appResourceService = appResourceService;
+        _cromwellCommands = cromwellCommands;
 
         _commands =
         [
             new(
-                CromwellCommands.ShowDeleteCredentialCommand,
+                _cromwellCommands.ShowDeleteCredentialCommand,
                 this,
                 appResourceService.GetResource<string>("Lang.Delete"),
                 PackIconMaterialDesignKind.Delete
             ),
             new(
-                CromwellCommands.ShowEditCredentialCommand,
+                _cromwellCommands.ShowEditCredentialCommand,
                 this,
                 appResourceService.GetResource<string>("Lang.Edit"),
                 PackIconMaterialDesignKind.Edit
             ),
             new(
-                CromwellCommands.ShowChangeParentCommand,
+                _cromwellCommands.ShowChangeParentCommand,
                 this,
                 appResourceService.GetResource<string>("Lang.ChangeParent"),
                 PackIconMaterialDesignKind.AccountTree
             ),
             new(
-                CromwellCommands.OpenLinkCommand,
+                _cromwellCommands.OpenLinkCommand,
                 this,
                 appResourceService.GetResource<string>("Lang.OpenLink"),
                 PackIconMaterialDesignKind.Link
             ),
             new(
-                CromwellCommands.LoginToClipboardCommand,
+                _cromwellCommands.LoginToClipboardCommand,
                 this,
                 appResourceService.GetResource<string>("Lang.Login"),
                 PackIconMaterialDesignKind.Login
             ),
             new(
-                CromwellCommands.GeneratePasswordCommand,
+                _cromwellCommands.GeneratePasswordCommand,
                 this,
                 appResourceService.GetResource<string>("Lang.Password"),
                 PackIconMaterialDesignKind.Password
