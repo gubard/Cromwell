@@ -140,31 +140,11 @@ public sealed class CredentialMemoryCache
     {
         Dispatcher.UIThread.InvokeAsync(() =>
         {
+            var updatedIds = new HashSet<Guid>();
+
             foreach (var create in source.CreateCredentials)
             {
-                var item = GetItem(create.Id);
-                item.Name = create.Name;
-                item.Login = create.Login;
-                item.Key = create.Key;
-                item.Link = create.Link;
-                item.IsAvailableUpperLatin = create.IsAvailableUpperLatin;
-                item.IsAvailableLowerLatin = create.IsAvailableLowerLatin;
-                item.IsAvailableNumber = create.IsAvailableNumber;
-                item.IsAvailableSpecialSymbols = create.IsAvailableSpecialSymbols;
-                item.Length = create.Length;
-                item.Regex = create.Regex;
-                item.Type = create.Type;
-                item.IsBookmark = create.IsBookmark;
-                item.Parent = create.ParentId.HasValue ? GetItem(create.ParentId.Value) : null;
-
-                if (item.Parent is not null)
-                {
-                    item.Parent.AddChild(item);
-                }
-                else
-                {
-                    _roots.Add(item);
-                }
+                UpdateCredential(create, updatedIds);
             }
 
             foreach (var edit in source.Edits)
@@ -349,7 +329,8 @@ public sealed class CredentialMemoryCache
         item.Length = credential.Length;
         item.Regex = credential.Regex;
         item.Type = credential.Type;
-        item.Parent = credential.ParentId.HasValue ? GetItem(credential.ParentId.Value) : null;
+        item.OrderIndex = credential.OrderIndex;
+        ChangeParent(item, credential.ParentId);
         updatedIds.Add(credential.Id);
 
         return item;

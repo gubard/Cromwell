@@ -68,6 +68,9 @@ public sealed partial class CredentialNotify
     [ObservableProperty]
     public partial CredentialNotify? Parent { get; set; }
 
+    [ObservableProperty]
+    public partial uint OrderIndex { get; set; }
+
     public static CredentialNotify Create(Guid input, IServiceProvider serviceProvider)
     {
         return new(
@@ -90,7 +93,7 @@ public sealed partial class CredentialNotify
 
     public void AddChild(CredentialNotify child)
     {
-        _children.Add(child);
+        _children.AddSorted(child, x => x.OrderIndex);
     }
 
     public void RemoveChild(CredentialNotify child)
