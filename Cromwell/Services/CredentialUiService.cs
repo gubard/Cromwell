@@ -1,4 +1,5 @@
-﻿using Inanna.Services;
+﻿using Gaia.Services;
+using Inanna.Services;
 using Turtle.Contract.Models;
 using Turtle.Contract.Services;
 
@@ -27,13 +28,18 @@ public sealed class CredentialUiService(
     >(credentialHttpService, dbService, uiCache, navigator, serviceName, statusBarService, factory),
         ICredentialUiService
 {
-    protected override TurtleGetRequest CreateGetRequestRefresh()
+    protected override async ValueTask<IValidationErrors> RefreshServiceCore(CancellationToken ct)
     {
-        return new()
+        var request = new TurtleGetRequest
         {
             IsGetBookmarks = true,
             IsGetRoots = true,
             IsGetSelectors = true,
         };
+
+        var response = await DbService.GetAsync(request, ct);
+        await UiCache.UpdateAsync(response, ct);
+
+        return response;
     }
 }
