@@ -168,7 +168,7 @@ public sealed class CromwellCommands : Commands
                                 .Format(
                                     ServiceProvider
                                         .GetService<IAppResourceService>()
-                                        .GetResource<string>("Lang.DeleteAsk"),
+                                        .GetResource<string>("Lang.AskDelete"),
                                     credential.Name
                                 ),
                             ServiceProvider.GetService<ISafeExecuteWrapper>(),

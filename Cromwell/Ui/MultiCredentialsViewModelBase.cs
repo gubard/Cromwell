@@ -80,7 +80,7 @@ public abstract partial class MultiCredentialsViewModelBase : ViewModelBase
                         new TextBlock
                         {
                             Text = StringFormater.Format(
-                                AppResourceService.GetResource<string>("Lang.DeleteAsk"),
+                                AppResourceService.GetResource<string>("Lang.AskDelete"),
                                 SelectedCredentials.Select(x => x.Name).JoinString(", ")
                             ),
                         },
